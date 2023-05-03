@@ -29,18 +29,28 @@ public abstract class Application : DisposableObject
             throw new PlatformNotSupportedException("GLFW is not supported");
         }
 
-        // Create main window.
-        MainWindow = new Window(Name, 1280, 720);
-
-        // Init graphics
+        // Create graphics instance first
         GraphicsInstanceDescriptor descriptor = new()
         {
-            ValidationMode = validationMode
+            ValidationMode = validationMode,
+            Label = Name
         };
         Instance = GraphicsInstance.CreateDefault(descriptor);
 
-        GraphicsAdapter adapter = Instance.RequestAdapter();
+        // Create main window.
+        MainWindow = new Window(Name, 1280, 720);
+
+        // Request GraphicsAdapter for window surface and create device.
+        Surface surface = Instance.CreateSurface(MainWindow.SurfaceSource!);
+        GraphicsAdapter adapter = Instance.RequestAdapter(surface);
         Device = adapter.CreateDevice();
+
+        // Create SwapChain for main window
+        SwapChainDescriptor swapChainDescriptor = new()
+        {
+            Format = adapter.GetPreferredFormat(surface)
+        };
+        MainWindowSwapChain = Device.CreateSwapChain(surface, swapChainDescriptor);
     }
 
     public abstract string Name { get; }
@@ -48,11 +58,16 @@ public abstract class Application : DisposableObject
     public GraphicsInstance Instance { get; }
     public GraphicsDevice Device { get; }   
     public Window MainWindow { get; }
+    public SwapChain MainWindowSwapChain { get; }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
+            Device.WaitIdle();
+            MainWindowSwapChain.Dispose();
+            Device.Dispose();
+
             Instance.Dispose();
         }
     }

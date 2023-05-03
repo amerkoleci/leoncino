@@ -178,7 +178,7 @@ internal unsafe class D3D12GraphicsInstance : GraphicsInstance
             if (D3D12CreateDevice((IUnknown*)dxgiAdapter.Get(), FeatureLevel.Level_11_0,
                 __uuidof<ID3D12Device>(), tempDevice.GetVoidAddressOf()).Success)
             {
-                return new D3D12GraphicsAdapter(this, dxgiAdapter, tempDevice.Get());
+                return new D3D12GraphicsAdapter(this, dxgiAdapter.Get(), tempDevice.Get());
             }
         }
 

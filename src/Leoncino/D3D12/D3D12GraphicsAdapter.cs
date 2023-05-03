@@ -13,15 +13,15 @@ using Win32.Graphics.Direct3D;
 
 namespace Leoncino.D3D12;
 
-internal unsafe class D3D12GraphicsAdapter : GraphicsAdapter
+internal unsafe class D3D12GraphicsAdapter : GraphicsAdapter, IDisposable
 {
     private D3D12GraphicsInstance _instance;
     private readonly ComPtr<IDXGIAdapter1> _adapter;
 
-    public D3D12GraphicsAdapter(D3D12GraphicsInstance instance, in ComPtr<IDXGIAdapter1> adapter, ID3D12Device* tempDevice)
+    public D3D12GraphicsAdapter(D3D12GraphicsInstance instance, IDXGIAdapter1* adapter, ID3D12Device* tempDevice)
     {
         _instance = instance;
-        _adapter = adapter.Move();
+        _adapter = new(adapter);
 
         AdapterDescription1 adapterDesc;
         ThrowIfFailed(_adapter.Get()->GetDesc1(&adapterDesc));
@@ -62,6 +62,8 @@ internal unsafe class D3D12GraphicsAdapter : GraphicsAdapter
         }
     }
 
+    public IDXGIFactory2* DXGIFactory => (IDXGIFactory2*)_instance.DXGIFactory;
+    public bool TearingSupported => _instance.TearingSupported;
     public IDXGIAdapter1* Handle => _adapter;
 
     /// <inheritdoc />
@@ -82,18 +84,10 @@ internal unsafe class D3D12GraphicsAdapter : GraphicsAdapter
     /// <inheritdoc />
     public override BackendType Backend => BackendType.D3D12;
 
-    /// <summary>
-    /// Finalizes an instance of the <see cref="D3D12GraphicsAdapter" /> class.
-    /// </summary>
-    ~D3D12GraphicsAdapter() => Dispose(disposing: false);
-
     /// <inheritdoc />
-    protected override void Dispose(bool disposing)
+    public void Dispose()
     {
-        if (disposing)
-        {
-            _adapter.Dispose();
-        }
+        _adapter.Dispose();
     }
 
     /// <inheritdoc />
@@ -101,7 +95,7 @@ internal unsafe class D3D12GraphicsAdapter : GraphicsAdapter
 
     public override GraphicsDevice CreateDevice(in GraphicsDeviceDescriptor descriptor)
     {
-        using ComPtr<ID3D12Device5> device = default;
+        ComPtr<ID3D12Device5> device = default;
         HResult result = D3D12CreateDevice((IUnknown*)_adapter.Get(), FeatureLevel.Level_11_0, __uuidof<ID3D12Device5>(), device.GetVoidAddressOf());
         if (result.Failure)
         {

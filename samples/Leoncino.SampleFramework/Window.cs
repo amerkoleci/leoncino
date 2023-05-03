@@ -4,7 +4,6 @@
 using System.Drawing;
 using Alimer.Bindings.SDL;
 using static Alimer.Bindings.SDL.SDL;
-using static Alimer.Bindings.SDL.SDL_EventType;
 using static Alimer.Bindings.SDL.SDL_WindowFlags;
 
 namespace Leoncino.SampleFramework;
@@ -26,7 +25,7 @@ public sealed unsafe class Window
 {
     private readonly SDL_Window _window;
 
-    public unsafe Window(string title, int width, int height, WindowFlags flags = WindowFlags.None)
+    public Window(string title, int width, int height, WindowFlags flags = WindowFlags.None)
     {
         Title = title;
 
@@ -76,11 +75,51 @@ public sealed unsafe class Window
 
         SDL_GetWindowSizeInPixels(_window, out width, out height);
         ClientSize = new(width, height);
+
+        // Native handle
+        SDL_SysWMinfo wmInfo = default;
+        SDL_GetWindowWMInfo(_window, &wmInfo);
+
+        // Window handle is selected per subsystem as defined at:
+        // https://wiki.libsdl.org/SDL_SysWMinfo
+        switch (wmInfo.subsystem)
+        {
+            case SDL_SYSWM_TYPE.SDL_SYSWM_WINDOWS:
+                SurfaceSource = SurfaceSource.CreateWin32(wmInfo.info.win.hinstance, wmInfo.info.win.window);
+                break;
+
+            case SDL_SYSWM_TYPE.SDL_SYSWM_WINRT:
+                //Surface = SwapChainSurface.CreateCoreWindow(wmInfo.info.winrt.window);
+                break;
+
+            case SDL_SYSWM_TYPE.SDL_SYSWM_X11:
+                //return wmInfo.info.x11.window;
+                break;
+
+            case SDL_SYSWM_TYPE.SDL_SYSWM_COCOA:
+                //return wmInfo.info.cocoa.window;
+                break;
+
+            case SDL_SYSWM_TYPE.SDL_SYSWM_UIKIT:
+                //return wmInfo.info.uikit.window;
+                break;
+
+            case SDL_SYSWM_TYPE.SDL_SYSWM_WAYLAND:
+                //return wmInfo.info.wl.shell_surface;
+                break;
+
+            case SDL_SYSWM_TYPE.SDL_SYSWM_ANDROID:
+                //return wmInfo.info.android.window;
+                break;
+
+            default:
+                break;
+        }
     }
 
     public string Title { get; }
     public Size ClientSize { get; }
-    //public IntPtr Handle { get; }
+    public SurfaceSource? SurfaceSource { get; }
 
     public void Show()
     {

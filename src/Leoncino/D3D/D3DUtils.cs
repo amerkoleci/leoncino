@@ -347,7 +347,7 @@ internal static unsafe class D3DUtils
     public static D3DPrimitiveTopology ToD3DPrimitiveTopology(this PrimitiveTopology value) => s_d3dPrimitiveTopologyMap[(uint)value];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static uint PresentModeToBufferCount(PresentMode mode)
+    public static uint ToBufferCount(this PresentMode mode)
     {
         return mode switch
         {
@@ -358,7 +358,7 @@ internal static unsafe class D3DUtils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static uint PresentModeToSwapInterval(PresentMode mode)
+    public static uint ToSwapInterval(this PresentMode mode)
     {
         switch (mode)
         {

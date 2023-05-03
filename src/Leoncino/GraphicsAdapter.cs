@@ -3,7 +3,7 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsAdapter : DisposableObject
+public abstract class GraphicsAdapter
 {
     public abstract uint VendorId { get; }
     public abstract uint DeviceId { get; }
