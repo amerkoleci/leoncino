@@ -1,0 +1,13 @@
+<Project Sdk="MSBuild.Sdk.Extras">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;$(LeoncinoPlatforms)</TargetFrameworks>
+    <RootNamespace>Leoncino</RootNamespace>
+    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
+  </ItemGroup>
+
+</Project>

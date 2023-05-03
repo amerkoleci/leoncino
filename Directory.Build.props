@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/amerkoleci/leoncino</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <!-- Version -->
+  <PropertyGroup>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix Condition="'$(VersionSuffix)' == ''">beta</VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Local builds should embed PDBs so we never lose them when a subsequent build occurs. -->
+    <DebugType Condition=" '$(CI)' != 'true' and '$(TF_BUILD)' != 'true' ">embedded</DebugType>
+    <Features>strict</Features>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <RestoreConfigFile>$(MSBuildThisFileDirectory)NuGet.config</RestoreConfigFile>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Amer Koleci and Contributors</Authors>
+    <Copyright>Copyright © Amer Koleci and Contributors</Copyright>
+    <Product>Alimer</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts/</PackageOutputPath>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_RUN_ID)' != ''">true</ContinuousIntegrationBuild>
+    <UseSharedCompilation>true</UseSharedCompilation>
+  </PropertyGroup>
+
+  <!-- https://github.com/dotnet/sourcelink -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols Condition=" '$(DebugType)' != 'embedded' ">true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_LeoncinoTargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_LeoncinoTargetPlatformIdentifier>
+    <_LeoncinoTargetPlatformIsWindows>false</_LeoncinoTargetPlatformIsWindows>
+    <_LeoncinoTargetPlatformIsWindows Condition="$(_LeoncinoTargetPlatformIdentifier.Contains('windows')) == 'True'">True</_LeoncinoTargetPlatformIsWindows>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeWindowsTargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(Packing)' == 'true'">true</IncludeWindowsTargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LeoncinoWindowsPlatforms Condition="'$(LeoncinoWindowsPlatforms)' == ''">net7.0-windows10.0.19041;uap10.0.19041</LeoncinoWindowsPlatforms>
+
+    <LeoncinoPlatforms Condition="'$(IncludeWindowsTargetFrameworks)' == 'true'">$(LeoncinoWindowsPlatforms);$(LeoncinoPlatforms)</LeoncinoPlatforms>
+  </PropertyGroup>
+
+</Project>
