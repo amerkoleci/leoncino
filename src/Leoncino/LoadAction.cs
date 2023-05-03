@@ -3,7 +3,9 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsDevice : DisposableObject
+public enum LoadAction
 {
-    public abstract GraphicsAdapter Adapter { get; }
+    Load,
+    Clear,
+    Discard,
 }

@@ -8,14 +8,17 @@ namespace Leoncino;
 /// </summary>
 public abstract class GraphicsInstance : DisposableObject
 {
-    protected GraphicsInstance(BackendType backend)
+    protected GraphicsInstance(BackendType backend, ValidationMode validationMode)
     {
         Backend = backend;
+        ValidationMode = validationMode;
     }
 
     public BackendType Backend { get; }
+    public ValidationMode ValidationMode { get; }   
 
-    public abstract IReadOnlyList<GraphicsAdapter> EnumerateAdapters(PowerPreference powerPreference = PowerPreference.HighPerformance);
+    public abstract Surface CreateSurface(SurfaceSource source);
+    public abstract GraphicsAdapter RequestAdapter(Surface? compatibleSurface = default, PowerPreference powerPreference = PowerPreference.HighPerformance);
 
     public static GraphicsInstance CreateDefault(in GraphicsInstanceDescriptor descriptor)
     {

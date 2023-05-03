@@ -29,19 +29,24 @@ public abstract class Application : DisposableObject
             throw new PlatformNotSupportedException("GLFW is not supported");
         }
 
+        // Create main window.
+        MainWindow = new Window(Name, 1280, 720);
+
+        // Init graphics
         GraphicsInstanceDescriptor descriptor = new()
         {
             ValidationMode = validationMode
         };
         Instance = GraphicsInstance.CreateDefault(descriptor);
 
-        // Create main window.
-        MainWindow = new Window(Name, 1280, 720);
+        GraphicsAdapter adapter = Instance.RequestAdapter();
+        Device = adapter.CreateDevice();
     }
 
     public abstract string Name { get; }
 
     public GraphicsInstance Instance { get; }
+    public GraphicsDevice Device { get; }   
     public Window MainWindow { get; }
 
     protected override void Dispose(bool disposing)

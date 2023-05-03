@@ -12,8 +12,6 @@ using Win32.Graphics.Direct3D12;
 using System.Diagnostics;
 using DxgiFeature = Win32.Graphics.Dxgi.Feature;
 using DxgiInfoQueueFilter = Win32.Graphics.Dxgi.InfoQueueFilter;
-using InfoQueueFilter = Win32.Graphics.Direct3D12.InfoQueueFilter;
-using MessageId = Win32.Graphics.Direct3D12.MessageId;
 
 namespace Leoncino.D3D12;
 
@@ -26,13 +24,13 @@ internal unsafe class D3D12GraphicsInstance : GraphicsInstance
     public static bool IsSupported() => s_isSupported.Value;
 
     public D3D12GraphicsInstance(in GraphicsInstanceDescriptor descriptor)
-        : base(BackendType.D3D12)
+        : base(BackendType.D3D12, descriptor.ValidationMode)
     {
         Guard.IsTrue(IsSupported(), nameof(D3D12GraphicsInstance), "Direct3D12 is not supported");
 
         uint dxgiFactoryFlags = 0u;
 
-        if (descriptor.ValidationMode != ValidationMode.Disabled)
+        if (ValidationMode != ValidationMode.Disabled)
         {
             dxgiFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
 
@@ -41,7 +39,7 @@ internal unsafe class D3D12GraphicsInstance : GraphicsInstance
             {
                 d3d12Debug.Get()->EnableDebugLayer();
 
-                if (descriptor.ValidationMode == ValidationMode.GPU)
+                if (ValidationMode == ValidationMode.GPU)
                 {
                     using ComPtr<ID3D12Debug1> d3d12Debug1 = default;
                     using ComPtr<ID3D12Debug2> d3d12Debug2 = default;
@@ -154,13 +152,16 @@ internal unsafe class D3D12GraphicsInstance : GraphicsInstance
         }
     }
 
-    public override IReadOnlyList<GraphicsAdapter> EnumerateAdapters(PowerPreference powerPreference = PowerPreference.HighPerformance)
+    /// <inheritdoc />
+    public override Surface CreateSurface(SurfaceSource source) => new D3D12Surface(this, source);
+
+    /// <inheritdoc />
+    public override GraphicsAdapter RequestAdapter(Surface? compatibleSurface = default, PowerPreference powerPreference = PowerPreference.HighPerformance)
     {
         using ComPtr<IDXGIFactory6> dxgiFactory6 = default;
         GpuPreference gpuPreference = powerPreference.ToDxgi();
         bool queryByPreference = _dxgiFactory.CopyTo(dxgiFactory6.GetAddressOf()).Success;
 
-        List<D3D12GraphicsAdapter> adapters = new();
         using ComPtr<IDXGIAdapter1> dxgiAdapter = default;
         for (uint i = 0; NextAdapter(i, dxgiAdapter.ReleaseAndGetAddressOf()) != DXGI_ERROR_NOT_FOUND; ++i)
         {
@@ -173,14 +174,15 @@ internal unsafe class D3D12GraphicsInstance : GraphicsInstance
                 continue;
             }
 
-            if (D3D12CreateDevice((IUnknown*)dxgiAdapter.Get(), FeatureLevel.Level_12_0,
-                __uuidof<ID3D12Device5>(), null).Success)
+            using ComPtr<ID3D12Device> tempDevice = default;
+            if (D3D12CreateDevice((IUnknown*)dxgiAdapter.Get(), FeatureLevel.Level_11_0,
+                __uuidof<ID3D12Device>(), tempDevice.GetVoidAddressOf()).Success)
             {
-                adapters.Add(new D3D12GraphicsAdapter(dxgiAdapter));
+                return new D3D12GraphicsAdapter(this, dxgiAdapter, tempDevice.Get());
             }
         }
 
-        return adapters;
+        throw new GraphicsException("No suitable adapters found");
 
         HResult NextAdapter(uint index, IDXGIAdapter1** ppAdapter)
         {
@@ -222,7 +224,7 @@ internal unsafe class D3D12GraphicsInstance : GraphicsInstance
                 }
 
                 // Check to see if the adapter supports Direct3D 12, but don't create the actual device.
-                if (D3D12CreateDevice((IUnknown*)dxgiAdapter.Get(), FeatureLevel.Level_12_0,
+                if (D3D12CreateDevice((IUnknown*)dxgiAdapter.Get(), FeatureLevel.Level_11_0,
                      __uuidof<ID3D12Device>(), null).Success)
                 {
                     foundCompatibleDevice = true;

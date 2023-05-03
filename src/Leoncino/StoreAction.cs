@@ -3,7 +3,8 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsDevice : DisposableObject
+public enum StoreAction
 {
-    public abstract GraphicsAdapter Adapter { get; }
+    Store,
+    Discard,
 }

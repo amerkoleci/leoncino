@@ -18,12 +18,12 @@ public readonly record struct GraphicsInstanceDescriptor
     public BackendType PreferredBackend { get; init; } = BackendType.Count;
 
     /// <summary>
-    /// Gets the <see cref="GraphicsDevice"/> validation mode.
+    /// Gets or sets the validation mode.
     /// </summary>
     public ValidationMode ValidationMode { get; init; } = ValidationMode.Disabled;
 
     // <summary>
-    /// Gets or sets the label of <see cref="GraphicsDevice"/>.
+    /// Gets or sets the label of <see cref="GraphicsInstance"/>.
     /// </summary>
     public string? Label { get; init; } = default;
 }
