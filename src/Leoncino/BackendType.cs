@@ -3,6 +3,13 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsDevice : DisposableObject
+public enum BackendType
 {
+    Null,
+    Vulkan,
+    D3D12,
+    D3D11,
+    Metal,
+
+    Count,
 }

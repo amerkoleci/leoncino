@@ -35,7 +35,7 @@ public abstract class DisposableObject : IDisposable
     {
         if (Interlocked.Exchange(ref _isDisposed, 1) == 0)
         {
-            Dispose(isDisposing: true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
     }
@@ -45,13 +45,8 @@ public abstract class DisposableObject : IDisposable
     protected void AssertNotDisposed() => Guard.IsTrue(_isDisposed == 0);
 
     /// <inheritdoc cref="Dispose()" />
-    /// <param name="isDisposing"><c>true</c> if the method was called from <see cref="Dispose()" />; otherwise, <c>false</c>.</param>
-    protected abstract void Dispose(bool isDisposing);
-
-    /// <summary>Sets the name of the object.</summary>
-    /// <param name="value">The new name of the object.</param>
-    /// <remarks>This method is unsafe because it does not perform most parameter or state validation.</remarks>
-    protected abstract void SetNameUnsafe(string value);
+    /// <param name="disposing"><c>true</c> if the method was called from <see cref="Dispose()" />; otherwise, <c>false</c>.</param>
+    protected abstract void Dispose(bool disposing);
 
     /// <summary>Throws an exception if the object has been disposed.</summary>
     /// <exception cref="ObjectDisposedException">The object has been disposed.</exception>

@@ -3,6 +3,8 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsDevice : DisposableObject
+public enum IndexType
 {
+    UInt16,
+    UInt32,
 }

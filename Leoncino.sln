@@ -17,7 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{22CA22
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{4F75D877-BF58-4D97-946E-9D95527EE71B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D9319EC2-0707-49A1-8A8B-02DD35887336}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leoncino", "src\Leoncino\Leoncino.csproj", "{B237578B-D51A-4D93-BFD6-D32CAB0C2C3A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leoncino.Tests", "tests\Leoncino.Tests\Leoncino.Tests.csproj", "{ADD62208-ACD4-4598-8D46-C5FDEA146581}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,9 +35,16 @@ Global
 		{B237578B-D51A-4D93-BFD6-D32CAB0C2C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B237578B-D51A-4D93-BFD6-D32CAB0C2C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B237578B-D51A-4D93-BFD6-D32CAB0C2C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADD62208-ACD4-4598-8D46-C5FDEA146581}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADD62208-ACD4-4598-8D46-C5FDEA146581}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADD62208-ACD4-4598-8D46-C5FDEA146581}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADD62208-ACD4-4598-8D46-C5FDEA146581}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ADD62208-ACD4-4598-8D46-C5FDEA146581} = {D9319EC2-0707-49A1-8A8B-02DD35887336}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D6D6ED45-9C03-461C-8C03-6AB793DA89C9}

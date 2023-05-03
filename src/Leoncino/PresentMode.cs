@@ -3,6 +3,9 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsDevice : DisposableObject
+public enum PresentMode
 {
+    Immediate,
+    Mailbox,
+    Fifo,
 }

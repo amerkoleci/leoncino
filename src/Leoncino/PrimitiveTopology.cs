@@ -3,6 +3,14 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsDevice : DisposableObject
+public enum PrimitiveTopology
 {
+    PointList,
+    LineList,
+    LineStrip,
+    TriangleList,
+    TriangleStrip,
+    PatchList,
+
+    Count
 }
