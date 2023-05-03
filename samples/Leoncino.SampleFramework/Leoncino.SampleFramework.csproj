@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+    <RootNamespace>Leoncino.SampleFramework</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Leoncino\Leoncino.csproj" />
+
+    <PackageReference Include="Alimer.Bindings.SDL" />
+  </ItemGroup>
+</Project>

@@ -15,6 +15,8 @@ public abstract class GraphicsInstance : DisposableObject
 
     public BackendType Backend { get; }
 
+    public abstract IReadOnlyList<GraphicsAdapter> EnumerateAdapters(PowerPreference powerPreference = PowerPreference.HighPerformance);
+
     public static GraphicsInstance CreateDefault(in GraphicsInstanceDescriptor descriptor)
     {
         BackendType backend = descriptor.PreferredBackend;

@@ -22,11 +22,6 @@ public readonly record struct GraphicsInstanceDescriptor
     /// </summary>
     public ValidationMode ValidationMode { get; init; } = ValidationMode.Disabled;
 
-    /// <summary>
-    /// Gets the GPU adapter selection power preference.
-    /// </summary>
-    public PowerPreference PowerPreference { get; init; } = PowerPreference.HighPerformance;
-
     // <summary>
     /// Gets or sets the label of <see cref="GraphicsDevice"/>.
     /// </summary>
