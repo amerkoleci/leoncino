@@ -14,6 +14,20 @@ public abstract class GraphicsDevice : DisposableObject
     /// </summary>
     public abstract void WaitIdle();
 
+    public unsafe Texture CreateTexture(in TextureDescriptor descriptor)
+    {
+        Guard.IsGreaterThanOrEqualTo(descriptor.Width, 1, nameof(TextureDescriptor.Width));
+        Guard.IsGreaterThanOrEqualTo(descriptor.Height, 1, nameof(TextureDescriptor.Height));
+        Guard.IsGreaterThanOrEqualTo(descriptor.DepthOrArrayLayers, 1, nameof(TextureDescriptor.DepthOrArrayLayers));
+
+        return CreateTextureCore(descriptor, default);
+    }
+
+    public QueryHeap CreateQueryHeap(in QueryHeapDescriptor descriptor)
+    {
+        return CreateQueryHeapCore(descriptor);
+    }
+
     public SwapChain CreateSwapChain(Surface surface, in SwapChainDescriptor descriptor)
     {
         Guard.IsNotNull(surface, nameof(surface));
@@ -21,5 +35,8 @@ public abstract class GraphicsDevice : DisposableObject
         return CreateSwapChainCore(surface, descriptor);
     }
 
+    protected abstract unsafe Buffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
+    protected abstract unsafe Texture CreateTextureCore(in TextureDescriptor descriptor, void* initialData);
+    protected abstract QueryHeap CreateQueryHeapCore(in QueryHeapDescriptor descriptor);
     protected abstract SwapChain CreateSwapChainCore(Surface surface, in SwapChainDescriptor descriptor);
 }

@@ -82,6 +82,25 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
         }
     }
 
+    /// <inheritdoc />
+    protected override Buffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
+    {
+        return new D3D12Buffer(this, descriptor, initialData);
+    }
+
+    /// <inheritdoc />
+    protected override Texture CreateTextureCore(in TextureDescriptor descriptor, void* initialData)
+    {
+        return new D3D12Texture(this, descriptor, initialData);
+    }
+
+    /// <inheritdoc />
+    protected override QueryHeap CreateQueryHeapCore(in QueryHeapDescriptor descriptor)
+    {
+        return new D3D12QueryHeap(this, descriptor);
+    }
+
+    /// <inheritdoc />
     protected override SwapChain CreateSwapChainCore(Surface surface, in SwapChainDescriptor descriptor)
     {
         return new D3D12SwapChain(this, surface, descriptor);

@@ -6,8 +6,12 @@ using Win32.Graphics.Direct3D12;
 
 namespace Leoncino.D3D12;
 
-internal static unsafe class D3DUtils
+internal static unsafe class D3D12Utils
 {
+    public static HeapProperties DefaultHeapProps => new (HeapType.Default);
+    public static HeapProperties UploadHeapProps => new (HeapType.Upload);
+    public static HeapProperties ReadbackHeapProps => new(HeapType.Readback);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static CommandListType ToD3D12(this CommandQueue queue)
     {
