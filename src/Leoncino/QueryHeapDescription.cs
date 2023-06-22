@@ -8,9 +8,9 @@ namespace Leoncino;
 /// <summary>
 /// Structure that describes the <see cref="QueryHeap"/>.
 /// </summary>
-public record struct QueryHeapDescriptor
+public record struct QueryHeapDescription
 {
-    public QueryHeapDescriptor(
+    public QueryHeapDescription(
         QueryType type = QueryType.Timestamp,
         int count = 1,
         string? label = default)
@@ -31,6 +31,8 @@ public record struct QueryHeapDescriptor
     /// Total count of queries the set contains. Must not be zero. Must not be greater than <see cref="Constants.QuerySetMaxQueries"/>.
     /// </summary>
     public int Count { get; init; }
+
+    public QueryPipelineStatisticFlags PipelineStatistics { get; init; } = QueryPipelineStatisticFlags.None;
 
     // <summary>
     /// Gets or sets the debug label for the query set.

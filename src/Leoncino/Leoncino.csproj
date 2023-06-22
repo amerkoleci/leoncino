@@ -1,9 +1,13 @@
 <Project Sdk="MSBuild.Sdk.Extras">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;$(LeoncinoPlatforms)</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;$(LeoncinoPlatforms)</TargetFrameworks>
     <RootNamespace>Leoncino</RootNamespace>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+    <ExcludeVulkan>True</ExcludeVulkan>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -25,6 +29,7 @@
     <PackageReference Include="Vortice.Win32.Graphics.Dxgi" Condition="'$(ExcludeD3D12)' != 'true' OR '$(ExcludeD3D11)' != 'true'" />
     <PackageReference Include="Vortice.Win32.Graphics.Direct3D12" Condition="'$(ExcludeD3D12)' != 'true'" />
     <PackageReference Include="Vortice.Win32.Graphics.Direct3D11" Condition="'$(ExcludeD3D11)' != 'true'" />
+    <PackageReference Include="Vortice.VulkanMemoryAllocator" Condition="'$(ExcludeVulkan)' != 'true'" />
   </ItemGroup>
 
 </Project>

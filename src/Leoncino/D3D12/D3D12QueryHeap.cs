@@ -3,6 +3,7 @@
 
 using Win32;
 using Win32.Graphics.Direct3D12;
+using D3DQueryHeapDescription = Win32.Graphics.Direct3D12.QueryHeapDescription;
 using static Win32.Apis;
 
 namespace Leoncino.D3D12;
@@ -11,10 +12,10 @@ internal unsafe class D3D12QueryHeap : QueryHeap
 {
     private readonly ComPtr<ID3D12QueryHeap> _handle;
 
-    public D3D12QueryHeap(D3D12GraphicsDevice device, in QueryHeapDescriptor descriptor)
-        : base(device, descriptor)
+    public D3D12QueryHeap(D3D12GraphicsDevice device, in QueryHeapDescription description)
+        : base(device, description)
     {
-        QueryHeapDescription d3dDesc = new(descriptor.Type.ToD3D12(), (uint)descriptor.Count);
+        D3DQueryHeapDescription d3dDesc = new(description.Type.ToD3D12(), (uint)description.Count);
 
         HResult hr = device.Handle->CreateQueryHeap(&d3dDesc, __uuidof<ID3D12QueryHeap>(), _handle.GetVoidAddressOf());
         if (hr.Failure)

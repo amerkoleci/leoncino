@@ -95,9 +95,9 @@ internal unsafe class D3D12GraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    protected override QueryHeap CreateQueryHeapCore(in QueryHeapDescriptor descriptor)
+    protected override QueryHeap CreateQueryHeapCore(in QueryHeapDescription description)
     {
-        return new D3D12QueryHeap(this, descriptor);
+        return new D3D12QueryHeap(this, in description);
     }
 
     /// <inheritdoc />

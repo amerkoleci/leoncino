@@ -8,11 +8,11 @@ namespace Leoncino;
 /// </summary>
 public abstract class QueryHeap : GraphicsObject
 {
-    protected QueryHeap(GraphicsDevice device, in QueryHeapDescriptor descriptor)
-        : base(device, descriptor.Label)
+    protected QueryHeap(GraphicsDevice device, in QueryHeapDescription description)
+        : base(device, description.Label)
     {
-        Type = descriptor.Type;
-        Count = descriptor.Count;
+        Type = description.Type;
+        Count = description.Count;
     }
 
     public QueryType Type { get; }

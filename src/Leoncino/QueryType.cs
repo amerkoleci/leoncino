@@ -8,12 +8,20 @@ namespace Leoncino;
 /// </summary>
 public enum QueryType
 {
-    /// Create a heap to contain timestamp queries.
-    Timestamp,
-    /// Used for occlusion query heap or occlusion queries.
+    /// <summary>
+    /// Used for occlusion query heap or occlusion queries
+    /// </summary>
     Occlusion,
-    /// Can be used in the same heap as occlusion.
+    /// <summary>
+    /// Can be used in the same heap as occlusion
+    /// </summary>
     BinaryOcclusion,
-    /// Create a heap to contain a structure of `PipelineStatistics`
+    /// <summary>
+    /// Create a heap to contain timestamp queries
+    /// </summary>
+    Timestamp,
+    /// <summary>
+    /// Create a heap to contain a structure of <see cref="QueryDataPipelineStatistics"/>
+    /// </summary>
     PipelineStatistics,
 }

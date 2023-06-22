@@ -23,9 +23,9 @@ public abstract class GraphicsDevice : DisposableObject
         return CreateTextureCore(descriptor, default);
     }
 
-    public QueryHeap CreateQueryHeap(in QueryHeapDescriptor descriptor)
+    public QueryHeap CreateQueryHeap(in QueryHeapDescription description)
     {
-        return CreateQueryHeapCore(descriptor);
+        return CreateQueryHeapCore(description);
     }
 
     public SwapChain CreateSwapChain(Surface surface, in SwapChainDescriptor descriptor)
@@ -37,6 +37,6 @@ public abstract class GraphicsDevice : DisposableObject
 
     protected abstract unsafe Buffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
     protected abstract unsafe Texture CreateTextureCore(in TextureDescriptor descriptor, void* initialData);
-    protected abstract QueryHeap CreateQueryHeapCore(in QueryHeapDescriptor descriptor);
+    protected abstract QueryHeap CreateQueryHeapCore(in QueryHeapDescription description);
     protected abstract SwapChain CreateSwapChainCore(Surface surface, in SwapChainDescriptor descriptor);
 }
