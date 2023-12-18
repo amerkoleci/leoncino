@@ -4,4 +4,26 @@
     <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>
+    <DefineConstants Condition="'$(ExcludeVulkan)' == 'true'">$(DefineConstants);EXCLUDE_VULKAN_BACKEND</DefineConstants>
+    <DefineConstants Condition="'$(ExcludeWebGPU)' == 'true'">$(DefineConstants);EXCLUDE_WEBGPU_BACKEND</DefineConstants>
+    <DefineConstants Condition="'$(ExcludeMetal)' == 'true'">$(DefineConstants);EXCLUDE_METAL_BACKEND</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Remove="System.Linq" />
+
+    <Compile Remove="D3D/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />
+    <Compile Remove="D3D12/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />
+    <Compile Remove="Vulkan/**/*" Condition="'$(ExcludeVulkan)' == 'true'" />
+    <Compile Remove="WebGPU/**/*" Condition="'$(ExcludeWebGPU)' == 'true'" />
+    <Compile Remove="Metal/**/*" Condition="'$(ExcludeMetal)' == 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
+    <PackageReference Include="Alimer.Bindings.WebGPU" Condition="'$(ExcludeWebGPU)' != 'true'" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,19 @@
+// Copyright (c) Amer Koleci and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+
+namespace Leoncino;
+
+/// <summary>
+/// Structure that describes the <see cref="Instance"/>.
+/// </summary>
+public readonly record struct InstanceDescriptor
+{
+    public InstanceDescriptor()
+    {
+    }
+
+    // <summary>
+    /// Gets or sets the label of <see cref="Instance"/>.
+    /// </summary>
+    public string? Label { get; init; } = default;
+}
