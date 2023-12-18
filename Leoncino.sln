@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".root", ".root", "{19EA3D79-6EBE-45F8-A70C-C8DA25BB726E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		LICENSE = LICENSE
+		NuGet.config = NuGet.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{DF892364-C2A7-46F9-AEBA-7276881AE282}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{269B1FE7-7E3C-4156-B576-8C356A497E70}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leoncino", "src\Leoncino\Leoncino.csproj", "{143A0BA9-50C0-4392-A42E-FE6E51FE083C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leoncino.Tests", "tests\Leoncino.Tests\Leoncino.Tests.csproj", "{F4BB3F7B-B120-4289-B806-CBBA3EA6CEB1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{143A0BA9-50C0-4392-A42E-FE6E51FE083C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{143A0BA9-50C0-4392-A42E-FE6E51FE083C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{143A0BA9-50C0-4392-A42E-FE6E51FE083C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{143A0BA9-50C0-4392-A42E-FE6E51FE083C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4BB3F7B-B120-4289-B806-CBBA3EA6CEB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4BB3F7B-B120-4289-B806-CBBA3EA6CEB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4BB3F7B-B120-4289-B806-CBBA3EA6CEB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4BB3F7B-B120-4289-B806-CBBA3EA6CEB1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F4BB3F7B-B120-4289-B806-CBBA3EA6CEB1} = {269B1FE7-7E3C-4156-B576-8C356A497E70}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F0556D2C-0809-40FC-8770-1F559F32F51A}
+	EndGlobalSection
+EndGlobal

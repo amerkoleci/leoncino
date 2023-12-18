@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Alimer</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="assets\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Leoncino\Leoncino.csproj" />
+  </ItemGroup>
+
+</Project>

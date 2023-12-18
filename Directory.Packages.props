@@ -1,0 +1,27 @@
+<Project>
+  <!-- https://learn.microsoft.com/nuget/consume-packages/central-package-management -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Package versions for package references across all projects -->
+  <PropertyGroup>
+    <TerraFXWindowsVersion>10.0.22621.2</TerraFXWindowsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="Vortice.Vulkan" Version="1.8.3" />
+
+    <!-- Tests -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageVersion Include="xunit" Version="2.6.3" />
+    <PackageVersion Include="xunit.console" Version="2.6.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.5" />
+  </ItemGroup>
+
+</Project>

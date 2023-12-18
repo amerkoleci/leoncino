@@ -1,0 +1,51 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.dmp
+
+# NuGet Packages
+*.nupkg
+*.nuget.g.props
+*.nuget.g.targets
+*.nuget.cache
+**/packages/*
+project.lock.json
+project.assets.json
+*.nuget.dgspec.json
+
+# Others
+*.Cache
+
+# Compiled shaders
+*.cso
+*.spv
+
+# Build dir
+.vs
+[Bb]in/
+[Oo]bj/
+src/native/build
