@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
-  </PropertyGroup>
+    <DefineConstants>$(DefineConstants);VALIDATE_USAGE</DefineConstants>
+    <ExcludeD3D12>true</ExcludeD3D12>
+    <ExcludeVulkan>true</ExcludeVulkan>
+    <ExcludeMetal>true</ExcludeMetal>
+</PropertyGroup>
 
   <PropertyGroup>
     <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>

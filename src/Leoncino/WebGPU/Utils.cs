@@ -9,7 +9,19 @@ namespace Leoncino.WebGPU;
 internal static unsafe class Utils
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static WGPUTextureFormat ToWebGPU(this PixelFormat format)
+    public static WGPUPowerPreference ToWGPU(this PowerPreference value)
+    {
+        switch (value)
+        {
+            case PowerPreference.LowPower: return WGPUPowerPreference.LowPower;
+            case PowerPreference.HighPerformance: return WGPUPowerPreference.HighPerformance;
+            default:
+                return WGPUPowerPreference.Undefined;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUTextureFormat ToWGPU(this PixelFormat format)
     {
         switch (format)
         {
@@ -144,7 +156,7 @@ internal static unsafe class Utils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static WGPUVertexFormat ToWebGPU(this VertexFormat format)
+    public static WGPUVertexFormat ToWGPU(this VertexFormat format)
     {
         switch (format)
         {
@@ -188,6 +200,24 @@ internal static unsafe class Utils
 
             default:
                 return WGPUVertexFormat.Undefined;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUCompareFunction ToWGPU(this CompareFunction value)
+    {
+        switch (value)
+        {
+            case CompareFunction.Never: return WGPUCompareFunction.Never;
+            case CompareFunction.Less: return WGPUCompareFunction.Less;
+            case CompareFunction.Equal: return WGPUCompareFunction.Equal;
+            case CompareFunction.LessEqual: return WGPUCompareFunction.LessEqual;
+            case CompareFunction.Greater: return WGPUCompareFunction.Greater;
+            case CompareFunction.NotEqual: return WGPUCompareFunction.NotEqual;
+            case CompareFunction.GreaterEqual: return WGPUCompareFunction.GreaterEqual;
+            case CompareFunction.Always: return WGPUCompareFunction.Always;
+            default:
+                return WGPUCompareFunction.Never;
         }
     }
 }

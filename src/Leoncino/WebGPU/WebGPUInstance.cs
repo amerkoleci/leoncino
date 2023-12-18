@@ -10,6 +10,8 @@ internal unsafe partial class WebGPUInstance : Instance
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
+    public static bool IsSupported() => s_isSupported.Value;
+
     public WebGPUInstance(in InstanceDescriptor descriptor)
         : base(descriptor)
     {
@@ -33,6 +35,37 @@ internal unsafe partial class WebGPUInstance : Instance
         if (disposing)
         {
             wgpuInstanceRelease(Handle);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override Surface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new WebGPUSurface(this, in descriptor);
+
+    protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
+    {
+        WGPURequestAdapterOptions requestAdapterOptions = new()
+        {
+            nextInChain = null,
+            compatibleSurface = options.CompatibleSurface != null ? ((WebGPUSurface)options.CompatibleSurface).Handle : WGPUSurface.Null,
+            powerPreference = options.PowerPreference.ToWGPU(),
+            backendType = WGPUBackendType.Undefined,
+            forceFallbackAdapter = false
+        };
+
+        WGPUAdapter result = WGPUAdapter.Null;
+        wgpuInstanceRequestAdapter(Handle, &requestAdapterOptions, requestAdapterCallback, 0);
+        return new WebGPUGraphicsAdapter(result);
+
+        void requestAdapterCallback(WGPURequestAdapterStatus status, WGPUAdapter candidateAdapter, sbyte* message, nint pUserData)
+        {
+            if (status == WGPURequestAdapterStatus.Success)
+            {
+                result = candidateAdapter;
+            }
+            else
+            {
+                //Log.Error("Could not get WebGPU adapter: " + Interop.GetString(message));
+            }
         }
     }
 

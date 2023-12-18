@@ -8,7 +8,7 @@ using static SDL.SDL;
 namespace Leoncino.Samples;
 
 [Flags]
-public enum WindowFlags
+public enum WindowFlags : uint
 {
     None = 0,
     Fullscreen = 1 << 0,
@@ -55,7 +55,7 @@ public sealed unsafe class Window
         }
 
         _window = SDL_CreateWindow(title, width, height, sdl_flags);
-        if(_window.IsNull)
+        if (_window.IsNull)
         {
             throw new Exception("SDL: failed to create window");
         }
@@ -67,6 +67,8 @@ public sealed unsafe class Window
     public string Title { get; }
 
     public SDL_WindowID Id { get; }
+
+    public Surface? Surface { get; private set; }
 
     public Size ClientSize
     {
@@ -87,6 +89,52 @@ public sealed unsafe class Window
 
     public void Show()
     {
-        SDL_ShowWindow(_window);
+        _ = SDL_ShowWindow(_window);
+    }
+
+    public void CreateSurface(Instance instance, bool useWayland = false)
+    {
+        SurfaceSource? source = default;
+        if (OperatingSystem.IsWindows())
+        {
+            nint hwnd = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.win32.hwnd");
+            source = SurfaceSource.CreateWin32(hwnd);
+        }
+        else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+        {
+            NSWindow ns_window = new(SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.cocoa.window"));
+            CAMetalLayer metal_layer = CAMetalLayer.New();
+            ns_window.contentView.wantsLayer = true;
+            ns_window.contentView.layer = metal_layer.Handle;
+
+            source = SurfaceSource.CreateMetalLayer(metal_layer.Handle);
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            if (useWayland)
+            {
+                nint display = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.wayland.display");
+                nint surface = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.wayland.surface");
+                source = SurfaceSource.CreateWaylandSurface(display, surface);
+            }
+            else
+            {
+                nint display = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.x11.display");
+                ulong window = (ulong)SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.x11.window");
+                source = SurfaceSource.CreateXlibWindow(display, window);
+            }
+        }
+
+        if (source is null)
+        {
+            throw new PlatformNotSupportedException();
+        }
+
+        SurfaceDescriptor descriptor = new()
+        {
+            Source = source!
+        };
+
+        Surface = instance.CreateSurface(in descriptor);
     }
 }

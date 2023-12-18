@@ -8,34 +8,36 @@ using static Leoncino.Samples.ObjectiveCRuntime;
 
 namespace Leoncino.Samples;
 
-internal static unsafe class ObjectiveCRuntime
+#pragma warning disable IDE1006 // Naming Styles
+
+internal static unsafe partial class ObjectiveCRuntime
 {
     private const string ObjCLibrary = "/usr/lib/libobjc.A.dylib";
 
-    [DllImport(ObjCLibrary)]
-    public static extern IntPtr sel_registerName(byte* namePtr);
+    [LibraryImport(ObjCLibrary)]
+    public static partial IntPtr sel_registerName(byte* namePtr);
 
-    [DllImport(ObjCLibrary)]
-    public static extern byte* sel_getName(IntPtr selector);
-    [DllImport(ObjCLibrary)]
-    public static extern IntPtr objc_getClass(byte* namePtr);
+    [LibraryImport(ObjCLibrary)]
+    public static partial byte* sel_getName(nint selector);
+    [LibraryImport(ObjCLibrary)]
+    public static partial IntPtr objc_getClass(byte* namePtr);
 
-    [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
-    public static extern void objc_msgSend(IntPtr receiver, Selector selector);
-    [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
-    public static extern void objc_msgSend(IntPtr receiver, Selector selector, Bool8 b);
-    [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
-    public static extern void objc_msgSend(IntPtr receiver, Selector selector, IntPtr b);
+    [LibraryImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
+    public static partial void objc_msgSend(nint receiver, Selector selector);
+    [LibraryImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
+    public static partial void objc_msgSend(nint receiver, Selector selector, Bool8 b);
+    [LibraryImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
+    public static partial void objc_msgSend(nint receiver, Selector selector, nint b);
 
-    [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
-    public static extern Bool8 bool8_objc_msgSend(IntPtr receiver, Selector selector);
+    [LibraryImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
+    public static partial Bool8 bool8_objc_msgSend(nint receiver, Selector selector);
 
-    [DllImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
-    public static extern IntPtr IntPtr_objc_msgSend(IntPtr receiver, Selector selector);
+    [LibraryImport(ObjCLibrary, EntryPoint = "objc_msgSend")]
+    public static partial nint IntPtr_objc_msgSend(nint receiver, Selector selector);
 
-    public static ref T objc_msgSend<T>(IntPtr receiver, Selector selector) where T : struct
+    public static ref T objc_msgSend<T>(nint receiver, Selector selector) where T : struct
     {
-        IntPtr value = IntPtr_objc_msgSend(receiver, selector);
+        nint value = IntPtr_objc_msgSend(receiver, selector);
         return ref Unsafe.AsRef<T>(&value);
     }
 
@@ -86,7 +88,9 @@ internal unsafe readonly struct Selector
 
 internal static class Selectors
 {
+
     internal static readonly Selector alloc = "alloc";
+
     internal static readonly Selector init = "init";
 }
 
@@ -135,15 +139,13 @@ internal readonly struct Bool8
     public static implicit operator Bool8(bool b) => new(b);
 }
 
-internal unsafe readonly struct NSView
+internal readonly struct NSView(nint ptr)
 {
     internal static readonly Selector setWantsLayer = "setWantsLayer:";
     internal static readonly Selector setLayer = "setLayer:";
 
-    public readonly IntPtr NativePtr;
-    public static implicit operator IntPtr(NSView nsView) => nsView.NativePtr;
-
-    public NSView(IntPtr ptr) => NativePtr = ptr;
+    public readonly nint NativePtr = ptr;
+    public static implicit operator nint(NSView nsView) => nsView.NativePtr;
 
     public Bool8 wantsLayer
     {
@@ -151,7 +153,7 @@ internal unsafe readonly struct NSView
         set => objc_msgSend(NativePtr, setWantsLayer, value);
     }
 
-    public IntPtr layer
+    public nint layer
     {
         get => IntPtr_objc_msgSend(NativePtr, "layer");
         set => objc_msgSend(NativePtr, setLayer, value);
@@ -168,24 +170,20 @@ internal unsafe readonly struct NSView
     //}
 }
 
-internal unsafe readonly struct NSWindow
+internal readonly struct NSWindow(IntPtr ptr)
 {
-    public readonly IntPtr NativePtr;
-    public NSWindow(IntPtr ptr)
-    {
-        NativePtr = ptr;
-    }
+    public readonly IntPtr NativePtr = ptr;
 
     public ref NSView contentView => ref objc_msgSend<NSView>(NativePtr, "contentView");
 }
 
-internal unsafe readonly struct CAMetalLayer
+internal readonly struct CAMetalLayer(nint ptr)
 {
-    public readonly IntPtr Handle;
-
-    public CAMetalLayer(IntPtr ptr) => Handle = ptr;
+    public readonly nint Handle = ptr;
 
     public static CAMetalLayer New() => s_class.AllocInit<CAMetalLayer>();
 
     private static readonly ObjCClass s_class = new(nameof(CAMetalLayer));
 }
+
+#pragma warning restore IDE1006 // Naming Styles

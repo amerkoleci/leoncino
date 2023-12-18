@@ -3,10 +3,9 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsResource : GraphicsObject
+public enum PowerPreference
 {
-    protected GraphicsResource(string? label = default)
-        : base(label)
-    {
-    }
+    Undefined,
+    LowPower,
+    HighPerformance,
 }

@@ -3,10 +3,10 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsResource : GraphicsObject
+public enum PresentMode
 {
-    protected GraphicsResource(string? label = default)
-        : base(label)
-    {
-    }
+    Fifo,
+    FifoRelaxed,
+    Immediate,
+    Mailbox,
 }

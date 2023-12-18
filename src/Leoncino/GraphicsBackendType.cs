@@ -3,10 +3,12 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsResource : GraphicsObject
+public enum GraphicsBackendType
 {
-    protected GraphicsResource(string? label = default)
-        : base(label)
-    {
-    }
+    WebGPU,
+    Vulkan,
+    D3D12,
+    Metal,
+
+    Count,
 }

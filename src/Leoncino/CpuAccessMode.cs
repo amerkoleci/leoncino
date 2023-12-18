@@ -3,10 +3,12 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsResource : GraphicsObject
+/// <summary>
+/// Describes the CPU access for <see cref="Buffer"/>.
+/// </summary>
+public enum CpuAccessMode
 {
-    protected GraphicsResource(string? label = default)
-        : base(label)
-    {
-    }
+    None = 0,
+    Write,
+    Read,
 }

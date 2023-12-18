@@ -1,0 +1,127 @@
+// Copyright (c) Amer Koleci and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+
+using System.Runtime.InteropServices;
+using WebGPU;
+using static WebGPU.WebGPU;
+
+namespace Leoncino.WebGPU;
+
+internal unsafe partial class WebGPUSurface : Surface
+{
+    public WebGPUSurface(WebGPUInstance instance, in SurfaceDescriptor descriptor)
+        : base(descriptor)
+    {
+        WGPUChainedStruct* chainStruct = default;
+        switch (descriptor.Source)
+        {
+            case AndroidWindowSurfaceSource androidWindowSurface:
+                WGPUSurfaceDescriptorFromAndroidNativeWindow androidWindowChain = new()
+                {
+                    window = androidWindowSurface.Window,
+                    chain = new WGPUChainedStruct()
+                    {
+                        sType = WGPUSType.SurfaceDescriptorFromAndroidNativeWindow
+                    }
+                };
+
+                chainStruct = (WGPUChainedStruct*)&androidWindowChain;
+                break;
+
+
+            case MetalLayerSurfaceSource metalLayerSurfaceSource:
+                WGPUSurfaceDescriptorFromMetalLayer metalLayerChain = new()
+                {
+                    layer = metalLayerSurfaceSource.Layer,
+                    chain = new WGPUChainedStruct()
+                    {
+                        sType = WGPUSType.SurfaceDescriptorFromMetalLayer
+                    }
+                };
+
+                chainStruct = (WGPUChainedStruct*)&metalLayerChain;
+                break;
+
+            case Win32SurfaceSource win32SurfaceSource:
+                WGPUSurfaceDescriptorFromWindowsHWND win32Chain = new()
+                {
+                    hwnd = win32SurfaceSource.Hwnd,
+                    hinstance = GetModuleHandleW(null),
+                    chain = new WGPUChainedStruct()
+                    {
+                        sType = WGPUSType.SurfaceDescriptorFromWindowsHWND
+                    }
+                };
+
+                chainStruct = (WGPUChainedStruct*)&win32Chain;
+                break;
+
+            case WaylandSurfaceSource waylandSurfaceSource:
+                WGPUSurfaceDescriptorFromWaylandSurface waylandChain = new()
+                {
+                    display = waylandSurfaceSource.Display,
+                    surface = waylandSurfaceSource.Surface,
+                    chain = new WGPUChainedStruct()
+                    {
+                        sType = WGPUSType.SurfaceDescriptorFromWaylandSurface
+                    }
+                };
+
+                chainStruct = (WGPUChainedStruct*)&waylandChain;
+                break;
+
+            case XcbWindowSurfaceSource xcbWindowSurfaceSource:
+                WGPUSurfaceDescriptorFromXcbWindow xcbChain = new()
+                {
+                    connection = xcbWindowSurfaceSource.Connection,
+                    window = xcbWindowSurfaceSource.Window,
+                    chain = new WGPUChainedStruct()
+                    {
+                        sType = WGPUSType.SurfaceDescriptorFromXcbWindow
+                    }
+                };
+
+                chainStruct = (WGPUChainedStruct*)&xcbChain;
+                break;
+
+            case XlibWindowSurfaceSource xlibWindowSurfaceSource:
+                WGPUSurfaceDescriptorFromXlibWindow xlibChain = new()
+                {
+                    display = xlibWindowSurfaceSource.Display,
+                    window = xlibWindowSurfaceSource.Window,
+                    chain = new WGPUChainedStruct()
+                    {
+                        sType = WGPUSType.SurfaceDescriptorFromXlibWindow
+                    }
+                };
+
+                chainStruct = (WGPUChainedStruct*)&xlibChain;
+                break;
+        }
+
+        WGPUSurfaceDescriptor surfaceDescriptor = new()
+        {
+            nextInChain = chainStruct
+        };
+        Handle = wgpuInstanceCreateSurface(instance.Handle, &surfaceDescriptor);
+    }
+
+    public WGPUSurface Handle { get; }
+
+    /// <summary>
+    /// Finalizes an instance of the <see cref="WebGPUSurface" /> class.
+    /// </summary>
+    ~WebGPUSurface() => Dispose(disposing: false);
+
+    /// <inheritdoc />
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            wgpuSurfaceRelease(Handle);
+        }
+    }
+
+    [LibraryImport("kernel32")]
+    private static partial nint GetModuleHandleW(ushort* lpModuleName);
+}

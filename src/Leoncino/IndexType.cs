@@ -3,10 +3,8 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsResource : GraphicsObject
+public enum IndexType
 {
-    protected GraphicsResource(string? label = default)
-        : base(label)
-    {
-    }
+    Uint16,
+    Uint32,
 }
