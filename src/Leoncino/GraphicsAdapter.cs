@@ -14,4 +14,14 @@ public abstract class GraphicsAdapter : GraphicsObjectBase
     protected GraphicsAdapter()
     {
     }
+
+    public abstract PixelFormat GetPreferredFormat(Surface surface);
+
+    // TODO: Async
+    public GraphicsDevice CreateDevice(in DeviceDescriptor descriptor)
+    {
+        return CreateDeviceCore(in descriptor);
+    }
+
+    protected abstract GraphicsDevice CreateDeviceCore(in DeviceDescriptor descriptor);
 }

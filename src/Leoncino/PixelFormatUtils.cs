@@ -57,8 +57,8 @@ public static class PixelFormatUtils
         // Packed 32-Bit Pixel formats
         new(PixelFormat.RGB10A2Unorm,           4, 1, 1, FormatKind.Unorm),
         new(PixelFormat.RGB10A2Uint,            4, 1, 1, FormatKind.Uint),
-        new(PixelFormat.RG11B10Float,           4, 1, 1, FormatKind.Float),
-        new(PixelFormat.RGB9E5Float,            4, 1, 1, FormatKind.Float),
+        new(PixelFormat.RG11B10Ufloat,          4, 1, 1, FormatKind.Float),
+        new(PixelFormat.RGB9E5Ufloat,           4, 1, 1, FormatKind.Float),
         // 64-Bit Pixel Formats
         new(PixelFormat.RG32Uint,               8, 1, 1, FormatKind.Uint),
         new(PixelFormat.RG32Sint,               8, 1, 1, FormatKind.Sint),
@@ -532,8 +532,8 @@ public static class PixelFormatUtils
 
             case PixelFormat.RGB10A2Unorm:
             case PixelFormat.RGB10A2Uint:
-            case PixelFormat.RG11B10Float:
-            case PixelFormat.RGB9E5Float:
+            case PixelFormat.RG11B10Ufloat:
+            case PixelFormat.RGB9E5Ufloat:
             case PixelFormat.RGBA8Unorm:
             case PixelFormat.RGBA8UnormSrgb:
             case PixelFormat.RGBA8Snorm:

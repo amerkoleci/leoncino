@@ -12,10 +12,7 @@ internal partial class WebGPUGraphicsAdapter : GraphicsAdapter
     {
         Handle = handle;
 
-        nuint featureCount = wgpuAdapterEnumerateFeatures(handle, null);
-        ReadOnlySpan<WGPUFeatureName> features = stackalloc WGPUFeatureName[(int)featureCount];
-        fixed (WGPUFeatureName* pFeatures = features)
-            wgpuAdapterEnumerateFeatures(handle, pFeatures);
+        ReadOnlySpan<WGPUFeatureName> features = wgpuAdapterEnumerateFeatures(handle);
 
         WGPUAdapterProperties properties;
         wgpuAdapterGetProperties(handle, &properties);
@@ -42,6 +39,52 @@ internal partial class WebGPUGraphicsAdapter : GraphicsAdapter
         if (disposing)
         {
             wgpuAdapterRelease(Handle);
+        }
+    }
+
+    /// <inheritdoc />
+    public override PixelFormat GetPreferredFormat(Surface surface)
+    {
+        WebGPUSurface backendSurface = (WebGPUSurface) surface;
+        WGPUTextureFormat format = wgpuSurfaceGetPreferredFormat(backendSurface.Handle, Handle);
+        return format.ToLeoncino();
+    }
+
+    /// <inheritdoc />
+    protected unsafe override GraphicsDevice CreateDeviceCore(in DeviceDescriptor descriptor)
+    {
+        fixed (sbyte* pDeviceName = descriptor.Label.GetUtf8Span())
+        {
+            WGPUDeviceDescriptor deviceDesc = new()
+            {
+                nextInChain = null,
+                label = pDeviceName,
+                requiredFeatureCount = 0,
+                requiredLimits = null
+            };
+            deviceDesc.defaultQueue.nextInChain = null;
+            //deviceDesc.defaultQueue.label = "The default queue";
+
+            WGPUDevice result = WGPUDevice.Null;
+            wgpuAdapterRequestDevice(
+                Handle,
+                &deviceDesc,
+                OnDeviceRequestEnded,
+                IntPtr.Zero
+            );
+            return new WebGPUGraphicsDevice(result);
+
+            void OnDeviceRequestEnded(WGPURequestDeviceStatus status, WGPUDevice device, sbyte* message, nint pUserData)
+            {
+                if (status == WGPURequestDeviceStatus.Success)
+                {
+                    result = device;
+                }
+                else
+                {
+                    //Log.Error("Could not get WebGPU adapter: " + Interop.GetString(message));
+                }
+            }
         }
     }
 }

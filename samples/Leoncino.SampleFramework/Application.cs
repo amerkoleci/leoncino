@@ -36,6 +36,9 @@ public abstract class Application : IDisposable
         };
 
         _adapter = _instance.RequestAdapter(in requestAdapterOptions);
+
+        DeviceDescriptor deviceDescriptor = new();
+        Device = _adapter.CreateDevice(in deviceDescriptor);
     }
 
     /// <summary>
@@ -51,6 +54,7 @@ public abstract class Application : IDisposable
     public abstract string Name { get; }
 
     public Window MainWindow { get; }
+    public GraphicsDevice Device { get; }
 
     public void Dispose()
     {
@@ -68,6 +72,7 @@ public abstract class Application : IDisposable
         if (disposing)
         {
             MainWindow.Surface?.Dispose();
+            Device.Dispose();
             _adapter.Dispose();
             _instance.Dispose();
         }

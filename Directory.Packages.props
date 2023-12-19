@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Alimer.Bindings.WebGPU" Version="1.3.2" />
+    <PackageVersion Include="Alimer.Bindings.WebGPU" Version="1.3.3" />
     <PackageVersion Include="Vortice.Vulkan" Version="1.8.3" />
 
     <!-- Samples -->

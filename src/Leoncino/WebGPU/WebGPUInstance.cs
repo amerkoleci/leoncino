@@ -15,9 +15,15 @@ internal unsafe partial class WebGPUInstance : Instance
     public WebGPUInstance(in InstanceDescriptor descriptor)
         : base(descriptor)
     {
+        WGPUInstanceExtras extras = new();
+        extras.flags = descriptor.ValidationMode.ToWGPU();
+#if DEBUG
+        extras.flags |= WGPUInstanceFlags.Debug;
+#endif
+
         WGPUInstanceDescriptor instanceDescriptor = new()
         {
-            nextInChain = null
+            nextInChain = (WGPUChainedStruct*)&extras
         };
         Handle = wgpuCreateInstance(&instanceDescriptor);
     }
