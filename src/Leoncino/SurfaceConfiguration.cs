@@ -3,6 +3,9 @@
 
 namespace Leoncino;
 
+/// <summary>
+/// Structure that configures the <see cref="GPUSurface"/>.
+/// </summary>
 public readonly record struct SurfaceConfiguration
 {
     public SurfaceConfiguration()
@@ -10,15 +13,11 @@ public readonly record struct SurfaceConfiguration
 
     }
 
-    public SurfaceConfiguration(
-        PixelFormat colorFormat = PixelFormat.BGRA8UnormSrgb,
-        PresentMode presentMode = PresentMode.Fifo)
-    {
-        Format = colorFormat;
-        PresentMode = presentMode;
-    }
+    public PixelFormat Format { get; init; } = PixelFormat.Undefined;
+    public TextureUsage Usage { get; init; } = TextureUsage.RenderTarget;
 
-    public PixelFormat Format { get; init; } = PixelFormat.BGRA8UnormSrgb;
+    public int Width { get; init; }
+    public int Height { get; init; }
     public PresentMode PresentMode { get; init; } = PresentMode.Fifo;
     public bool IsFullscreen { get; init; } = false;
 

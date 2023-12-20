@@ -15,7 +15,7 @@ public abstract class GPUAdapter : GPUObjectBase
     {
     }
 
-    public abstract PixelFormat GetPreferredFormat(GPUSurface surface);
+    public abstract PixelFormat GetSurfacePreferredFormat(GPUSurface surface);
 
     public ValueTask<GPUDevice> CreateDeviceAsync(in DeviceDescriptor descriptor)
     {

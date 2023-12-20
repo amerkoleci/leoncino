@@ -2,6 +2,7 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Collections.Concurrent;
+using CommunityToolkit.Diagnostics;
 
 namespace Leoncino;
 
@@ -22,6 +23,26 @@ public abstract class GPUDevice : GPUObjectBase
     protected GPUDevice(string? label = default)
         : base(label)
     {
+    }
+
+    // <summary>
+    /// Get the <see cref="GPUAdapter"/> object that created this object.
+    /// </summary>
+    public abstract GPUAdapter Adapter { get; }
+
+    public unsafe GPUBuffer CreateBuffer(in BufferDescriptor descriptor, nint initialData = 0)
+    {
+        Guard.IsGreaterThanOrEqualTo(descriptor.Size, 4, nameof(BufferDescriptor.Size));
+
+        return CreateBufferCore(descriptor, initialData.ToPointer());
+    }
+
+    public GPUBuffer CreateBuffer(ulong size,
+        BufferUsage usage = BufferUsage.ShaderReadWrite,
+        CpuAccessMode cpuAccess = CpuAccessMode.None,
+        string? label = default)
+    {
+        return CreateBuffer(new BufferDescriptor(size, usage, cpuAccess, label), IntPtr.Zero);
     }
 
     internal void QueueDestroy(GPUObject @object)
@@ -53,4 +74,6 @@ public abstract class GPUDevice : GPUObjectBase
             }
         }
     }
+
+    protected abstract unsafe GPUBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
 }

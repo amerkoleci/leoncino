@@ -118,8 +118,34 @@ internal unsafe partial class WebGPUSurface : GPUSurface
     {
         if (disposing)
         {
+            if (IsConfigured)
+                wgpuSurfaceUnconfigure(Handle);
             wgpuSurfaceRelease(Handle);
         }
+    }
+
+    /// <inheritdoc />
+    protected override void ConfigureCore(GPUDevice device, in SurfaceConfiguration configuration)
+    {
+        WebGPUDevice backendDevice = (WebGPUDevice)device;
+
+        PixelFormat format = configuration.Format == PixelFormat.Undefined ? backendDevice.Adapter.GetSurfacePreferredFormat(this) : configuration.Format;
+        WGPUTextureFormat viewFormat = format.ToWGPU();
+
+        WGPUSurfaceConfiguration surfaceConfiguration = new()
+        {
+            nextInChain = null,
+            device = backendDevice.Handle,
+            format = viewFormat,
+            usage = WGPUTextureUsage.RenderAttachment,
+            viewFormatCount = 1,
+            viewFormats = &viewFormat,
+            alphaMode = WGPUCompositeAlphaMode.Auto,
+            width = (uint)configuration.Width,
+            height = (uint)configuration.Height,
+            presentMode = configuration.PresentMode.ToWGPU(),
+        };
+        wgpuSurfaceConfigure(Handle, &surfaceConfiguration);
     }
 
     [LibraryImport("kernel32")]

@@ -7,7 +7,7 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe partial class WebGPUInstance : GPUInstance
+internal unsafe class WebGPUInstance : GPUInstance
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DefineConstants>$(DefineConstants);VALIDATE_USAGE</DefineConstants>
     <ExcludeD3D12>true</ExcludeD3D12>
     <ExcludeVulkan>true</ExcludeVulkan>
@@ -26,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
+    
     <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
     <PackageReference Include="Alimer.Bindings.WebGPU" Condition="'$(ExcludeWebGPU)' != 'true'" />
   </ItemGroup>

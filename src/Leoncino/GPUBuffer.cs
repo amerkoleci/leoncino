@@ -1,8 +1,8 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Diagnostics;
 using System.Runtime.InteropServices;
+using CommunityToolkit.Diagnostics;
 
 namespace Leoncino;
 
@@ -44,7 +44,7 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe void SetData<T>(Span<T> data, int offsetInBytes = 0) where T : unmanaged
     {
-        Debug.Assert(CpuAccess == CpuAccessMode.Write);
+        Guard.IsTrue(CpuAccess == CpuAccessMode.Write);
 
         fixed (T* dataPtr = data)
         {
@@ -62,7 +62,7 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe T[] GetArray<T>(int offsetInBytes = 0) where T : unmanaged
     {
-        Debug.Assert(CpuAccess != CpuAccessMode.None);
+        Guard.IsTrue(CpuAccess != CpuAccessMode.None);
 
         T[] data = new T[((int)Size / sizeof(T)) - offsetInBytes];
         GetData(data.AsSpan(), offsetInBytes);
@@ -73,7 +73,7 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe void GetData<T>(ref T data, int offsetInBytes = 0) where T : unmanaged
     {
-        Debug.Assert(CpuAccess != CpuAccessMode.None);
+        Guard.IsTrue(CpuAccess != CpuAccessMode.None);
 
         fixed (T* destPtr = &data)
         {
@@ -83,7 +83,7 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe void GetData<T>(T[] destination, int offsetInBytes = 0) where T : unmanaged
     {
-        Debug.Assert(CpuAccess != CpuAccessMode.None);
+        Guard.IsTrue(CpuAccess != CpuAccessMode.None);
 
         fixed (T* destPtr = destination)
         {

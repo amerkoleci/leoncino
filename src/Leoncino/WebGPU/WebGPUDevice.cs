@@ -6,10 +6,13 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal partial class WebGPUDevice : GPUDevice
+internal unsafe class WebGPUDevice : GPUDevice
 {
-    public WebGPUDevice(WGPUDevice handle)
+    private WebGPUAdapter _adapter;
+
+    public WebGPUDevice(WebGPUAdapter adapter, WGPUDevice handle)
     {
+        _adapter = adapter;
         Handle = handle;
         wgpuDeviceSetUncapturedErrorCallback(handle, HandleUncapturedErrorCallback);
 
@@ -17,11 +20,14 @@ internal partial class WebGPUDevice : GPUDevice
         Queue = wgpuDeviceGetQueue(handle);
     }
 
+    /// <inheritdoc />
+    public override GPUAdapter Adapter => _adapter;
+
     public WGPUDevice Handle { get; }
     public WGPUQueue Queue { get; }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="WebGPUGraphicsDevice" /> class.
+    /// Finalizes an instance of the <see cref="WebGPUDevice" /> class.
     /// </summary>
     ~WebGPUDevice() => Dispose(disposing: false);
 
@@ -33,6 +39,11 @@ internal partial class WebGPUDevice : GPUDevice
             wgpuQueueRelease(Queue);
             wgpuDeviceRelease(Handle);
         }
+    }
+
+    protected override GPUBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
+    {
+        return new WebGPUBuffer(this, in descriptor, initialData);
     }
 
     private static void HandleUncapturedErrorCallback(WGPUErrorType type, string message)

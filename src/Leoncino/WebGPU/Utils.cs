@@ -33,6 +33,21 @@ internal static unsafe class Utils
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUPresentMode ToWGPU(this PresentMode value)
+    {
+        switch (value)
+        {
+            case PresentMode.Fifo: return WGPUPresentMode.Fifo;
+            case PresentMode.FifoRelaxed: return WGPUPresentMode.FifoRelaxed;
+            case PresentMode.Immediate: return WGPUPresentMode.Immediate;
+            case PresentMode.Mailbox: return WGPUPresentMode.Mailbox;
+
+            default:
+                return WGPUPresentMode.Fifo;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static WGPUTextureFormat ToWGPU(this PixelFormat format)
     {
         switch (format)

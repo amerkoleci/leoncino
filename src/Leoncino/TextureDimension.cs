@@ -1,0 +1,23 @@
+// Copyright (c) Amer Koleci and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+
+namespace Leoncino;
+
+/// <summary>
+/// Defines dimension of <see cref="GPUTexture"/>
+/// </summary>
+public enum TextureDimension
+{
+    /// <summary>
+    /// One-dimensional Texture.
+    /// </summary>
+    Texture1D,
+    /// <summary>
+    /// Two-dimensional Texture.
+    /// </summary>
+    Texture2D,
+    /// <summary>
+    /// Three-dimensional Texture.
+    /// </summary>
+    Texture3D,
+}

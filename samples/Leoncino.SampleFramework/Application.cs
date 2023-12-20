@@ -35,7 +35,7 @@ public abstract class Application : IDisposable
         };
 
         Adapter = Instance.RequestAdapterAsync(in requestAdapterOptions).Result;
-        SurfaceFormat = Adapter.GetPreferredFormat(MainWindow.Surface);
+        SurfaceFormat = Adapter.GetSurfacePreferredFormat(MainWindow.Surface);
         Debug.Assert(SurfaceFormat != PixelFormat.Undefined);
 
         DeviceDescriptor deviceDescriptor = new();
@@ -102,6 +102,18 @@ public abstract class Application : IDisposable
     {
         Width = size.Width;
         Height = size.Height;
+
+        SurfaceConfiguration surfaceConfiguration = new()
+        {
+            Format = SurfaceFormat,
+            Usage = TextureUsage.RenderTarget,
+            //alphaMode = WGPUCompositeAlphaMode.Auto,
+            Width = Width,
+            Height = Height,
+            PresentMode = VSync ? PresentMode.Fifo : PresentMode.Immediate,
+        };
+
+        MainWindow.Surface.Configure(Device, in surfaceConfiguration);
     }
 
     public unsafe void Run()

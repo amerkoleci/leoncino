@@ -7,7 +7,7 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal partial class WebGPUAdapter : GPUAdapter
+internal class WebGPUAdapter : GPUAdapter
 {
     public unsafe WebGPUAdapter(WGPUAdapter handle)
     {
@@ -44,7 +44,7 @@ internal partial class WebGPUAdapter : GPUAdapter
     }
 
     /// <inheritdoc />
-    public override PixelFormat GetPreferredFormat(GPUSurface surface)
+    public override PixelFormat GetSurfacePreferredFormat(GPUSurface surface)
     {
         WebGPUSurface backendSurface = (WebGPUSurface) surface;
         WGPUTextureFormat format = wgpuSurfaceGetPreferredFormat(backendSurface.Handle, Handle);
@@ -73,7 +73,7 @@ internal partial class WebGPUAdapter : GPUAdapter
                 &OnDeviceRequestEnded,
                 new nint(&result)
             );
-            return ValueTask.FromResult<GPUDevice>(new WebGPUDevice(result));
+            return ValueTask.FromResult<GPUDevice>(new WebGPUDevice(this, result));
         }
     }
 
