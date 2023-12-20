@@ -5,23 +5,26 @@ using System.Collections.Concurrent;
 
 namespace Leoncino;
 
-public abstract class GraphicsDevice : GraphicsObjectBase
+/// <summary>
+/// Defines a GPU logical device
+/// </summary>
+public abstract class GPUDevice : GPUObjectBase
 {
     protected uint _frameIndex = 0;
     protected ulong _frameCount = 0;
-    protected readonly ConcurrentQueue<Tuple<GraphicsObject, ulong>> _deferredDestroyObjects = new();
+    protected readonly ConcurrentQueue<Tuple<GPUObject, ulong>> _deferredDestroyObjects = new();
     protected bool _shuttingDown;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GraphicsObject" /> class.
+    /// Initializes a new instance of the <see cref="GPUDevice" /> class.
     /// </summary>
     /// <param name="label">The label of the object or <c>null</c> to use <see cref="MemberInfo.Name" />.</param>
-    protected GraphicsDevice(string? label = default)
+    protected GPUDevice(string? label = default)
         : base(label)
     {
     }
 
-    internal void QueueDestroy(GraphicsObject @object)
+    internal void QueueDestroy(GPUObject @object)
     {
         if (_shuttingDown)
         {
@@ -36,7 +39,7 @@ public abstract class GraphicsDevice : GraphicsObjectBase
     {
         while (!_deferredDestroyObjects.IsEmpty)
         {
-            if (_deferredDestroyObjects.TryPeek(out Tuple<GraphicsObject, ulong>? item) &&
+            if (_deferredDestroyObjects.TryPeek(out Tuple<GPUObject, ulong>? item) &&
                 item.Item2 + Constants.MaxFramesInFlight < _frameCount)
             {
                 if (_deferredDestroyObjects.TryDequeue(out item))

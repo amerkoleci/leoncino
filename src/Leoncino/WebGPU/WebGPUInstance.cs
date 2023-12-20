@@ -1,12 +1,13 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.InteropServices;
 using WebGPU;
 using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe partial class WebGPUInstance : Instance
+internal unsafe partial class WebGPUInstance : GPUInstance
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
@@ -15,8 +16,12 @@ internal unsafe partial class WebGPUInstance : Instance
     public WebGPUInstance(in InstanceDescriptor descriptor)
         : base(descriptor)
     {
-        WGPUInstanceExtras extras = new();
-        extras.flags = descriptor.ValidationMode.ToWGPU();
+        wgpuSetLogCallback(LogCallback);
+
+        WGPUInstanceExtras extras = new()
+        {
+            flags = descriptor.ValidationMode.ToWGPU()
+        };
 #if DEBUG
         extras.flags |= WGPUInstanceFlags.Debug;
 #endif
@@ -45,9 +50,9 @@ internal unsafe partial class WebGPUInstance : Instance
     }
 
     /// <inheritdoc />
-    protected override Surface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new WebGPUSurface(this, in descriptor);
+    protected override GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new WebGPUSurface(this, in descriptor);
 
-    protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
+    protected override ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options)
     {
         WGPURequestAdapterOptions requestAdapterOptions = new()
         {
@@ -59,24 +64,42 @@ internal unsafe partial class WebGPUInstance : Instance
         };
 
         WGPUAdapter result = WGPUAdapter.Null;
-        wgpuInstanceRequestAdapter(Handle, &requestAdapterOptions, requestAdapterCallback, 0);
-        return new WebGPUGraphicsAdapter(result);
-
-        void requestAdapterCallback(WGPURequestAdapterStatus status, WGPUAdapter candidateAdapter, sbyte* message, nint pUserData)
-        {
-            if (status == WGPURequestAdapterStatus.Success)
-            {
-                result = candidateAdapter;
-            }
-            else
-            {
-                //Log.Error("Could not get WebGPU adapter: " + Interop.GetString(message));
-            }
-        }
+        wgpuInstanceRequestAdapter(Handle, &requestAdapterOptions, &OnAdapterRequestEnded, new nint(&result));
+        return ValueTask.FromResult<GPUAdapter>(new WebGPUAdapter(result));
     }
 
     private static bool CheckIsSupported()
     {
         return true;
+    }
+
+    private static void LogCallback(WGPULogLevel level, string message, nint userdata = 0)
+    {
+        switch (level)
+        {
+            case WGPULogLevel.Error:
+                throw new GPUException(message);
+            case WGPULogLevel.Warn:
+                //Log.Warn(message);
+                break;
+            case WGPULogLevel.Info:
+            case WGPULogLevel.Debug:
+            case WGPULogLevel.Trace:
+                //Log.Info(message);
+                break;
+        }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OnAdapterRequestEnded(WGPURequestAdapterStatus status, WGPUAdapter candidateAdapter, sbyte* message, nint pUserData)
+    {
+        if (status == WGPURequestAdapterStatus.Success)
+        {
+            *(WGPUAdapter*)pUserData = candidateAdapter;
+        }
+        else
+        {
+            //Log.Error("Could not get WebGPU adapter: " + Interop.GetString(message));
+        }
     }
 }

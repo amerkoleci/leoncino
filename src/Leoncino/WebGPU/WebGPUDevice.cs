@@ -6,11 +6,12 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal partial class WebGPUGraphicsDevice : GraphicsDevice
+internal partial class WebGPUDevice : GPUDevice
 {
-    public WebGPUGraphicsDevice(WGPUDevice handle)
+    public WebGPUDevice(WGPUDevice handle)
     {
         Handle = handle;
+        wgpuDeviceSetUncapturedErrorCallback(handle, HandleUncapturedErrorCallback);
 
         // Get the queue associated with the device
         Queue = wgpuDeviceGetQueue(handle);
@@ -22,7 +23,7 @@ internal partial class WebGPUGraphicsDevice : GraphicsDevice
     /// <summary>
     /// Finalizes an instance of the <see cref="WebGPUGraphicsDevice" /> class.
     /// </summary>
-    ~WebGPUGraphicsDevice() => Dispose(disposing: false);
+    ~WebGPUDevice() => Dispose(disposing: false);
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
@@ -32,5 +33,14 @@ internal partial class WebGPUGraphicsDevice : GraphicsDevice
             wgpuQueueRelease(Queue);
             wgpuDeviceRelease(Handle);
         }
+    }
+
+    private static void HandleUncapturedErrorCallback(WGPUErrorType type, string message)
+    {
+#if DEBUG
+        throw new GPUException($"Uncaptured device error: type: {type} ({message})");
+#else
+        //Log.Error($"Uncaptured device error: type: {type} ({message})");
+#endif
     }
 }

@@ -22,7 +22,7 @@ public sealed unsafe class Window
 {
     private readonly SDL_Window _window;
 
-    public unsafe Window(string title, int width, int height, WindowFlags flags = WindowFlags.None)
+    public Window(GPUInstance instance, string title, int width, int height, WindowFlags flags = WindowFlags.None)
     {
         Title = title;
 
@@ -62,13 +62,14 @@ public sealed unsafe class Window
 
         SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
         Id = SDL_GetWindowID(_window);
+        Surface =  CreateSurface(instance, _window);
     }
 
     public string Title { get; }
 
     public SDL_WindowID Id { get; }
 
-    public Surface? Surface { get; private set; }
+    public GPUSurface Surface { get; }
 
     public Size ClientSize
     {
@@ -92,17 +93,17 @@ public sealed unsafe class Window
         _ = SDL_ShowWindow(_window);
     }
 
-    public void CreateSurface(Instance instance, bool useWayland = false)
+    private static GPUSurface CreateSurface(GPUInstance instance, SDL_Window window, bool useWayland = false)
     {
         SurfaceSource? source = default;
         if (OperatingSystem.IsWindows())
         {
-            nint hwnd = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.win32.hwnd");
+            nint hwnd = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.win32.hwnd");
             source = SurfaceSource.CreateWin32(hwnd);
         }
         else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
         {
-            NSWindow ns_window = new(SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.cocoa.window"));
+            NSWindow ns_window = new(SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.cocoa.window"));
             CAMetalLayer metal_layer = CAMetalLayer.New();
             ns_window.contentView.wantsLayer = true;
             ns_window.contentView.layer = metal_layer.Handle;
@@ -113,15 +114,15 @@ public sealed unsafe class Window
         {
             if (useWayland)
             {
-                nint display = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.wayland.display");
-                nint surface = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.wayland.surface");
+                nint display = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.wayland.display");
+                nint surface = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.wayland.surface");
                 source = SurfaceSource.CreateWaylandSurface(display, surface);
             }
             else
             {
-                nint display = SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.x11.display");
-                ulong window = (ulong)SDL_GetProperty(SDL_GetWindowProperties(_window), "SDL.window.x11.window");
-                source = SurfaceSource.CreateXlibWindow(display, window);
+                nint xlibDisplay = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.x11.display");
+                ulong xlibWindow = (ulong)SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.x11.window");
+                source = SurfaceSource.CreateXlibWindow(xlibDisplay, xlibWindow);
             }
         }
 
@@ -135,6 +136,6 @@ public sealed unsafe class Window
             Source = source!
         };
 
-        Surface = instance.CreateSurface(in descriptor);
+        return instance.CreateSurface(in descriptor);
     }
 }

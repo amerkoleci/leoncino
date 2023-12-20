@@ -1,14 +1,15 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.InteropServices;
 using WebGPU;
 using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal partial class WebGPUGraphicsAdapter : GraphicsAdapter
+internal partial class WebGPUAdapter : GPUAdapter
 {
-    public unsafe WebGPUGraphicsAdapter(WGPUAdapter handle)
+    public unsafe WebGPUAdapter(WGPUAdapter handle)
     {
         Handle = handle;
 
@@ -29,9 +30,9 @@ internal partial class WebGPUGraphicsAdapter : GraphicsAdapter
     public WGPUSupportedLimits AdapterLimits { get; }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="WebGPUGraphicsAdapter" /> class.
+    /// Finalizes an instance of the <see cref="WebGPUAdapter" /> class.
     /// </summary>
-    ~WebGPUGraphicsAdapter() => Dispose(disposing: false);
+    ~WebGPUAdapter() => Dispose(disposing: false);
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
@@ -43,7 +44,7 @@ internal partial class WebGPUGraphicsAdapter : GraphicsAdapter
     }
 
     /// <inheritdoc />
-    public override PixelFormat GetPreferredFormat(Surface surface)
+    public override PixelFormat GetPreferredFormat(GPUSurface surface)
     {
         WebGPUSurface backendSurface = (WebGPUSurface) surface;
         WGPUTextureFormat format = wgpuSurfaceGetPreferredFormat(backendSurface.Handle, Handle);
@@ -51,7 +52,7 @@ internal partial class WebGPUGraphicsAdapter : GraphicsAdapter
     }
 
     /// <inheritdoc />
-    protected unsafe override GraphicsDevice CreateDeviceCore(in DeviceDescriptor descriptor)
+    protected unsafe override ValueTask<GPUDevice> CreateDeviceAsyncCore(in DeviceDescriptor descriptor)
     {
         fixed (sbyte* pDeviceName = descriptor.Label.GetUtf8Span())
         {
@@ -69,22 +70,23 @@ internal partial class WebGPUGraphicsAdapter : GraphicsAdapter
             wgpuAdapterRequestDevice(
                 Handle,
                 &deviceDesc,
-                OnDeviceRequestEnded,
-                IntPtr.Zero
+                &OnDeviceRequestEnded,
+                new nint(&result)
             );
-            return new WebGPUGraphicsDevice(result);
+            return ValueTask.FromResult<GPUDevice>(new WebGPUDevice(result));
+        }
+    }
 
-            void OnDeviceRequestEnded(WGPURequestDeviceStatus status, WGPUDevice device, sbyte* message, nint pUserData)
-            {
-                if (status == WGPURequestDeviceStatus.Success)
-                {
-                    result = device;
-                }
-                else
-                {
-                    //Log.Error("Could not get WebGPU adapter: " + Interop.GetString(message));
-                }
-            }
+    [UnmanagedCallersOnly]
+    private static unsafe void OnDeviceRequestEnded(WGPURequestDeviceStatus status, WGPUDevice device, sbyte* message, nint pUserData)
+    {
+        if (status == WGPURequestDeviceStatus.Success)
+        {
+            *(WGPUDevice*)pUserData = device;
+        }
+        else
+        {
+            //Log.Error("Could not get WebGPU adapter: " + Interop.GetString(message));
         }
     }
 }

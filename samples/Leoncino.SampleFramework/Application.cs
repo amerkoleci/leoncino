@@ -1,6 +1,8 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Diagnostics;
+using System.Drawing;
 using SDL;
 using static SDL.SDL;
 
@@ -10,8 +12,6 @@ public abstract class Application : IDisposable
 {
     private volatile uint _isDisposed = 0;
     private bool _closeRequested = false;
-    private readonly Instance _instance;
-    private readonly GraphicsAdapter _adapter;
 
     protected Application()
     {
@@ -23,11 +23,10 @@ public abstract class Application : IDisposable
 
         SDL_LogSetOutputFunction(Log_SDL);
         InstanceDescriptor instanceDescriptor = new();
-        _instance = Instance.Create(in instanceDescriptor);
+        Instance = GPUInstance.Create(in instanceDescriptor);
 
         // Create main window.
-        MainWindow = new Window(Name, 1280, 720);
-        MainWindow.CreateSurface(_instance);
+        MainWindow = new Window(Instance, Name, 1280, 720);
 
         RequestAdapterOptions requestAdapterOptions = new()
         {
@@ -35,10 +34,15 @@ public abstract class Application : IDisposable
             PowerPreference = PowerPreference.HighPerformance
         };
 
-        _adapter = _instance.RequestAdapter(in requestAdapterOptions);
+        Adapter = Instance.RequestAdapterAsync(in requestAdapterOptions).Result;
+        SurfaceFormat = Adapter.GetPreferredFormat(MainWindow.Surface);
+        Debug.Assert(SurfaceFormat != PixelFormat.Undefined);
 
         DeviceDescriptor deviceDescriptor = new();
-        Device = _adapter.CreateDevice(in deviceDescriptor);
+        Device = Adapter.CreateDeviceAsync(in deviceDescriptor).Result;
+
+        VSync = true;
+        Resize(MainWindow.ClientSize);
     }
 
     /// <summary>
@@ -54,7 +58,14 @@ public abstract class Application : IDisposable
     public abstract string Name { get; }
 
     public Window MainWindow { get; }
-    public GraphicsDevice Device { get; }
+
+    public GPUInstance Instance { get; }
+    public GPUAdapter Adapter { get; }
+    public GPUDevice Device { get; }
+    public PixelFormat SurfaceFormat { get; }
+    public int Width { get; private set; }
+    public int Height { get; private set; }
+    public bool VSync { get; set; }
 
     public void Dispose()
     {
@@ -73,8 +84,8 @@ public abstract class Application : IDisposable
         {
             MainWindow.Surface?.Dispose();
             Device.Dispose();
-            _adapter.Dispose();
-            _instance.Dispose();
+            Adapter.Dispose();
+            Instance.Dispose();
         }
     }
 
@@ -85,6 +96,12 @@ public abstract class Application : IDisposable
 
     protected virtual void OnTick()
     {
+    }
+
+    public void Resize(Size size)
+    {
+        Width = size.Width;
+        Height = size.Height;
     }
 
     public unsafe void Run()

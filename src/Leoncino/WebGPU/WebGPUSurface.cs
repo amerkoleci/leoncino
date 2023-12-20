@@ -7,7 +7,7 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe partial class WebGPUSurface : Surface
+internal unsafe partial class WebGPUSurface : GPUSurface
 {
     public WebGPUSurface(WebGPUInstance instance, in SurfaceDescriptor descriptor)
         : base(descriptor)

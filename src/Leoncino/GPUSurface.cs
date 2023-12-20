@@ -4,15 +4,15 @@
 namespace Leoncino;
 
 /// <summary>
-/// Defines a platform-specific surface
+/// Defines a platform-specific GPU surface
 /// </summary>
-public abstract class Surface : GraphicsObjectBase
+public abstract class GPUSurface : GPUObjectBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Surface" /> class.
     /// </summary>
     /// <param name="descriptor">The <see cref="SurfaceDescriptor"/>.</param>
-    protected Surface(in SurfaceDescriptor descriptor)
+    protected GPUSurface(in SurfaceDescriptor descriptor)
         : base(descriptor.Label)
     {
     }

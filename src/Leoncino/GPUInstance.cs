@@ -3,34 +3,36 @@
 
 namespace Leoncino;
 
-public abstract class Instance : GraphicsObjectBase
+/// <summary>
+/// Defines a global GPU instance/factory for enumerating adapters and surface creation
+/// </summary>
+public abstract class GPUInstance : GPUObjectBase
 {
-    protected Instance(in InstanceDescriptor descriptor)
+    protected GPUInstance(in InstanceDescriptor descriptor)
         : base(descriptor.Label)
     {
     }
 
-    public Surface CreateSurface(in SurfaceDescriptor descriptor)
+    public GPUSurface CreateSurface(in SurfaceDescriptor descriptor)
     {
 #if VALIDATE_USAGE
         if (descriptor.Source is null)
         {
-            throw new GraphicsException("SurfaceDescriptor.Source must be valid.");
+            throw new GPUException("SurfaceDescriptor.Source must be valid.");
         }
 #endif
 
         return CreateSurfaceCore(in descriptor);
     }
 
-    // TODO: Async
-    public GraphicsAdapter RequestAdapter(in RequestAdapterOptions options)
+    public ValueTask<GPUAdapter> RequestAdapterAsync(in RequestAdapterOptions options)
     {
-        return RequestAdapterCore(in options);
+        return RequestAdapterAsyncCore(in options);
     }
 
-    protected abstract Surface CreateSurfaceCore(in SurfaceDescriptor descriptor);
+    protected abstract GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor);
 
-    protected abstract GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options);
+    protected abstract ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options);
 
     public static bool IsBackendSupport(GraphicsBackendType backend)
     {
@@ -63,7 +65,7 @@ public abstract class Instance : GraphicsObjectBase
         }
     }
 
-    public static Instance Create(in InstanceDescriptor descriptor)
+    public static GPUInstance Create(in InstanceDescriptor descriptor)
     {
         GraphicsBackendType backend = descriptor.PreferredBackend;
         if (backend == GraphicsBackendType.Count)
@@ -86,7 +88,7 @@ public abstract class Instance : GraphicsObjectBase
             }
         }
 
-        Instance? instance = default;
+        GPUInstance? instance = default;
         switch (backend)
         {
 #if !EXCLUDE_VULKAN_BACKEND
@@ -127,7 +129,7 @@ public abstract class Instance : GraphicsObjectBase
 
         if (instance == null)
         {
-            throw new GraphicsException($"{backend} is not supported");
+            throw new GPUException($"{backend} is not supported");
         }
 
         return instance!;

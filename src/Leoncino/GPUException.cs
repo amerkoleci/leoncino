@@ -3,10 +3,11 @@
 
 namespace Leoncino;
 
-public abstract class GraphicsResource : GraphicsObject
+public sealed class GPUException : Exception
 {
-    protected GraphicsResource(string? label = default)
-        : base(label)
+    public GPUException(string message)
+        : base(message)
     {
+        //Log.Error(message);
     }
 }
