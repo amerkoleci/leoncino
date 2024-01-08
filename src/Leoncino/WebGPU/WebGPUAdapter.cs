@@ -16,18 +16,20 @@ internal class WebGPUAdapter : GPUAdapter
         ReadOnlySpan<WGPUFeatureName> features = wgpuAdapterEnumerateFeatures(handle);
 
         WGPUAdapterProperties properties;
-        wgpuAdapterGetProperties(handle, &properties);
+        WGPUSupportedLimits supportedLimits;
 
-        WGPUSupportedLimits limits;
-        wgpuAdapterGetLimits(handle, &limits);
+        wgpuAdapterGetProperties(handle, &properties);
+        wgpuAdapterGetLimits(handle, &supportedLimits);
 
         AdapterProperties = properties;
-        AdapterLimits = limits;
+        AdapterLimits = supportedLimits;
+        Features = features.ToArray();
     }
 
     public WGPUAdapter Handle { get; }
     public WGPUAdapterProperties AdapterProperties { get; }
     public WGPUSupportedLimits AdapterLimits { get; }
+    public WGPUFeatureName[] Features { get; }
 
     /// <summary>
     /// Finalizes an instance of the <see cref="WebGPUAdapter" /> class.
@@ -56,12 +58,23 @@ internal class WebGPUAdapter : GPUAdapter
     {
         fixed (sbyte* pDeviceName = descriptor.Label.GetUtf8Span())
         {
+            WGPUFeatureName* requiredFeatures = stackalloc WGPUFeatureName[2]
+            {
+                WGPUFeatureName.Depth32FloatStencil8,
+                WGPUFeatureName.Float32Filterable
+            };
+
+            WGPURequiredLimits requiredLimits;
+            requiredLimits.nextInChain = null;
+            requiredLimits.limits = AdapterLimits.limits;
+
             WGPUDeviceDescriptor deviceDesc = new()
             {
                 nextInChain = null,
                 label = pDeviceName,
-                requiredFeatureCount = 0,
-                requiredLimits = null
+                requiredFeatureCount = 1,
+                requiredFeatures = requiredFeatures,
+                requiredLimits = &requiredLimits
             };
             deviceDesc.defaultQueue.nextInChain = null;
             //deviceDesc.defaultQueue.label = "The default queue";

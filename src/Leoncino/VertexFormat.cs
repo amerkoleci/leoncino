@@ -42,8 +42,8 @@ public enum VertexFormat
 
     //Int1010102Normalized,
     UInt1010102Normalized,
-    RG11B10Float,
-    RGB9E5Float,
+    FloatRG11B10,
+    FloatRGB9E5,
 
     Count
 }

@@ -437,4 +437,92 @@ internal static unsafe class Utils
                 return WGPUCompareFunction.Never;
         }
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUShaderStage ToWGPU(this ShaderStages stage)
+    {
+        if (stage == ShaderStages.All)
+            return WGPUShaderStage.Vertex | WGPUShaderStage.Fragment | WGPUShaderStage.Compute;
+
+        WGPUShaderStage result = WGPUShaderStage.None;
+        if ((stage & ShaderStages.Vertex) != 0)
+            result |= WGPUShaderStage.Vertex;
+
+        if ((stage & ShaderStages.Hull) != 0)
+            throw new GPUException($"WebGPU doesn't support {ShaderStages.Hull} shader stage");
+
+        if ((stage & ShaderStages.Domain) != 0)
+            throw new GPUException($"WebGPU doesn't support {ShaderStages.Domain} shader stage");
+
+        if ((stage & ShaderStages.Geometry) != 0)
+            throw new GPUException($"WebGPU doesn't support {ShaderStages.Geometry} shader stage");
+
+        if ((stage & ShaderStages.Fragment) != 0)
+            result |= WGPUShaderStage.Fragment;
+
+        if ((stage & ShaderStages.Compute) != 0)
+            result |= WGPUShaderStage.Compute;
+
+        if ((stage & ShaderStages.Amplification) != 0)
+            throw new GPUException($"WebGPU doesn't support {ShaderStages.Amplification} shader stage");
+
+        if ((stage & ShaderStages.Mesh) != 0)
+            throw new GPUException($"WebGPU doesn't support {ShaderStages.Mesh} shader stage");
+
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUBufferBindingType ToWGPU(this BufferBindingType value)
+    {
+        switch (value)
+        {
+            case BufferBindingType.Constant: return WGPUBufferBindingType.Uniform;
+            case BufferBindingType.Storage: return WGPUBufferBindingType.Storage;
+            case BufferBindingType.ReadOnlyStorage: return WGPUBufferBindingType.ReadOnlyStorage;
+            default:
+                return WGPUBufferBindingType.Undefined;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUSamplerBindingType ToWGPU(this SamplerBindingType value)
+    {
+        switch (value)
+        {
+            case SamplerBindingType.Filtering: return WGPUSamplerBindingType.Filtering;
+            case SamplerBindingType.NonFiltering: return WGPUSamplerBindingType.NonFiltering;
+            case SamplerBindingType.Comparison: return WGPUSamplerBindingType.Comparison;
+            default:
+                return WGPUSamplerBindingType.Undefined;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUTextureSampleType ToWGPU(this TextureSampleType value)
+    {
+        switch (value)
+        {
+            case TextureSampleType.Float: return WGPUTextureSampleType.Float;
+            case TextureSampleType.UnfilterableFloat: return WGPUTextureSampleType.UnfilterableFloat;
+            case TextureSampleType.Depth: return WGPUTextureSampleType.Depth;
+            case TextureSampleType.Sint: return WGPUTextureSampleType.Sint;
+            case TextureSampleType.Uint: return WGPUTextureSampleType.Uint;
+            default:
+                return WGPUTextureSampleType.Undefined;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static WGPUStorageTextureAccess ToWGPU(this StorageTextureAccess value)
+    {
+        switch (value)
+        {
+            case StorageTextureAccess.WriteOnly: return WGPUStorageTextureAccess.WriteOnly;
+            case StorageTextureAccess.ReadOnly: return WGPUStorageTextureAccess.ReadOnly;
+            case StorageTextureAccess.ReadWrite: return WGPUStorageTextureAccess.ReadWrite;
+            default:
+                return WGPUStorageTextureAccess.Undefined;
+        }
+    }
 }

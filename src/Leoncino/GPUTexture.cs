@@ -5,6 +5,21 @@ namespace Leoncino;
 
 public abstract class GPUTexture : GPUObject
 {
+    protected GPUTexture(in TextureDescriptor descriptor)
+        : base(descriptor.Label)
+    {
+        Dimension = descriptor.Dimension;
+        Format = descriptor.Format;
+        Width = descriptor.Width;
+        Height = descriptor.Height;
+        Depth = (descriptor.Dimension == TextureDimension.Texture3D) ? descriptor.DepthOrArrayLayers : 1;
+        ArrayLayers = (descriptor.Dimension != TextureDimension.Texture3D) ? descriptor.DepthOrArrayLayers : 1;
+        MipLevelCount = descriptor.MipLevelCount;
+        SampleCount = descriptor.SampleCount;
+        Usage = descriptor.Usage;
+        CpuAccess = descriptor.CpuAccess;
+    }
+
     /// <summary>
     /// Gets the texture dimension.
     /// </summary>
@@ -55,20 +70,6 @@ public abstract class GPUTexture : GPUObject
     /// </summary>
     public CpuAccessMode CpuAccess { get; }
 
-    protected GPUTexture(in TextureDescriptor descriptor)
-        : base(descriptor.Label)
-    {
-        Dimension = descriptor.Dimension;
-        Format = descriptor.Format;
-        Width = descriptor.Width;
-        Height = descriptor.Height;
-        Depth = (descriptor.Dimension == TextureDimension.Texture3D) ? descriptor.DepthOrArrayLayers : 1;
-        ArrayLayers = (descriptor.Dimension != TextureDimension.Texture3D) ? descriptor.DepthOrArrayLayers : 1;
-        MipLevelCount = descriptor.MipLevelCount;
-        SampleCount = descriptor.SampleCount;
-        Usage = descriptor.Usage;
-        CpuAccess = descriptor.CpuAccess;
-    }
 
     /// <summary>
     /// Get a mip-level width.

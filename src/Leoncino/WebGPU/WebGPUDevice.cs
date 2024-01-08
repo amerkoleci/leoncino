@@ -1,6 +1,7 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.InteropServices;
 using WebGPU;
 using static WebGPU.WebGPU;
 
@@ -14,7 +15,7 @@ internal unsafe class WebGPUDevice : GPUDevice
     {
         _adapter = adapter;
         Handle = handle;
-        wgpuDeviceSetUncapturedErrorCallback(handle, HandleUncapturedErrorCallback);
+        wgpuDeviceSetUncapturedErrorCallback(handle, &HandleUncapturedErrorCallback, 0);
 
         // Get the queue associated with the device
         Queue = wgpuDeviceGetQueue(handle);
@@ -41,13 +42,28 @@ internal unsafe class WebGPUDevice : GPUDevice
         }
     }
 
+    /// <inheritdoc />
     protected override GPUBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
     {
         return new WebGPUBuffer(this, in descriptor, initialData);
     }
 
-    private static void HandleUncapturedErrorCallback(WGPUErrorType type, string message)
+    /// <inheritdoc />
+    protected override unsafe GPUTexture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData)
     {
+        return new WebGPUTexture(this, in descriptor, initialData);
+    }
+
+    /// <inheritdoc />
+    protected override BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescriptor descriptor)
+    {
+        return new WebGPUBindGroupLayout(this, in descriptor);
+    }
+
+    [UnmanagedCallersOnly]
+    private static void HandleUncapturedErrorCallback(WGPUErrorType type, sbyte* pMessage, nint pUserData)
+    {
+        string message = Interop.GetString(pMessage)!;
 #if DEBUG
         throw new GPUException($"Uncaptured device error: type: {type} ({message})");
 #else

@@ -1,7 +1,6 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-using System.Runtime.CompilerServices;
 using WebGPU;
 using static WebGPU.WebGPU;
 
@@ -11,7 +10,7 @@ internal unsafe class WebGPUTexture : GPUTexture
 {
     private readonly WebGPUDevice _device;
 
-    public WebGPUTexture(WebGPUDevice device, in TextureDescriptor descriptor)
+    public WebGPUTexture(WebGPUDevice device, in TextureDescriptor descriptor, TextureData* initialData)
         : base(descriptor)
     {
         _device = device;

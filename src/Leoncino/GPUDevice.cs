@@ -45,6 +45,25 @@ public abstract class GPUDevice : GPUObjectBase
         return CreateBuffer(new BufferDescriptor(size, usage, cpuAccess, label), IntPtr.Zero);
     }
 
+    public unsafe GPUTexture CreateTexture(in TextureDescriptor descriptor)
+    {
+        Guard.IsGreaterThanOrEqualTo(descriptor.Width, 1, nameof(TextureDescriptor.Width));
+        Guard.IsGreaterThanOrEqualTo(descriptor.Height, 1, nameof(TextureDescriptor.Height));
+        Guard.IsGreaterThanOrEqualTo(descriptor.DepthOrArrayLayers, 1, nameof(TextureDescriptor.DepthOrArrayLayers));
+
+        return CreateTextureCore(in descriptor, default);
+    }
+
+    public BindGroupLayout CreateBindGroupLayout(in BindGroupLayoutDescriptor descriptor)
+    {
+        return CreateBindGroupLayoutCore(in descriptor);
+    }
+
+    public BindGroupLayout CreateBindGroupLayout(params BindGroupLayoutEntry[] entries)
+    {
+        return CreateBindGroupLayoutCore(new BindGroupLayoutDescriptor(entries));
+    }
+
     internal void QueueDestroy(GPUObject @object)
     {
         if (_shuttingDown)
@@ -76,4 +95,6 @@ public abstract class GPUDevice : GPUObjectBase
     }
 
     protected abstract unsafe GPUBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
+    protected abstract unsafe GPUTexture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData);
+    protected abstract BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescriptor descriptor);
 }
