@@ -21,7 +21,7 @@ public abstract class Application : IDisposable
             throw new Exception($"Failed to start SDL2: {error}");
         }
 
-        SDL_LogSetOutputFunction(Log_SDL);
+        SDL_SetLogOutputFunction(Log_SDL);
         InstanceDescriptor instanceDescriptor = new();
         Instance = GPUInstance.Create(in instanceDescriptor);
 

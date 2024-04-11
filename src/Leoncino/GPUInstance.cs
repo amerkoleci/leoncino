@@ -42,7 +42,7 @@ public abstract class GPUInstance : GPUObjectBase
         {
 #if !EXCLUDE_VULKAN_BACKEND
             case GraphicsBackendType.Vulkan:
-                return Vulkan.VulkanGraphicsDevice.IsSupported();
+                return Vulkan.VulkanInstance.IsSupported();
 #endif
 
 #if !EXCLUDE_D3D12_BACKEND
@@ -93,9 +93,9 @@ public abstract class GPUInstance : GPUObjectBase
         {
 #if !EXCLUDE_VULKAN_BACKEND
             case GraphicsBackendType.Vulkan:
-                if (Vulkan.VulkanGraphicsDevice.IsSupported())
+                if (Vulkan.VulkanInstance.IsSupported())
                 {
-                    instance = new Vulkan.VulkanGraphicsDevice(in description);
+                    instance = new Vulkan.VulkanInstance(in descriptor);
                 }
                 break;
 #endif
