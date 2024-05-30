@@ -20,7 +20,6 @@ internal unsafe class VulkanInstance : GPUInstance
     public VulkanInstance(in InstanceDescriptor descriptor)
         : base(descriptor)
     {
-
         uint instanceLayerCount = 0;
         vkEnumerateInstanceLayerProperties(&instanceLayerCount, null).DebugCheckResult();
         VkLayerProperties* availableInstanceLayers = stackalloc VkLayerProperties[(int)instanceLayerCount];
@@ -31,8 +30,8 @@ internal unsafe class VulkanInstance : GPUInstance
         VkExtensionProperties* availableInstanceExtensions = stackalloc VkExtensionProperties[(int)extensionCount];
         vkEnumerateInstanceExtensionProperties(null, &extensionCount, availableInstanceExtensions).CheckResult();
 
-        List<string> instanceExtensions = new();
-        List<string> instanceLayers = new();
+        List<string> instanceExtensions = [];
+        List<string> instanceLayers = [];
         bool validationFeatures = false;
 
         for (int i = 0; i < extensionCount; i++)
@@ -178,9 +177,9 @@ internal unsafe class VulkanInstance : GPUInstance
         {
             VkValidationFeatureEnableEXT* enabledValidationFeatures = stackalloc VkValidationFeatureEnableEXT[2]
             {
-                    VkValidationFeatureEnableEXT.GpuAssistedReserveBindingSlot,
-                    VkValidationFeatureEnableEXT.GpuAssisted
-                };
+                VkValidationFeatureEnableEXT.GpuAssistedReserveBindingSlot,
+                VkValidationFeatureEnableEXT.GpuAssisted
+            };
 
             validationFeaturesInfo.enabledValidationFeatureCount = 2;
             validationFeaturesInfo.pEnabledValidationFeatures = enabledValidationFeatures;
@@ -235,7 +234,7 @@ internal unsafe class VulkanInstance : GPUInstance
     public bool HasXlibSurface { get; }
     public bool HasXcbSurface { get; }
     public bool HasWaylandSurface { get; }
-    public VkInstance Instance => _instance;
+    public VkInstance Handle => _instance;
 
     /// <summary>
     /// Finalizes an instance of the <see cref="VulkanInstance" /> class.
@@ -257,10 +256,7 @@ internal unsafe class VulkanInstance : GPUInstance
     }
 
     /// <inheritdoc />
-    protected override GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor)
-    {
-        throw new NotImplementedException();
-    }
+    protected override GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new VulkanSurface(this, in descriptor);
 
     protected override ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options)
     {
@@ -268,10 +264,49 @@ internal unsafe class VulkanInstance : GPUInstance
 
         if (physicalDevices.Length == 0)
         {
-            throw new GPUException("Vulkan: Failed to find GPUs with Vulkan support");
+            throw new LeoncinoException("Vulkan: Failed to find GPUs with Vulkan support");
         }
 
-        return ValueTask.FromResult<GPUAdapter>(new VulkanAdapter(physicalDevices[0]));
+        VkPhysicalDevice foundPhysicalDevice = VkPhysicalDevice.Null;
+        foreach (VkPhysicalDevice physicalDevice in physicalDevices)
+        {
+            // We require minimum 1.2
+            vkGetPhysicalDeviceProperties(physicalDevice, out VkPhysicalDeviceProperties physicalDeviceProperties);
+            if (physicalDeviceProperties.apiVersion < VkVersion.Version_1_2)
+            {
+                continue;
+            }
+
+            PhysicalDeviceExtensions physicalDeviceExtensions = physicalDevice.QueryExtensions();
+            if (!Headless && !physicalDeviceExtensions.Swapchain)
+            {
+                continue;
+            }
+
+            bool priority = physicalDeviceProperties.deviceType == VkPhysicalDeviceType.DiscreteGpu;
+            if (options.PowerPreference == PowerPreference.LowPower)
+            {
+                priority = physicalDeviceProperties.deviceType == VkPhysicalDeviceType.IntegratedGpu;
+            }
+
+            if (priority || foundPhysicalDevice.IsNull)
+            {
+                foundPhysicalDevice = physicalDevice;
+                if (priority)
+                {
+                    // If this is prioritized adapter, look no further.
+                    break;
+                }
+
+            }
+        }
+
+        if (foundPhysicalDevice.IsNull)
+        {
+            throw new LeoncinoException("Vulkan: Failed to find a suitable GPU");
+        }
+
+        return ValueTask.FromResult<GPUAdapter>(new VulkanAdapter(foundPhysicalDevice));
     }
 
     private static bool CheckIsSupported()

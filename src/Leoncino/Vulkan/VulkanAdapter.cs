@@ -36,6 +36,34 @@ internal class VulkanAdapter : GPUAdapter
     /// <inheritdoc />
     public override PixelFormat GetSurfacePreferredFormat(GPUSurface surface)
     {
+        VulkanSurface backendSurface = (VulkanSurface)surface;
+
+        ReadOnlySpan<VkSurfaceFormatKHR> swapchainFormats = vkGetPhysicalDeviceSurfaceFormatsKHR(Handle, backendSurface.Handle);
+
+        VkFormat wantedFormat = VkFormat.B8G8R8A8Srgb;
+
+        bool valid = false;
+        bool allowHDR = true;
+        VkSurfaceFormatKHR foundFormat = default;
+        foreach (VkSurfaceFormatKHR format in swapchainFormats)
+        {
+            if (!allowHDR && format.colorSpace != VkColorSpaceKHR.SrgbNonLinear)
+                continue;
+
+            if (format.format == wantedFormat)
+            {
+                foundFormat = format;
+                valid = true;
+                break;
+            }
+        }
+
+        if (!valid)
+        {
+            foundFormat.format = VkFormat.B8G8R8A8Unorm;
+            foundFormat.colorSpace = VkColorSpaceKHR.SrgbNonLinear;
+        }
+
         // TODO:
         return PixelFormat.BGRA8UnormSrgb;
     }

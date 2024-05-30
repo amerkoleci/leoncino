@@ -1,6 +1,7 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Leoncino;
@@ -43,7 +44,14 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe void SetData<T>(Span<T> data, int offsetInBytes = 0) where T : unmanaged
     {
-        Guard.IsTrue(CpuAccess == CpuAccessMode.Write);
+        Debug.Assert(CpuAccess == CpuAccessMode.Write);
+
+#if VALIDATE_USAGE
+        if (CpuAccess != CpuAccessMode.Write)
+        {
+            throw new LeoncinoException("Cannot set buffer data for not writeable buffer");
+        }
+#endif
 
         fixed (T* dataPtr = data)
         {
@@ -61,7 +69,7 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe T[] GetArray<T>(int offsetInBytes = 0) where T : unmanaged
     {
-        Guard.IsTrue(CpuAccess != CpuAccessMode.None);
+        Debug.Assert(CpuAccess != CpuAccessMode.None);
 
         T[] data = new T[((int)Size / sizeof(T)) - offsetInBytes];
         GetData(data.AsSpan(), offsetInBytes);
@@ -72,7 +80,7 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe void GetData<T>(ref T data, int offsetInBytes = 0) where T : unmanaged
     {
-        Guard.IsTrue(CpuAccess != CpuAccessMode.None);
+        Debug.Assert(CpuAccess != CpuAccessMode.None);
 
         fixed (T* destPtr = &data)
         {
@@ -82,7 +90,7 @@ public abstract class GPUBuffer : GPUObject
 
     public unsafe void GetData<T>(T[] destination, int offsetInBytes = 0) where T : unmanaged
     {
-        Guard.IsTrue(CpuAccess != CpuAccessMode.None);
+        Debug.Assert(CpuAccess != CpuAccessMode.None);
 
         fixed (T* destPtr = destination)
         {

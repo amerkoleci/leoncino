@@ -64,10 +64,6 @@ internal unsafe class WebGPUDevice : GPUDevice
     private static void HandleUncapturedErrorCallback(WGPUErrorType type, sbyte* pMessage, nint pUserData)
     {
         string message = Interop.GetString(pMessage)!;
-#if DEBUG
-        throw new GPUException($"Uncaptured device error: type: {type} ({message})");
-#else
-        //Log.Error($"Uncaptured device error: type: {type} ({message})");
-#endif
+        throw new LeoncinoException($"Uncaptured device error: type: {type} ({message})");
     }
 }

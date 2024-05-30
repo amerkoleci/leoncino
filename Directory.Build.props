@@ -3,7 +3,6 @@
   <PropertyGroup>
     <AlimerRootDirectory>$(MSBuildThisFileDirectory)</AlimerRootDirectory>
     <AlimerSrcDirectory>$(MSBuildThisFileDirectory)src/</AlimerSrcDirectory>
-    <AlimerNativeDirectory>$(MSBuildThisFileDirectory)native/</AlimerNativeDirectory>
   </PropertyGroup>
 
   <PropertyGroup>

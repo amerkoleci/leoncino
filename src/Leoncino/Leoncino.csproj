@@ -1,12 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(Packing)' == 'true'">$(TargetFrameworks);net8.0-windows10.0.22621</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DefineConstants>$(DefineConstants);VALIDATE_USAGE</DefineConstants>
     <ExcludeD3D12>true</ExcludeD3D12>
     <ExcludeMetal>true</ExcludeMetal>
-</PropertyGroup>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" $(TargetFramework.Contains('-windows10')) ">
+    <ExcludeVulkan>true</ExcludeVulkan>
+    <ExcludeWebGPU>true</ExcludeWebGPU>
+    <ExcludeMetal>true</ExcludeMetal>
+  </PropertyGroup>
 
   <PropertyGroup>
     <DefineConstants Condition="'$(ExcludeD3D12)' == 'true'">$(DefineConstants);EXCLUDE_D3D12_BACKEND</DefineConstants>
@@ -17,7 +24,6 @@
 
   <ItemGroup>
     <Using Remove="System.Linq" />
-    <Using Include="CommunityToolkit.Diagnostics" />
 
     <Compile Remove="D3D/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />
     <Compile Remove="D3D12/**/*" Condition="'$(ExcludeD3D12)' == 'true'" />
@@ -27,8 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Diagnostics" />
-    
     <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
     <PackageReference Include="Alimer.Bindings.WebGPU" Condition="'$(ExcludeWebGPU)' != 'true'" />
   </ItemGroup>

@@ -11,14 +11,17 @@ public abstract class GPUInstance : GPUObjectBase
     protected GPUInstance(in InstanceDescriptor descriptor)
         : base(descriptor.Label)
     {
+        Headless = descriptor.Headless;
     }
+
+    public bool Headless { get; }
 
     public GPUSurface CreateSurface(in SurfaceDescriptor descriptor)
     {
 #if VALIDATE_USAGE
         if (descriptor.Source is null)
         {
-            throw new GPUException("SurfaceDescriptor.Source must be valid.");
+            throw new LeoncinoException("SurfaceDescriptor.Source must be valid.");
         }
 #endif
 
@@ -129,7 +132,7 @@ public abstract class GPUInstance : GPUObjectBase
 
         if (instance == null)
         {
-            throw new GPUException($"{backend} is not supported");
+            throw new LeoncinoException($"{backend} is not supported");
         }
 
         return instance!;

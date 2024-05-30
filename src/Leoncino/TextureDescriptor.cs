@@ -2,7 +2,6 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using CommunityToolkit.Diagnostics;
 
 namespace Leoncino;
 
@@ -24,11 +23,22 @@ public readonly record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        Guard.IsTrue(format != PixelFormat.Undefined);
-        Guard.IsGreaterThanOrEqualTo(width, 1);
-        Guard.IsGreaterThanOrEqualTo(height, 1);
-        Guard.IsGreaterThanOrEqualTo(depthOrArrayLayers, 1);
-        Guard.IsGreaterThanOrEqualTo(mipLevelCount, 0);
+#if VALIDATE_USAGE
+        if (format == PixelFormat.Undefined)
+        {
+            throw new LeoncinoException($"format must be different than {PixelFormat.Undefined}");
+        }
+
+        if (width == 0 || height == 0 || depthOrArrayLayers == 0)
+        {
+            throw new LeoncinoException("width, height, and depthOrArrayLayers must be non-zero.");
+        }
+
+        if (mipLevelCount < 0)
+        {
+            throw new LeoncinoException("mipLevelCount must be greater or equal to zero.");
+        }
+#endif
 
         Dimension = dimension;
         Format = format;

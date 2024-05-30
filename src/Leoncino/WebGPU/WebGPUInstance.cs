@@ -78,7 +78,7 @@ internal unsafe class WebGPUInstance : GPUInstance
         switch (level)
         {
             case WGPULogLevel.Error:
-                throw new GPUException(message);
+                throw new LeoncinoException(message);
             case WGPULogLevel.Warn:
                 //Log.Warn(message);
                 break;

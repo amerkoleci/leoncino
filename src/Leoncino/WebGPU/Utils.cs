@@ -449,13 +449,13 @@ internal static unsafe class Utils
             result |= WGPUShaderStage.Vertex;
 
         if ((stage & ShaderStages.Hull) != 0)
-            throw new GPUException($"WebGPU doesn't support {ShaderStages.Hull} shader stage");
+            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Hull} shader stage");
 
         if ((stage & ShaderStages.Domain) != 0)
-            throw new GPUException($"WebGPU doesn't support {ShaderStages.Domain} shader stage");
+            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Domain} shader stage");
 
         if ((stage & ShaderStages.Geometry) != 0)
-            throw new GPUException($"WebGPU doesn't support {ShaderStages.Geometry} shader stage");
+            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Geometry} shader stage");
 
         if ((stage & ShaderStages.Fragment) != 0)
             result |= WGPUShaderStage.Fragment;
@@ -464,10 +464,10 @@ internal static unsafe class Utils
             result |= WGPUShaderStage.Compute;
 
         if ((stage & ShaderStages.Amplification) != 0)
-            throw new GPUException($"WebGPU doesn't support {ShaderStages.Amplification} shader stage");
+            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Amplification} shader stage");
 
         if ((stage & ShaderStages.Mesh) != 0)
-            throw new GPUException($"WebGPU doesn't support {ShaderStages.Mesh} shader stage");
+            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Mesh} shader stage");
 
         return result;
     }

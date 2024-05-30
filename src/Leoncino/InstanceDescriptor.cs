@@ -22,6 +22,8 @@ public readonly record struct InstanceDescriptor
     /// </summary>
     public ValidationMode ValidationMode { get; init; } = ValidationMode.Disabled;
 
+    public bool Headless { get; init; }
+
     /// <summary>
     /// Gets or sets the label of <see cref="Instance"/>.
     /// </summary>

@@ -31,7 +31,12 @@ public abstract class GPUDevice : GPUObjectBase
 
     public unsafe GPUBuffer CreateBuffer(in BufferDescriptor descriptor, nint initialData = 0)
     {
-        Guard.IsGreaterThanOrEqualTo(descriptor.Size, 4, nameof(BufferDescriptor.Size));
+#if VALIDATE_USAGE
+        if (descriptor.Size < 4)
+        {
+            throw new LeoncinoException("Buffer size must be greater or equal to 4");
+        }
+#endif
 
         return CreateBufferCore(descriptor, initialData.ToPointer());
     }
@@ -46,9 +51,17 @@ public abstract class GPUDevice : GPUObjectBase
 
     public unsafe GPUTexture CreateTexture(in TextureDescriptor descriptor)
     {
-        Guard.IsGreaterThanOrEqualTo(descriptor.Width, 1, nameof(TextureDescriptor.Width));
-        Guard.IsGreaterThanOrEqualTo(descriptor.Height, 1, nameof(TextureDescriptor.Height));
-        Guard.IsGreaterThanOrEqualTo(descriptor.DepthOrArrayLayers, 1, nameof(TextureDescriptor.DepthOrArrayLayers));
+#if VALIDATE_USAGE
+        if (descriptor.Format == PixelFormat.Undefined)
+        {
+            throw new LeoncinoException($"Format must be different than {PixelFormat.Undefined}");
+        }
+
+        if (descriptor.Width == 0 || descriptor.Height == 0 || descriptor.DepthOrArrayLayers == 0)
+        {
+            throw new LeoncinoException("Width, Height, and DepthOrArrayLayers must be non-zero.");
+        }
+#endif
 
         return CreateTextureCore(in descriptor, default);
     }
