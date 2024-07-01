@@ -4,9 +4,9 @@
 namespace Leoncino;
 
 /// <summary>
-/// Defines a platform-specific GPU surface
+/// Defines a platform-specific graphics surface.
 /// </summary>
-public abstract class GPUSurface : GPUObjectBase
+public abstract class GPUSurface : GraphicsObject
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Surface" /> class.

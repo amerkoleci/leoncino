@@ -22,11 +22,14 @@ public abstract class Application : IDisposable
         }
 
         SDL_SetLogOutputFunction(Log_SDL);
-        InstanceDescriptor instanceDescriptor = new();
-        Instance = GPUInstance.Create(in instanceDescriptor);
+        GraphicsFactoryDescription factoryDescription = new()
+        {
+            PreferredBackend = GraphicsBackend.Vulkan
+        };
+        Factory = GraphicsFactory.Create(in factoryDescription);
 
         // Create main window.
-        MainWindow = new Window(Instance, Name, 1280, 720);
+        MainWindow = new Window(Factory, Name, 1280, 720);
 
         RequestAdapterOptions requestAdapterOptions = new()
         {
@@ -34,7 +37,7 @@ public abstract class Application : IDisposable
             PowerPreference = PowerPreference.HighPerformance
         };
 
-        Adapter = Instance.RequestAdapterAsync(in requestAdapterOptions).Result;
+        Adapter = Factory.RequestAdapterAsync(in requestAdapterOptions).Result;
         SurfaceFormat = Adapter.GetSurfacePreferredFormat(MainWindow.Surface);
         Debug.Assert(SurfaceFormat != PixelFormat.Undefined);
 
@@ -59,7 +62,7 @@ public abstract class Application : IDisposable
 
     public Window MainWindow { get; }
 
-    public GPUInstance Instance { get; }
+    public GraphicsFactory Factory { get; }
     public GPUAdapter Adapter { get; }
     public GPUDevice Device { get; }
     public PixelFormat SurfaceFormat { get; }
@@ -85,7 +88,7 @@ public abstract class Application : IDisposable
             MainWindow.Surface?.Dispose();
             Device.Dispose();
             Adapter.Dispose();
-            Instance.Dispose();
+            Factory.Dispose();
         }
     }
 

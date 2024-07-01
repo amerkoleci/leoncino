@@ -49,7 +49,7 @@ public abstract class GPUBuffer : GPUObject
 #if VALIDATE_USAGE
         if (CpuAccess != CpuAccessMode.Write)
         {
-            throw new LeoncinoException("Cannot set buffer data for not writeable buffer");
+            throw new GraphicsException("Cannot set buffer data for not writeable buffer");
         }
 #endif
 

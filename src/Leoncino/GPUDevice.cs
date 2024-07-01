@@ -8,7 +8,7 @@ namespace Leoncino;
 /// <summary>
 /// Defines a GPU logical device
 /// </summary>
-public abstract class GPUDevice : GPUObjectBase
+public abstract class GPUDevice : GraphicsObject
 {
     protected uint _frameIndex = 0;
     protected ulong _frameCount = 0;
@@ -34,7 +34,7 @@ public abstract class GPUDevice : GPUObjectBase
 #if VALIDATE_USAGE
         if (descriptor.Size < 4)
         {
-            throw new LeoncinoException("Buffer size must be greater or equal to 4");
+            throw new GraphicsException("Buffer size must be greater or equal to 4");
         }
 #endif
 
@@ -54,12 +54,12 @@ public abstract class GPUDevice : GPUObjectBase
 #if VALIDATE_USAGE
         if (descriptor.Format == PixelFormat.Undefined)
         {
-            throw new LeoncinoException($"Format must be different than {PixelFormat.Undefined}");
+            throw new GraphicsException($"Format must be different than {PixelFormat.Undefined}");
         }
 
         if (descriptor.Width == 0 || descriptor.Height == 0 || descriptor.DepthOrArrayLayers == 0)
         {
-            throw new LeoncinoException("Width, Height, and DepthOrArrayLayers must be non-zero.");
+            throw new GraphicsException("Width, Height, and DepthOrArrayLayers must be non-zero.");
         }
 #endif
 

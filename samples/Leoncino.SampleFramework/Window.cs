@@ -22,7 +22,7 @@ public sealed unsafe class Window
 {
     private readonly SDL_Window _window;
 
-    public Window(GPUInstance instance, string title, int width, int height, WindowFlags flags = WindowFlags.None)
+    public Window(GraphicsFactory factory, string title, int width, int height, WindowFlags flags = WindowFlags.None)
     {
         Title = title;
 
@@ -62,7 +62,7 @@ public sealed unsafe class Window
 
         SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
         Id = SDL_GetWindowID(_window);
-        Surface =  CreateSurface(instance, _window);
+        Surface =  CreateSurface(factory, _window);
     }
 
     public string Title { get; }
@@ -93,7 +93,7 @@ public sealed unsafe class Window
         _ = SDL_ShowWindow(_window);
     }
 
-    private static GPUSurface CreateSurface(GPUInstance instance, SDL_Window window, bool useWayland = false)
+    private static GPUSurface CreateSurface(GraphicsFactory factory, SDL_Window window, bool useWayland = false)
     {
         SurfaceSource? source = default;
         if (OperatingSystem.IsWindows())
@@ -136,6 +136,6 @@ public sealed unsafe class Window
             Source = source!
         };
 
-        return instance.CreateSurface(in descriptor);
+        return factory.CreateSurface(in descriptor);
     }
 }

@@ -4,15 +4,20 @@
 namespace Leoncino;
 
 /// <summary>
-/// Defines a global GPU instance/factory for enumerating adapters and surface creation
+/// Defines a graphics factory for enumerating adapters and surface creation
 /// </summary>
-public abstract class GPUInstance : GPUObjectBase
+public abstract class GraphicsFactory : GraphicsObject
 {
-    protected GPUInstance(in InstanceDescriptor descriptor)
-        : base(descriptor.Label)
+    protected GraphicsFactory(in GraphicsFactoryDescription description)
+        : base(description.Label)
     {
-        Headless = descriptor.Headless;
+        Headless = description.Headless;
     }
+
+    /// <summary>
+    /// Gets a value identifying the specific graphics backend used by this factory.
+    /// </summary>
+    public abstract GraphicsBackend BackendType { get; }
 
     public bool Headless { get; }
 
@@ -21,7 +26,7 @@ public abstract class GPUInstance : GPUObjectBase
 #if VALIDATE_USAGE
         if (descriptor.Source is null)
         {
-            throw new LeoncinoException("SurfaceDescriptor.Source must be valid.");
+            throw new GraphicsException("SurfaceDescriptor.Source must be valid.");
         }
 #endif
 
@@ -37,20 +42,20 @@ public abstract class GPUInstance : GPUObjectBase
 
     protected abstract ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options);
 
-    public static bool IsBackendSupport(GraphicsBackendType backend)
+    public static bool IsBackendSupport(GraphicsBackend backend)
     {
         //Guard.IsTrue(backend != GraphicsBackendType.Count, nameof(backend), "Invalid backend");
 
         switch (backend)
         {
 #if !EXCLUDE_VULKAN_BACKEND
-            case GraphicsBackendType.Vulkan:
-                return Vulkan.VulkanInstance.IsSupported();
+            case GraphicsBackend.Vulkan:
+                return Vulkan.VulkanGraphicsFactory.IsSupported();
 #endif
 
 #if !EXCLUDE_D3D12_BACKEND
-            case GraphicsBackendType.D3D12:
-                return D3D12.D3D12GraphicsDevice.IsSupported();
+            case GraphicsBackend.Direct3D12:
+                return D3D12.D3D12GraphicsFactory.IsSupported();
 #endif
 
 #if !EXCLUDE_METAL_BACKEND
@@ -68,46 +73,46 @@ public abstract class GPUInstance : GPUObjectBase
         }
     }
 
-    public static GPUInstance Create(in InstanceDescriptor descriptor)
+    public static GraphicsFactory Create(in GraphicsFactoryDescription description)
     {
-        GraphicsBackendType backend = descriptor.PreferredBackend;
-        if (backend == GraphicsBackendType.Count)
+        GraphicsBackend backend = description.PreferredBackend;
+        if (backend == GraphicsBackend.Count)
         {
-            if (IsBackendSupport(GraphicsBackendType.D3D12))
+            if (IsBackendSupport(GraphicsBackend.Direct3D12))
             {
-                backend = GraphicsBackendType.D3D12;
+                backend = GraphicsBackend.Direct3D12;
             }
-            else if (IsBackendSupport(GraphicsBackendType.Metal))
+            else if (IsBackendSupport(GraphicsBackend.Metal))
             {
-                backend = GraphicsBackendType.Metal;
+                backend = GraphicsBackend.Metal;
             }
-            else if (IsBackendSupport(GraphicsBackendType.Vulkan))
+            else if (IsBackendSupport(GraphicsBackend.Vulkan))
             {
-                backend = GraphicsBackendType.Vulkan;
+                backend = GraphicsBackend.Vulkan;
             }
-            else if (IsBackendSupport(GraphicsBackendType.WebGPU))
+            else if (IsBackendSupport(GraphicsBackend.WebGPU))
             {
-                backend = GraphicsBackendType.WebGPU;
+                backend = GraphicsBackend.WebGPU;
             }
         }
 
-        GPUInstance? instance = default;
+        GraphicsFactory? instance = default;
         switch (backend)
         {
 #if !EXCLUDE_VULKAN_BACKEND
-            case GraphicsBackendType.Vulkan:
-                if (Vulkan.VulkanInstance.IsSupported())
+            case GraphicsBackend.Vulkan:
+                if (Vulkan.VulkanGraphicsFactory.IsSupported())
                 {
-                    instance = new Vulkan.VulkanInstance(in descriptor);
+                    instance = new Vulkan.VulkanGraphicsFactory(in description);
                 }
                 break;
 #endif
 
 #if !EXCLUDE_D3D12_BACKEND 
-            case GraphicsBackendType.D3D12:
-                if (D3D12.D3D12GraphicsDevice.IsSupported())
+            case GraphicsBackend.Direct3D12:
+                if (D3D12.D3D12GraphicsFactory.IsSupported())
                 {
-                    instance = new D3D12.D3D12GraphicsDevice(in description);
+                    instance = new D3D12.D3D12GraphicsFactory(in description);
                 }
                 break;
 #endif
@@ -132,7 +137,7 @@ public abstract class GPUInstance : GPUObjectBase
 
         if (instance == null)
         {
-            throw new LeoncinoException($"{backend} is not supported");
+            throw new GraphicsException($"{backend} is not supported");
         }
 
         return instance!;

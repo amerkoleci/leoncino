@@ -6,7 +6,7 @@ namespace Leoncino;
 /// <summary>
 /// An base graphics object that was created by <see cref="GPUDevice"/>
 /// </summary>
-public abstract class GPUObject : GPUObjectBase
+public abstract class GPUObject : GraphicsObject
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="GPUObject" /> class.

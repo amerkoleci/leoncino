@@ -4,18 +4,18 @@
 namespace Leoncino;
 
 /// <summary>
-/// Structure that describes the <see cref="Instance"/>.
+/// Structure that describes the <see cref="GraphicsFactory"/>.
 /// </summary>
-public readonly record struct InstanceDescriptor
+public readonly record struct GraphicsFactoryDescription
 {
-    public InstanceDescriptor()
+    public GraphicsFactoryDescription()
     {
     }
 
     /// <summary>
     /// Gets or sets the preferred backend to creates.
     /// </summary>
-    public GraphicsBackendType PreferredBackend { get; init; } = GraphicsBackendType.Count;
+    public GraphicsBackend PreferredBackend { get; init; } = GraphicsBackend.Count;
 
     /// <summary>
     /// Gets or sets the <see cref="GraphicsDevice"/> validation mode.

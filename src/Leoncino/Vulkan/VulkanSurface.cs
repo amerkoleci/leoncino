@@ -9,12 +9,12 @@ namespace Leoncino.Vulkan;
 
 internal unsafe partial class VulkanSurface : GPUSurface
 {
-    private readonly VulkanInstance _instance;
+    private readonly VulkanGraphicsFactory _factory;
 
-    public VulkanSurface(VulkanInstance instance, in SurfaceDescriptor descriptor)
+    public VulkanSurface(VulkanGraphicsFactory factory, in SurfaceDescriptor descriptor)
         : base(descriptor)
     {
-        _instance = instance;
+        _factory = factory;
 
         VkResult result = VkResult.ErrorInitializationFailed;
         VkSurfaceKHR surface = VkSurfaceKHR.Null;
@@ -27,7 +27,7 @@ internal unsafe partial class VulkanSurface : GPUSurface
                     {
                         window = androidWindowSurface.Window,
                     };
-                    result = vkCreateAndroidSurfaceKHR(instance.Handle, &surfaceCreateInfo, null, &surface);
+                    result = vkCreateAndroidSurfaceKHR(_factory.Handle, &surfaceCreateInfo, null, &surface);
                     break;
                 }
 
@@ -37,7 +37,7 @@ internal unsafe partial class VulkanSurface : GPUSurface
                     {
                         pLayer = metalLayerSurfaceSource.Layer,
                     };
-                    result = vkCreateMetalSurfaceEXT(instance.Handle, &surfaceCreateInfo, null, &surface);
+                    result = vkCreateMetalSurfaceEXT(_factory.Handle, &surfaceCreateInfo, null, &surface);
                     break;
                 }
 
@@ -49,7 +49,7 @@ internal unsafe partial class VulkanSurface : GPUSurface
                         hwnd = win32SurfaceSource.Hwnd
                     };
 
-                    result = vkCreateWin32SurfaceKHR(instance.Handle, &surfaceCreateInfo, null, &surface);
+                    result = vkCreateWin32SurfaceKHR(_factory.Handle, &surfaceCreateInfo, null, &surface);
                     break;
                 }
 
@@ -60,7 +60,7 @@ internal unsafe partial class VulkanSurface : GPUSurface
                         display = waylandSurfaceSource.Display,
                         surface = waylandSurfaceSource.Surface,
                     };
-                    result = vkCreateWaylandSurfaceKHR(instance.Handle, &surfaceCreateInfo, null, &surface);
+                    result = vkCreateWaylandSurfaceKHR(_factory.Handle, &surfaceCreateInfo, null, &surface);
                     break;
                 }
 
@@ -71,7 +71,7 @@ internal unsafe partial class VulkanSurface : GPUSurface
                         connection = xcbWindowSurfaceSource.Connection,
                         window = xcbWindowSurfaceSource.Window,
                     };
-                    result = vkCreateXcbSurfaceKHR(instance.Handle, &surfaceCreateInfo, null, &surface);
+                    result = vkCreateXcbSurfaceKHR(_factory.Handle, &surfaceCreateInfo, null, &surface);
                     break;
                 }
 
@@ -82,7 +82,7 @@ internal unsafe partial class VulkanSurface : GPUSurface
                         display = xlibWindowSurfaceSource.Display,
                         window = (nuint)xlibWindowSurfaceSource.Window,
                     };
-                    result = vkCreateXlibSurfaceKHR(instance.Handle, &surfaceCreateInfo, null, &surface);
+                    result = vkCreateXlibSurfaceKHR(_factory.Handle, &surfaceCreateInfo, null, &surface);
                     break;
                 }
         }
@@ -108,7 +108,7 @@ internal unsafe partial class VulkanSurface : GPUSurface
                 // TODO: Destroy Swapchain
             }
 
-            vkDestroySurfaceKHR(_instance.Handle, Handle, null);
+            vkDestroySurfaceKHR(_factory.Handle, Handle, null);
         }
     }
 

@@ -1,13 +1,16 @@
 <Project>
   <!-- https://learn.microsoft.com/nuget/consume-packages/central-package-management -->
-  <!-- Package versions for package references across all projects -->
   <PropertyGroup>
-    <TerraFXWindowsVersion>10.0.22621.5</TerraFXWindowsVersion>
+    <VorticeWin32Version>2.2.0</VorticeWin32Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Alimer.Bindings.WebGPU" Version="1.4.1" />
-    <PackageVersion Include="Vortice.Vulkan" Version="1.8.10" />
+    <PackageVersion Include="Vortice.Vulkan" Version="1.8.14" />
+    <PackageVersion Include="Vortice.VulkanMemoryAllocator" Version="1.4.9" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Dxgi" Version="$(VorticeWin32Version)" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Direct3D12" Version="$(VorticeWin32Version)" />
+    <PackageVersion Include="Vortice.Win32.Graphics.Direct3D11" Version="$(VorticeWin32Version)" />
+    <PackageVersion Include="Alimer.Bindings.WebGPU" Version="1.4.2" />
 
     <!-- Samples -->
     <PackageVersion Include="Alimer.Bindings.SDL" Version="3.5.4" />

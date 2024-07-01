@@ -26,17 +26,17 @@ public readonly record struct TextureDescriptor
 #if VALIDATE_USAGE
         if (format == PixelFormat.Undefined)
         {
-            throw new LeoncinoException($"format must be different than {PixelFormat.Undefined}");
+            throw new GraphicsException($"format must be different than {PixelFormat.Undefined}");
         }
 
         if (width == 0 || height == 0 || depthOrArrayLayers == 0)
         {
-            throw new LeoncinoException("width, height, and depthOrArrayLayers must be non-zero.");
+            throw new GraphicsException("width, height, and depthOrArrayLayers must be non-zero.");
         }
 
         if (mipLevelCount < 0)
         {
-            throw new LeoncinoException("mipLevelCount must be greater or equal to zero.");
+            throw new GraphicsException("mipLevelCount must be greater or equal to zero.");
         }
 #endif
 

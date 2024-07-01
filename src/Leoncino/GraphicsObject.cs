@@ -6,18 +6,18 @@ using System.Runtime.CompilerServices;
 namespace Leoncino;
 
 /// <summary>
-/// Base class for GPU objects, that implements <see cref="IDisposable"/> interface
+/// Base class for graphics objects, that implements <see cref="IDisposable"/> interface
 /// </summary>
-public abstract class GPUObjectBase : IDisposable
+public abstract class GraphicsObject : IDisposable
 {
     private volatile uint _isDisposed = 0;
     private string? _label;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GPUObjectBase" /> class.
+    /// Initializes a new instance of the <see cref="GraphicsObject" /> class.
     /// </summary>
     /// <param name="label">The label of the object or <c>null</c>.</param>
-    protected GPUObjectBase(string? label = default)
+    protected GraphicsObject(string? label = default)
     {
         _label = label;
         _isDisposed = 0;

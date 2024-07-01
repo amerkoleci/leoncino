@@ -9,7 +9,7 @@ using static Leoncino.Vulkan.VulkanUtils;
 
 namespace Leoncino.Vulkan;
 
-internal unsafe class VulkanInstance : GPUInstance
+internal unsafe class VulkanGraphicsFactory : GraphicsFactory
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
     private readonly VkInstance _instance;
@@ -17,8 +17,8 @@ internal unsafe class VulkanInstance : GPUInstance
 
     public static bool IsSupported() => s_isSupported.Value;
 
-    public VulkanInstance(in InstanceDescriptor descriptor)
-        : base(descriptor)
+    public VulkanGraphicsFactory(in GraphicsFactoryDescription description)
+        : base(description)
     {
         uint instanceLayerCount = 0;
         vkEnumerateInstanceLayerProperties(&instanceLayerCount, null).DebugCheckResult();
@@ -110,13 +110,13 @@ internal unsafe class VulkanInstance : GPUInstance
         //    instanceExtensions.Add(VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME);
         //}
 
-        if (descriptor.ValidationMode != ValidationMode.Disabled)
+        if (description.ValidationMode != ValidationMode.Disabled)
         {
             // Determine the optimal validation layers to enable that are necessary for useful debugging
             GetOptimalValidationLayers(availableInstanceLayers, instanceLayerCount, instanceLayers);
         }
 
-        if (descriptor.ValidationMode == ValidationMode.GPU)
+        if (description.ValidationMode == ValidationMode.GPU)
         {
             ReadOnlySpan<VkExtensionProperties> availableLayerInstanceExtensions = vkEnumerateInstanceExtensionProperties("VK_LAYER_KHRONOS_validation");
             for (int i = 0; i < availableLayerInstanceExtensions.Length; i++)
@@ -132,8 +132,8 @@ internal unsafe class VulkanInstance : GPUInstance
 
         VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = new();
 
-        using VkString pApplicationName = new(Label);
-        using VkString pEngineName = new("Vortice");
+        ReadOnlySpanUtf8 pApplicationName = new(Label.GetUtf8Span());
+        ReadOnlySpanUtf8 pEngineName = "Leoncino"u8;
 
         VkApplicationInfo appInfo = new()
         {
@@ -156,12 +156,12 @@ internal unsafe class VulkanInstance : GPUInstance
             ppEnabledExtensionNames = vkInstanceExtensions
         };
 
-        if (descriptor.ValidationMode != ValidationMode.Disabled && DebugUtils)
+        if (description.ValidationMode != ValidationMode.Disabled && DebugUtils)
         {
             debugUtilsCreateInfo.messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.Error | VkDebugUtilsMessageSeverityFlagsEXT.Warning;
             debugUtilsCreateInfo.messageType = VkDebugUtilsMessageTypeFlagsEXT.Validation | VkDebugUtilsMessageTypeFlagsEXT.Performance;
 
-            if (descriptor.ValidationMode == ValidationMode.Verbose)
+            if (description.ValidationMode == ValidationMode.Verbose)
             {
                 debugUtilsCreateInfo.messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Verbose;
                 debugUtilsCreateInfo.messageSeverity |= VkDebugUtilsMessageSeverityFlagsEXT.Info;
@@ -173,7 +173,7 @@ internal unsafe class VulkanInstance : GPUInstance
 
         VkValidationFeaturesEXT validationFeaturesInfo = new();
 
-        if (descriptor.ValidationMode == ValidationMode.GPU && validationFeatures)
+        if (description.ValidationMode == ValidationMode.GPU && validationFeatures)
         {
             VkValidationFeatureEnableEXT* enabledValidationFeatures = stackalloc VkValidationFeatureEnableEXT[2]
             {
@@ -200,7 +200,7 @@ internal unsafe class VulkanInstance : GPUInstance
         }
         vkLoadInstanceOnly(_instance);
 
-        if (descriptor.ValidationMode != ValidationMode.Disabled && DebugUtils)
+        if (description.ValidationMode != ValidationMode.Disabled && DebugUtils)
         {
             vkCreateDebugUtilsMessengerEXT(_instance, &debugUtilsCreateInfo, null, out _debugMessenger).CheckResult();
         }
@@ -236,10 +236,13 @@ internal unsafe class VulkanInstance : GPUInstance
     public bool HasWaylandSurface { get; }
     public VkInstance Handle => _instance;
 
+    /// <inheritdoc />
+    public override GraphicsBackend BackendType => GraphicsBackend.Vulkan;
+
     /// <summary>
-    /// Finalizes an instance of the <see cref="VulkanInstance" /> class.
+    /// Finalizes an instance of the <see cref="VulkanGraphicsFactory" /> class.
     /// </summary>
-    ~VulkanInstance() => Dispose(disposing: false);
+    ~VulkanGraphicsFactory() => Dispose(disposing: false);
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
@@ -264,7 +267,7 @@ internal unsafe class VulkanInstance : GPUInstance
 
         if (physicalDevices.Length == 0)
         {
-            throw new LeoncinoException("Vulkan: Failed to find GPUs with Vulkan support");
+            throw new GraphicsException("Vulkan: Failed to find GPUs with Vulkan support");
         }
 
         VkPhysicalDevice foundPhysicalDevice = VkPhysicalDevice.Null;
@@ -303,7 +306,7 @@ internal unsafe class VulkanInstance : GPUInstance
 
         if (foundPhysicalDevice.IsNull)
         {
-            throw new LeoncinoException("Vulkan: Failed to find a suitable GPU");
+            throw new GraphicsException("Vulkan: Failed to find a suitable GPU");
         }
 
         return ValueTask.FromResult<GPUAdapter>(new VulkanAdapter(foundPhysicalDevice));
@@ -341,7 +344,7 @@ internal unsafe class VulkanInstance : GPUInstance
         VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
         void* userData)
     {
-        string message = new(pCallbackData->pMessage);
+        string message = Interop.GetString(pCallbackData->pMessage)!;
         if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
         {
             if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)

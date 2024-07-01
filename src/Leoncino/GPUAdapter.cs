@@ -6,7 +6,7 @@ namespace Leoncino;
 /// <summary>
 /// Defines a GPU (physical device) adapter
 /// </summary>
-public abstract class GPUAdapter : GPUObjectBase
+public abstract class GPUAdapter : GraphicsObject
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="GPUAdapter" /> class.
