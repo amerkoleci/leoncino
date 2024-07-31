@@ -6,12 +6,14 @@ using System.Diagnostics.CodeAnalysis;
 namespace Leoncino;
 
 /// <summary>
-/// Structure that describes the <see cref="GPUTexture"/>.
+/// Structure that describes the <see cref="Texture"/>.
 /// </summary>
-public readonly record struct TextureDescriptor
+public readonly record struct TextureDescription
 {
+    public const int NumCubeMapSlices = 6;
+
     [SetsRequiredMembers]
-    public TextureDescriptor(
+    public TextureDescription(
         TextureDimension dimension,
         PixelFormat format,
         int width,
@@ -23,23 +25,6 @@ public readonly record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-#if VALIDATE_USAGE
-        if (format == PixelFormat.Undefined)
-        {
-            throw new GraphicsException($"format must be different than {PixelFormat.Undefined}");
-        }
-
-        if (width == 0 || height == 0 || depthOrArrayLayers == 0)
-        {
-            throw new GraphicsException("width, height, and depthOrArrayLayers must be non-zero.");
-        }
-
-        if (mipLevelCount < 0)
-        {
-            throw new GraphicsException("mipLevelCount must be greater or equal to zero.");
-        }
-#endif
-
         Dimension = dimension;
         Format = format;
         Width = width;
@@ -52,7 +37,7 @@ public readonly record struct TextureDescriptor
         Label = label;
     }
 
-    public static TextureDescriptor Texture1D(
+    public static TextureDescription Texture1D(
         PixelFormat format,
         int width,
         int mipLevelCount = 1,
@@ -61,7 +46,7 @@ public readonly record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        return new TextureDescriptor(
+        return new TextureDescription(
             TextureDimension.Texture1D,
             format,
             width,
@@ -74,7 +59,7 @@ public readonly record struct TextureDescriptor
             label);
     }
 
-    public static TextureDescriptor Texture2D(
+    public static TextureDescription Texture2D(
         PixelFormat format,
         int width,
         int height,
@@ -85,7 +70,7 @@ public readonly record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        return new TextureDescriptor(
+        return new TextureDescription(
             TextureDimension.Texture2D,
             format,
             width,
@@ -98,7 +83,7 @@ public readonly record struct TextureDescriptor
             label);
     }
 
-    public static TextureDescriptor Texture3D(
+    public static TextureDescription Texture3D(
         PixelFormat format,
         int width,
         int height,
@@ -108,7 +93,7 @@ public readonly record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        return new TextureDescriptor(
+        return new TextureDescription(
             TextureDimension.Texture3D,
             format,
             width,
@@ -121,38 +106,60 @@ public readonly record struct TextureDescriptor
             label);
     }
 
+    public static TextureDescription TextureCube(
+        PixelFormat format,
+        int width,
+        int mipLevelCount = 1,
+        int arrayLayers = 1,
+        TextureUsage usage = TextureUsage.ShaderRead,
+        CpuAccessMode access = CpuAccessMode.None,
+        string? label = default)
+    {
+        return new TextureDescription(
+            TextureDimension.Texture2D,
+            format,
+            width * NumCubeMapSlices,
+            width * NumCubeMapSlices,
+            1,
+            mipLevelCount,
+            usage,
+            1,
+            access,
+            label);
+    }
+
     /// <summary>
-    /// Gets the dimension of <see cref="GPUTexture"/>
+    /// Gets the dimension of <see cref="Texture"/>
     /// </summary>
     public required TextureDimension Dimension { get; init; }
 
     /// <summary>
-    /// Gets the pixel format of <see cref="GPUTexture"/>
+    /// Gets the pixel format of <see cref="Texture"/>
     /// </summary>
     public required PixelFormat Format { get; init; }
 
     /// <summary>
-    /// Gets the width of <see cref="GPUTexture"/>
+    /// Gets the width of <see cref="Texture"/>
     /// </summary>
     public required int Width { get; init; } = 1;
 
     /// <summary>
-    /// Gets the height of <see cref="GPUTexture"/>
+    /// Gets the height of <see cref="Texture"/>
     /// </summary>
     public required int Height { get; init; } = 1;
 
     /// <summary>
-    /// Gets the depth of <see cref="GPUTexture"/>, if it is 3D, or the array layers if it is an array of 1D or 2D resources.
+    /// Gets the depth of <see cref="Texture"/>, if it is 3D, or the array layers if it is an array of 1D or 2D resources.
     /// </summary>
     public required int DepthOrArrayLayers { get; init; } = 1;
 
     /// <summary>
-    /// The number of mipmap levels in the <see cref="GPUTexture"/>.
+    /// The number of mipmap levels in the <see cref="Texture"/>.
     /// </summary>
     public required int MipLevelCount { get; init; } = 1;
 
     /// <summary>
-    /// Gets the <see cref="TextureUsage"/> of <see cref="GPUTexture"/>.
+    /// Gets the <see cref="TextureUsage"/> of <see cref="Texture"/>.
     /// </summary>
     public TextureUsage Usage { get; init; } = TextureUsage.ShaderRead;
 
@@ -162,12 +169,12 @@ public readonly record struct TextureDescriptor
     public uint SampleCount { get; init; } = 1;
 
     /// <summary>
-    /// CPU access of the <see cref="GPUTexture"/>.
+    /// CPU access of the <see cref="Texture"/>.
     /// </summary>
     public CpuAccessMode CpuAccess { get; init; } = CpuAccessMode.None;
 
     // <summary>
-    /// Gets or sets the label of <see cref="GPUTexture"/>.
+    /// Gets or sets the label of <see cref="Texture"/>.
     /// </summary>
     public string? Label { get; init; }
 }

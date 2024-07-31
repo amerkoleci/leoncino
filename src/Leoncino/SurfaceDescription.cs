@@ -4,21 +4,21 @@
 namespace Leoncino;
 
 /// <summary>
-/// Structure that describes the <see cref="GPUSurface"/>.
+/// Structure that describes the <see cref="GraphicsSurface"/>.
 /// </summary>
-public readonly record struct SurfaceDescriptor
+public readonly record struct SurfaceDescription
 {
-    public SurfaceDescriptor()
+    public SurfaceDescription()
     {
     }
 
     /// <summary>
     /// Gets or sets the surface source.
     /// </summary>
-    public SurfaceSource? Source { get; init; }
+    public required SurfaceSource Source { get; init; }
 
     /// <summary>
-    /// Gets or sets the label of <see cref="GPUSurface"/>.
+    /// Gets or sets the label of <see cref="GraphicsSurface"/>.
     /// </summary>
     public string? Label { get; init; } = default;
 }

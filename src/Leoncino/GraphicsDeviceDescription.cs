@@ -6,14 +6,14 @@ namespace Leoncino;
 /// <summary>
 /// Structure that describes the <see cref="GraphicsDevice"/>.
 /// </summary>
-public readonly record struct DeviceDescriptor
+public readonly record struct GraphicsDeviceDescription
 {
-    public DeviceDescriptor()
+    public GraphicsDeviceDescription()
     {
     }
 
     /// <summary>
-    /// Gets or sets the label of <see cref="Instance"/>.
+    /// Gets or sets the label.
     /// </summary>
     public string? Label { get; init; } = default;
 }

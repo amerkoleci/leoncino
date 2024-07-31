@@ -11,7 +11,6 @@ public abstract class GraphicsFactory : GraphicsObject
     protected GraphicsFactory(in GraphicsFactoryDescription description)
         : base(description.Label)
     {
-        Headless = description.Headless;
     }
 
     /// <summary>
@@ -19,9 +18,7 @@ public abstract class GraphicsFactory : GraphicsObject
     /// </summary>
     public abstract GraphicsBackend BackendType { get; }
 
-    public bool Headless { get; }
-
-    public GPUSurface CreateSurface(in SurfaceDescriptor descriptor)
+    public GraphicsSurface CreateSurface(in SurfaceDescription descriptor)
     {
 #if VALIDATE_USAGE
         if (descriptor.Source is null)
@@ -33,14 +30,14 @@ public abstract class GraphicsFactory : GraphicsObject
         return CreateSurfaceCore(in descriptor);
     }
 
-    public ValueTask<GPUAdapter> RequestAdapterAsync(in RequestAdapterOptions options)
+    public GraphicsAdapter RequestAdapter(in RequestAdapterOptions options)
     {
-        return RequestAdapterAsyncCore(in options);
+        return RequestAdapterCore(in options);
     }
 
-    protected abstract GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor);
+    protected abstract GraphicsSurface CreateSurfaceCore(in SurfaceDescription descriptor);
 
-    protected abstract ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options);
+    protected abstract GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options);
 
     public static bool IsBackendSupport(GraphicsBackend backend)
     {

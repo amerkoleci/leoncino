@@ -4,7 +4,7 @@
 namespace Leoncino;
 
 /// <summary>
-/// Structure that configures the <see cref="GPUSurface"/>.
+/// Structure that configures the <see cref="GraphicsSurface"/>.
 /// </summary>
 public readonly record struct SurfaceConfiguration
 {

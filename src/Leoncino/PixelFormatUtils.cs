@@ -105,34 +105,49 @@ public static class PixelFormatUtils
         new(PixelFormat.EACRG11Snorm,        16,   4, 4, FormatKind.Snorm),
 
         // ASTC compressed formats
-        new(PixelFormat.ASTC4x4Unorm,        16,   4, 4, FormatKind.Unorm),
-        new(PixelFormat.ASTC4x4UnormSrgb,    16,   4, 4, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC5x4Unorm,        16,   5, 4, FormatKind.Unorm),
-        new(PixelFormat.ASTC5x4UnormSrgb,    16,   5, 4, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC5x5Unorm,        16,   5, 5, FormatKind.Unorm),
-        new(PixelFormat.ASTC5x5UnormSrgb,    16,   5, 5, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC6x5Unorm,        16,   6, 5, FormatKind.Unorm),
-        new(PixelFormat.ASTC6x5UnormSrgb,    16,   6, 5, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC6x6Unorm,        16,   6, 6, FormatKind.Unorm),
-        new(PixelFormat.ASTC6x6UnormSrgb,    16,   6, 6, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC8x5Unorm,        16,   8, 5, FormatKind.Unorm),
-        new(PixelFormat.ASTC8x5UnormSrgb,    16,   8, 5, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC8x6Unorm,        16,   8, 6, FormatKind.Unorm),
-        new(PixelFormat.ASTC8x6UnormSrgb,    16,   8, 6, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC8x8Unorm,        16,   8, 8, FormatKind.Unorm),
-        new(PixelFormat.ASTC8x8UnormSrgb,    16,   8, 8, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC10x5Unorm,       16,   10, 5, FormatKind.Unorm),
-        new(PixelFormat.ASTC10x5UnormSrgb,   16,   10, 5, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC10x6Unorm,       16,   10, 6, FormatKind.Unorm),
-        new(PixelFormat.ASTC10x6UnormSrgb,   16,   10, 6, FormatKind.UnormSrgb ),
-        new(PixelFormat.ASTC10x8Unorm,       16,   10, 8, FormatKind.Unorm),
-        new(PixelFormat.ASTC10x8UnormSrgb,   16,   10, 8, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC10x10Unorm,      16,   10, 10, FormatKind.Unorm ),
-        new(PixelFormat.ASTC10x10UnormSrgb,  16,   10, 10, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC12x10Unorm,      16,   12, 10, FormatKind.Unorm),
-        new(PixelFormat.ASTC12x10UnormSrgb,  16,   12, 10, FormatKind.UnormSrgb),
-        new(PixelFormat.ASTC12x12Unorm,      16,   12, 12, FormatKind.Unorm),
-        new(PixelFormat.ASTC12x12UnormSrgb,  16,   12, 12, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc4x4Unorm,        16,   4, 4, FormatKind.Unorm),
+        new(PixelFormat.Astc4x4UnormSrgb,    16,   4, 4, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc5x4Unorm,        16,   5, 4, FormatKind.Unorm),
+        new(PixelFormat.Astc5x4UnormSrgb,    16,   5, 4, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc5x5Unorm,        16,   5, 5, FormatKind.Unorm),
+        new(PixelFormat.Astc5x5UnormSrgb,    16,   5, 5, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc6x5Unorm,        16,   6, 5, FormatKind.Unorm),
+        new(PixelFormat.Astc6x5UnormSrgb,    16,   6, 5, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc6x6Unorm,        16,   6, 6, FormatKind.Unorm),
+        new(PixelFormat.Astc6x6UnormSrgb,    16,   6, 6, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc8x5Unorm,        16,   8, 5, FormatKind.Unorm),
+        new(PixelFormat.Astc8x5UnormSrgb,    16,   8, 5, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc8x6Unorm,        16,   8, 6, FormatKind.Unorm),
+        new(PixelFormat.Astc8x6UnormSrgb,    16,   8, 6, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc8x8Unorm,        16,   8, 8, FormatKind.Unorm),
+        new(PixelFormat.Astc8x8UnormSrgb,    16,   8, 8, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc10x5Unorm,       16,   10, 5, FormatKind.Unorm),
+        new(PixelFormat.Astc10x5UnormSrgb,   16,   10, 5, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc10x6Unorm,       16,   10, 6, FormatKind.Unorm),
+        new(PixelFormat.Astc10x6UnormSrgb,   16,   10, 6, FormatKind.UnormSrgb ),
+        new(PixelFormat.Astc10x8Unorm,       16,   10, 8, FormatKind.Unorm),
+        new(PixelFormat.Astc10x8UnormSrgb,   16,   10, 8, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc10x10Unorm,      16,   10, 10, FormatKind.Unorm ),
+        new(PixelFormat.Astc10x10UnormSrgb,  16,   10, 10, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc12x10Unorm,      16,   12, 10, FormatKind.Unorm),
+        new(PixelFormat.Astc12x10UnormSrgb,  16,   12, 10, FormatKind.UnormSrgb),
+        new(PixelFormat.Astc12x12Unorm,      16,   12, 12, FormatKind.Unorm),
+        new(PixelFormat.Astc12x12UnormSrgb,  16,   12, 12, FormatKind.UnormSrgb),
+         // ASTC HDR compressed formats
+        new(PixelFormat.Astc4x4Hdr,             16,   4, 4, FormatKind.Hdr),
+        new(PixelFormat.Astc5x4Hdr,             16,   5, 4, FormatKind.Hdr),
+        new(PixelFormat.Astc5x5Hdr,             16,   5, 5, FormatKind.Hdr),
+        new(PixelFormat.Astc6x5Hdr,             16,   6, 5, FormatKind.Hdr),
+        new(PixelFormat.Astc6x6Hdr,             16,   6, 6, FormatKind.Hdr),
+        new(PixelFormat.Astc8x5Hdr,             16,   8, 5, FormatKind.Hdr),
+        new(PixelFormat.Astc8x6Hdr,             16,   8, 6, FormatKind.Hdr),
+        new(PixelFormat.Astc8x8Hdr,             16,   8, 6, FormatKind.Hdr),
+        new(PixelFormat.Astc10x5Hdr,            16,   10, 5, FormatKind.Hdr),
+        new(PixelFormat.Astc10x6Hdr,            16,   10, 6, FormatKind.Hdr),
+        new(PixelFormat.Astc10x8Hdr,            16,   10, 8, FormatKind.Hdr),
+        new(PixelFormat.Astc10x10Hdr,           16,   10, 10, FormatKind.Hdr),
+        new(PixelFormat.Astc12x10Hdr,           16,   12, 10, FormatKind.Hdr),
+        new(PixelFormat.Astc12x12Hdr,           16,   12, 12, FormatKind.Hdr),
     ];
 
     public static ref readonly PixelFormatInfo GetFormatInfo(this PixelFormat format)
@@ -239,38 +254,55 @@ public static class PixelFormatUtils
     /// </summary>
     /// <param name="format"></param>
     /// <returns></returns>
-    public static bool IsASTCCompressedFormat(this PixelFormat format)
+    public static bool IsAstcCompressedFormat(this PixelFormat format)
     {
         switch (format)
         {
-            case PixelFormat.ASTC4x4Unorm:
-            case PixelFormat.ASTC4x4UnormSrgb:
-            case PixelFormat.ASTC5x4Unorm:
-            case PixelFormat.ASTC5x4UnormSrgb:
-            case PixelFormat.ASTC5x5Unorm:
-            case PixelFormat.ASTC5x5UnormSrgb:
-            case PixelFormat.ASTC6x5Unorm:
-            case PixelFormat.ASTC6x5UnormSrgb:
-            case PixelFormat.ASTC6x6Unorm:
-            case PixelFormat.ASTC6x6UnormSrgb:
-            case PixelFormat.ASTC8x5Unorm:
-            case PixelFormat.ASTC8x5UnormSrgb:
-            case PixelFormat.ASTC8x6Unorm:
-            case PixelFormat.ASTC8x6UnormSrgb:
-            case PixelFormat.ASTC8x8Unorm:
-            case PixelFormat.ASTC8x8UnormSrgb:
-            case PixelFormat.ASTC10x5Unorm:
-            case PixelFormat.ASTC10x5UnormSrgb:
-            case PixelFormat.ASTC10x6Unorm:
-            case PixelFormat.ASTC10x6UnormSrgb:
-            case PixelFormat.ASTC10x8Unorm:
-            case PixelFormat.ASTC10x8UnormSrgb:
-            case PixelFormat.ASTC10x10Unorm:
-            case PixelFormat.ASTC10x10UnormSrgb:
-            case PixelFormat.ASTC12x10Unorm:
-            case PixelFormat.ASTC12x10UnormSrgb:
-            case PixelFormat.ASTC12x12Unorm:
+            case PixelFormat.Astc4x4Unorm:
+            case PixelFormat.Astc4x4UnormSrgb:
+            case PixelFormat.Astc5x4Unorm:
+            case PixelFormat.Astc5x4UnormSrgb:
+            case PixelFormat.Astc5x5Unorm:
+            case PixelFormat.Astc5x5UnormSrgb:
+            case PixelFormat.Astc6x5Unorm:
+            case PixelFormat.Astc6x5UnormSrgb:
+            case PixelFormat.Astc6x6Unorm:
+            case PixelFormat.Astc6x6UnormSrgb:
+            case PixelFormat.Astc8x5Unorm:
+            case PixelFormat.Astc8x5UnormSrgb:
+            case PixelFormat.Astc8x6Unorm:
+            case PixelFormat.Astc8x6UnormSrgb:
+            case PixelFormat.Astc8x8Unorm:
+            case PixelFormat.Astc8x8UnormSrgb:
+            case PixelFormat.Astc10x5Unorm:
+            case PixelFormat.Astc10x5UnormSrgb:
+            case PixelFormat.Astc10x6Unorm:
+            case PixelFormat.Astc10x6UnormSrgb:
+            case PixelFormat.Astc10x8Unorm:
+            case PixelFormat.Astc10x8UnormSrgb:
+            case PixelFormat.Astc10x10Unorm:
+            case PixelFormat.Astc10x10UnormSrgb:
+            case PixelFormat.Astc12x10Unorm:
+            case PixelFormat.Astc12x10UnormSrgb:
+            case PixelFormat.Astc12x12Unorm:
                 return true;
+
+            case PixelFormat.Astc4x4Hdr:
+            case PixelFormat.Astc5x4Hdr:
+            case PixelFormat.Astc5x5Hdr:
+            case PixelFormat.Astc6x5Hdr:
+            case PixelFormat.Astc6x6Hdr:
+            case PixelFormat.Astc8x5Hdr:
+            case PixelFormat.Astc8x6Hdr:
+            case PixelFormat.Astc8x8Hdr:
+            case PixelFormat.Astc10x5Hdr:
+            case PixelFormat.Astc10x6Hdr:
+            case PixelFormat.Astc10x8Hdr:
+            case PixelFormat.Astc10x10Hdr:
+            case PixelFormat.Astc12x10Hdr:
+            case PixelFormat.Astc12x12Hdr:
+                return true;
+
             default:
                 return false;
         }
@@ -397,34 +429,34 @@ public static class PixelFormatUtils
                 return PixelFormat.ETC2RGBA8Unorm;
 
             // Astc compressed formats
-            case PixelFormat.ASTC4x4UnormSrgb:
-                return PixelFormat.ASTC4x4Unorm;
-            case PixelFormat.ASTC5x4UnormSrgb:
-                return PixelFormat.ASTC5x4Unorm;
-            case PixelFormat.ASTC5x5UnormSrgb:
-                return PixelFormat.ASTC5x5Unorm;
-            case PixelFormat.ASTC6x5UnormSrgb:
-                return PixelFormat.ASTC6x5Unorm;
-            case PixelFormat.ASTC6x6UnormSrgb:
-                return PixelFormat.ASTC6x6Unorm;
-            case PixelFormat.ASTC8x5UnormSrgb:
-                return PixelFormat.ASTC8x5Unorm;
-            case PixelFormat.ASTC8x6UnormSrgb:
-                return PixelFormat.ASTC8x6Unorm;
-            case PixelFormat.ASTC8x8UnormSrgb:
-                return PixelFormat.ASTC8x8Unorm;
-            case PixelFormat.ASTC10x5UnormSrgb:
-                return PixelFormat.ASTC10x5Unorm;
-            case PixelFormat.ASTC10x6UnormSrgb:
-                return PixelFormat.ASTC10x6Unorm;
-            case PixelFormat.ASTC10x8UnormSrgb:
-                return PixelFormat.ASTC10x8Unorm;
-            case PixelFormat.ASTC10x10UnormSrgb:
-                return PixelFormat.ASTC10x10Unorm;
-            case PixelFormat.ASTC12x10UnormSrgb:
-                return PixelFormat.ASTC12x10Unorm;
-            case PixelFormat.ASTC12x12UnormSrgb:
-                return PixelFormat.ASTC12x12Unorm;
+            case PixelFormat.Astc4x4UnormSrgb:
+                return PixelFormat.Astc4x4Unorm;
+            case PixelFormat.Astc5x4UnormSrgb:
+                return PixelFormat.Astc5x4Unorm;
+            case PixelFormat.Astc5x5UnormSrgb:
+                return PixelFormat.Astc5x5Unorm;
+            case PixelFormat.Astc6x5UnormSrgb:
+                return PixelFormat.Astc6x5Unorm;
+            case PixelFormat.Astc6x6UnormSrgb:
+                return PixelFormat.Astc6x6Unorm;
+            case PixelFormat.Astc8x5UnormSrgb:
+                return PixelFormat.Astc8x5Unorm;
+            case PixelFormat.Astc8x6UnormSrgb:
+                return PixelFormat.Astc8x6Unorm;
+            case PixelFormat.Astc8x8UnormSrgb:
+                return PixelFormat.Astc8x8Unorm;
+            case PixelFormat.Astc10x5UnormSrgb:
+                return PixelFormat.Astc10x5Unorm;
+            case PixelFormat.Astc10x6UnormSrgb:
+                return PixelFormat.Astc10x6Unorm;
+            case PixelFormat.Astc10x8UnormSrgb:
+                return PixelFormat.Astc10x8Unorm;
+            case PixelFormat.Astc10x10UnormSrgb:
+                return PixelFormat.Astc10x10Unorm;
+            case PixelFormat.Astc12x10UnormSrgb:
+                return PixelFormat.Astc12x10Unorm;
+            case PixelFormat.Astc12x12UnormSrgb:
+                return PixelFormat.Astc12x12Unorm;
 
             default:
                 Debug.Assert(!IsSrgb(format));
@@ -466,34 +498,34 @@ public static class PixelFormatUtils
                 return PixelFormat.ETC2RGBA8UnormSrgb;
 
             // Astc compressed formats
-            case PixelFormat.ASTC4x4Unorm:
-                return PixelFormat.ASTC4x4UnormSrgb;
-            case PixelFormat.ASTC5x4Unorm:
-                return PixelFormat.ASTC5x4UnormSrgb;
-            case PixelFormat.ASTC5x5Unorm:
-                return PixelFormat.ASTC5x5UnormSrgb;
-            case PixelFormat.ASTC6x5Unorm:
-                return PixelFormat.ASTC6x5UnormSrgb;
-            case PixelFormat.ASTC6x6Unorm:
-                return PixelFormat.ASTC6x6UnormSrgb;
-            case PixelFormat.ASTC8x5Unorm:
-                return PixelFormat.ASTC8x5UnormSrgb;
-            case PixelFormat.ASTC8x6Unorm:
-                return PixelFormat.ASTC8x6UnormSrgb;
-            case PixelFormat.ASTC8x8Unorm:
-                return PixelFormat.ASTC8x8UnormSrgb;
-            case PixelFormat.ASTC10x5Unorm:
-                return PixelFormat.ASTC10x5UnormSrgb;
-            case PixelFormat.ASTC10x6Unorm:
-                return PixelFormat.ASTC10x6UnormSrgb;
-            case PixelFormat.ASTC10x8Unorm:
-                return PixelFormat.ASTC10x8UnormSrgb;
-            case PixelFormat.ASTC10x10Unorm:
-                return PixelFormat.ASTC10x10UnormSrgb;
-            case PixelFormat.ASTC12x10Unorm:
-                return PixelFormat.ASTC12x10UnormSrgb;
-            case PixelFormat.ASTC12x12Unorm:
-                return PixelFormat.ASTC12x12UnormSrgb;
+            case PixelFormat.Astc4x4Unorm:
+                return PixelFormat.Astc4x4UnormSrgb;
+            case PixelFormat.Astc5x4Unorm:
+                return PixelFormat.Astc5x4UnormSrgb;
+            case PixelFormat.Astc5x5Unorm:
+                return PixelFormat.Astc5x5UnormSrgb;
+            case PixelFormat.Astc6x5Unorm:
+                return PixelFormat.Astc6x5UnormSrgb;
+            case PixelFormat.Astc6x6Unorm:
+                return PixelFormat.Astc6x6UnormSrgb;
+            case PixelFormat.Astc8x5Unorm:
+                return PixelFormat.Astc8x5UnormSrgb;
+            case PixelFormat.Astc8x6Unorm:
+                return PixelFormat.Astc8x6UnormSrgb;
+            case PixelFormat.Astc8x8Unorm:
+                return PixelFormat.Astc8x8UnormSrgb;
+            case PixelFormat.Astc10x5Unorm:
+                return PixelFormat.Astc10x5UnormSrgb;
+            case PixelFormat.Astc10x6Unorm:
+                return PixelFormat.Astc10x6UnormSrgb;
+            case PixelFormat.Astc10x8Unorm:
+                return PixelFormat.Astc10x8UnormSrgb;
+            case PixelFormat.Astc10x10Unorm:
+                return PixelFormat.Astc10x10UnormSrgb;
+            case PixelFormat.Astc12x10Unorm:
+                return PixelFormat.Astc12x10UnormSrgb;
+            case PixelFormat.Astc12x12Unorm:
+                return PixelFormat.Astc12x12UnormSrgb;
 
             default:
                 return format;
@@ -654,38 +686,60 @@ public static class PixelFormatUtils
                 break;
 
             // ASTC compressed formats
-            case PixelFormat.ASTC4x4Unorm:
-            case PixelFormat.ASTC4x4UnormSrgb:
-            case PixelFormat.ASTC5x4Unorm:
-            case PixelFormat.ASTC5x4UnormSrgb:
-            case PixelFormat.ASTC5x5Unorm:
-            case PixelFormat.ASTC5x5UnormSrgb:
-            case PixelFormat.ASTC6x5Unorm:
-            case PixelFormat.ASTC6x5UnormSrgb:
-            case PixelFormat.ASTC6x6Unorm:
-            case PixelFormat.ASTC6x6UnormSrgb:
-            case PixelFormat.ASTC8x5Unorm:
-            case PixelFormat.ASTC8x5UnormSrgb:
-            case PixelFormat.ASTC8x6Unorm:
-            case PixelFormat.ASTC8x6UnormSrgb:
-            case PixelFormat.ASTC8x8Unorm:
-            case PixelFormat.ASTC8x8UnormSrgb:
-            case PixelFormat.ASTC10x5Unorm:
-            case PixelFormat.ASTC10x5UnormSrgb:
-            case PixelFormat.ASTC10x6Unorm:
-            case PixelFormat.ASTC10x6UnormSrgb:
-            case PixelFormat.ASTC10x8Unorm:
-            case PixelFormat.ASTC10x8UnormSrgb:
-            case PixelFormat.ASTC10x10Unorm:
-            case PixelFormat.ASTC10x10UnormSrgb:
-            case PixelFormat.ASTC12x10Unorm:
-            case PixelFormat.ASTC12x10UnormSrgb:
-            case PixelFormat.ASTC12x12Unorm:
+            case PixelFormat.Astc4x4Unorm:
+            case PixelFormat.Astc4x4UnormSrgb:
+            case PixelFormat.Astc5x4Unorm:
+            case PixelFormat.Astc5x4UnormSrgb:
+            case PixelFormat.Astc5x5Unorm:
+            case PixelFormat.Astc5x5UnormSrgb:
+            case PixelFormat.Astc6x5Unorm:
+            case PixelFormat.Astc6x5UnormSrgb:
+            case PixelFormat.Astc6x6Unorm:
+            case PixelFormat.Astc6x6UnormSrgb:
+            case PixelFormat.Astc8x5Unorm:
+            case PixelFormat.Astc8x5UnormSrgb:
+            case PixelFormat.Astc8x6Unorm:
+            case PixelFormat.Astc8x6UnormSrgb:
+            case PixelFormat.Astc8x8Unorm:
+            case PixelFormat.Astc8x8UnormSrgb:
+            case PixelFormat.Astc10x5Unorm:
+            case PixelFormat.Astc10x5UnormSrgb:
+            case PixelFormat.Astc10x6Unorm:
+            case PixelFormat.Astc10x6UnormSrgb:
+            case PixelFormat.Astc10x8Unorm:
+            case PixelFormat.Astc10x8UnormSrgb:
+            case PixelFormat.Astc10x10Unorm:
+            case PixelFormat.Astc10x10UnormSrgb:
+            case PixelFormat.Astc12x10Unorm:
+            case PixelFormat.Astc12x10UnormSrgb:
+            case PixelFormat.Astc12x12Unorm:
                 widthCount = Math.Max(1, (width + formatInfo.BlockWidth - 1) / formatInfo.BlockWidth);
                 heightCount = Math.Max(1, (height + formatInfo.BlockHeight - 1) / formatInfo.BlockHeight);
                 rowPitch = widthCount * formatInfo.BytesPerBlock;  // BytesPerBlock is always 16
                 slicePitch = rowPitch * heightCount;
                 break;
+
+            // ASTC HDR compressed formats
+            case PixelFormat.Astc4x4Hdr:
+            case PixelFormat.Astc5x4Hdr:
+            case PixelFormat.Astc5x5Hdr:
+            case PixelFormat.Astc6x5Hdr:
+            case PixelFormat.Astc6x6Hdr:
+            case PixelFormat.Astc8x5Hdr:
+            case PixelFormat.Astc8x6Hdr:
+            case PixelFormat.Astc8x8Hdr:
+            case PixelFormat.Astc10x5Hdr:
+            case PixelFormat.Astc10x6Hdr:
+            case PixelFormat.Astc10x8Hdr:
+            case PixelFormat.Astc10x10Hdr:
+            case PixelFormat.Astc12x10Hdr:
+            case PixelFormat.Astc12x12Hdr:
+                throw new NotImplementedException();
+            //widthCount = Math.Max(1, (width + formatInfo.BlockWidth - 1) / formatInfo.BlockWidth);
+            //heightCount = Math.Max(1, (height + formatInfo.BlockHeight - 1) / formatInfo.BlockHeight);
+            //rowPitch = widthCount * formatInfo.BytesPerBlock;  // BytesPerBlock is always 16
+            //slicePitch = rowPitch * heightCount;
+            //break;
 
             //case Format.R8G8_B8G8_UNorm:
             //case Format.G8R8_G8B8_UNorm:

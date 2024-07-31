@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Leoncino;
 
 /// <summary>
-/// Structure that describes the <see cref="GPUBuffer"/>.
+/// Structure that describes the <see cref="GraphicsBuffer"/>.
 /// </summary>
 public readonly record struct BufferDescriptor
 {

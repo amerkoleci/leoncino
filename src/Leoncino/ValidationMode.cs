@@ -4,9 +4,9 @@
 namespace Leoncino;
 
 /// <summary>
-/// Type of validation during creation of <see cref="Instance"/>.
+/// Type of validation during creation of <see cref="GraphicsFactory"/>.
 /// </summary>
-/// <remarks>See <see cref="InstanceDescriptor.ValidationMode"/></remarks>
+/// <remarks>See <see cref="GraphicsFactoryDescription.ValidationMode"/></remarks>
 public enum ValidationMode
 {
     /// <summary>

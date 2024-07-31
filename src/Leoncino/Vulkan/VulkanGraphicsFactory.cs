@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using static Leoncino.Vulkan.VulkanUtils;
+using Win32;
+using XenoAtom.Collections;
 
 namespace Leoncino.Vulkan;
 
@@ -20,57 +22,59 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
     public VulkanGraphicsFactory(in GraphicsFactoryDescription description)
         : base(description)
     {
-        uint instanceLayerCount = 0;
-        vkEnumerateInstanceLayerProperties(&instanceLayerCount, null).DebugCheckResult();
-        VkLayerProperties* availableInstanceLayers = stackalloc VkLayerProperties[(int)instanceLayerCount];
-        vkEnumerateInstanceLayerProperties(&instanceLayerCount, availableInstanceLayers).DebugCheckResult();
+        vkEnumerateInstanceLayerProperties(out uint availableInstanceLayerCount).CheckResult();
+        Span<VkLayerProperties> availableInstanceLayers = stackalloc VkLayerProperties[(int)availableInstanceLayerCount];
+        vkEnumerateInstanceLayerProperties(availableInstanceLayers).CheckResult();
 
-        uint extensionCount = 0;
-        vkEnumerateInstanceExtensionProperties(null, &extensionCount, null).CheckResult();
-        VkExtensionProperties* availableInstanceExtensions = stackalloc VkExtensionProperties[(int)extensionCount];
-        vkEnumerateInstanceExtensionProperties(null, &extensionCount, availableInstanceExtensions).CheckResult();
+        vkEnumerateInstanceExtensionProperties(out uint extensionCount).CheckResult();
+        Span<VkExtensionProperties> availableInstanceExtensions = stackalloc VkExtensionProperties[(int)extensionCount];
+        vkEnumerateInstanceExtensionProperties(availableInstanceExtensions).CheckResult();
 
-        List<string> instanceExtensions = [];
-        List<string> instanceLayers = [];
+        UnsafeList<VkUtf8String> instanceExtensions = [];
+        UnsafeList<VkUtf8String> instanceLayers = [];
         bool validationFeatures = false;
+        bool hasPortability = false;
 
         for (int i = 0; i < extensionCount; i++)
         {
-            string extensionName = availableInstanceExtensions[i].GetExtensionName();
-            if (extensionName == VK_EXT_DEBUG_UTILS_EXTENSION_NAME)
+            fixed (byte* pExtensionName = availableInstanceExtensions[i].extensionName)
             {
-                DebugUtils = true;
-                instanceExtensions.Add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-            }
-            else if (extensionName == VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-            {
-                instanceExtensions.Add(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-            }
-            else if (extensionName == VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME)
-            {
-                HasPortability = true;
-                instanceExtensions.Add(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-            }
-            else if (extensionName == VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME)
-            {
-                instanceExtensions.Add(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
-            }
-            else if (extensionName == VK_KHR_XLIB_SURFACE_EXTENSION_NAME)
-            {
-                HasXlibSurface = true;
-            }
-            else if (extensionName == VK_KHR_XCB_SURFACE_EXTENSION_NAME)
-            {
-                HasXcbSurface = true;
-            }
-            else if (extensionName == VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME)
-            {
-                HasWaylandSurface = true;
-            }
-            else if (extensionName == VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME)
-            {
-                HasHeadlessSurface = true;
-
+                VkUtf8String extensionName = new(pExtensionName);
+                if (extensionName == VK_EXT_DEBUG_UTILS_EXTENSION_NAME)
+                {
+                    DebugUtils = true;
+                    instanceExtensions.Add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+                }
+                else if (extensionName == VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
+                {
+                    // Core 1.1
+                    instanceExtensions.Add(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+                }
+                else if (extensionName == VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME)
+                {
+                    hasPortability = true;
+                    instanceExtensions.Add(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+                }
+                else if (extensionName == VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME)
+                {
+                    instanceExtensions.Add(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+                }
+                else if (extensionName == VK_KHR_XLIB_SURFACE_EXTENSION_NAME)
+                {
+                    HasXlibSurface = true;
+                }
+                else if (extensionName == VK_KHR_XCB_SURFACE_EXTENSION_NAME)
+                {
+                    HasXcbSurface = true;
+                }
+                else if (extensionName == VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME)
+                {
+                    HasWaylandSurface = true;
+                }
+                else if (extensionName == VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME)
+                {
+                    HasHeadlessSurface = true;
+                }
             }
         }
         instanceExtensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
@@ -100,8 +104,16 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
                 instanceExtensions.Add(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
             }
         }
-        else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
+        else if (OperatingSystem.IsMacOS()
+            || OperatingSystem.IsMacCatalyst()
+            || OperatingSystem.IsIOS()
+            || OperatingSystem.IsTvOS())
         {
+            if (!hasPortability)
+            {
+                throw new GraphicsException($"Required {new VkUtf8ReadOnlyString(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME).ToString()} is missing");
+            }
+
             instanceExtensions.Add(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
         }
 
@@ -113,27 +125,34 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
         if (description.ValidationMode != ValidationMode.Disabled)
         {
             // Determine the optimal validation layers to enable that are necessary for useful debugging
-            GetOptimalValidationLayers(availableInstanceLayers, instanceLayerCount, instanceLayers);
+            GetOptimalValidationLayers(ref instanceLayers, availableInstanceLayers);
         }
 
         if (description.ValidationMode == ValidationMode.GPU)
         {
-            ReadOnlySpan<VkExtensionProperties> availableLayerInstanceExtensions = vkEnumerateInstanceExtensionProperties("VK_LAYER_KHRONOS_validation");
+            vkEnumerateInstanceExtensionProperties(VK_LAYER_KHRONOS_VALIDATION_EXTENSION_NAME, out uint propertyCount).CheckResult();
+            Span<VkExtensionProperties> availableLayerInstanceExtensions = stackalloc VkExtensionProperties[(int)propertyCount];
+            vkEnumerateInstanceExtensionProperties(VK_LAYER_KHRONOS_VALIDATION_EXTENSION_NAME, availableLayerInstanceExtensions).CheckResult();
+
             for (int i = 0; i < availableLayerInstanceExtensions.Length; i++)
             {
-                string extensionName = availableLayerInstanceExtensions[i].GetExtensionName();
-                if (extensionName == VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME)
+                fixed (byte* pExtensionName = availableLayerInstanceExtensions[i].extensionName)
                 {
-                    validationFeatures = true;
-                    instanceExtensions.Add(VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME);
+                    VkUtf8String extensionName = new(pExtensionName);
+
+                    if (extensionName == VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME)
+                    {
+                        validationFeatures = true;
+                        instanceExtensions.Add(VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME);
+                    }
                 }
             }
         }
 
         VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = new();
 
-        ReadOnlySpanUtf8 pApplicationName = new(Label.GetUtf8Span());
-        ReadOnlySpanUtf8 pEngineName = "Leoncino"u8;
+        VkUtf8ReadOnlyString pApplicationName = Label.GetUtf8Span();
+        VkUtf8ReadOnlyString pEngineName = "Leoncino"u8;
 
         VkApplicationInfo appInfo = new()
         {
@@ -149,6 +168,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
 
         VkInstanceCreateInfo createInfo = new()
         {
+            flags = hasPortability ? VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : 0,
             pApplicationInfo = &appInfo,
             enabledLayerCount = vkLayerNames.Length,
             ppEnabledLayerNames = vkLayerNames,
@@ -188,11 +208,6 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
             createInfo.pNext = &validationFeaturesInfo;
         }
 
-        if (HasPortability)
-        {
-            createInfo.flags |= VkInstanceCreateFlags.EnumeratePortabilityKHR;
-        }
-
         VkResult result = vkCreateInstance(&createInfo, null, out _instance);
         if (result != VkResult.Success)
         {
@@ -214,7 +229,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
 
             for (uint i = 0; i < createInfo.enabledLayerCount; ++i)
             {
-                string layerName = Interop.GetString(Interop.GetUtf8Span(createInfo.ppEnabledLayerNames[i]))!;
+                string layerName = VkStringInterop.ConvertToManaged(createInfo.ppEnabledLayerNames[i])!;
                 Debug.WriteLine($"\t{layerName}");
             }
         }
@@ -222,14 +237,13 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
         Debug.WriteLine($"Enabled {createInfo.enabledExtensionCount} Instance Extensions:");
         for (uint i = 0; i < createInfo.enabledExtensionCount; ++i)
         {
-            string extensionName = Interop.GetString(Interop.GetUtf8Span(createInfo.ppEnabledExtensionNames[i]))!;
+            string extensionName = VkStringInterop.ConvertToManaged(createInfo.ppEnabledExtensionNames[i])!;
             Debug.WriteLine($"\t{extensionName}");
         }
 #endif
     }
 
     public bool DebugUtils { get; }
-    public bool HasPortability { get; }
     public bool HasHeadlessSurface { get; }
     public bool HasXlibSurface { get; }
     public bool HasXcbSurface { get; }
@@ -259,17 +273,20 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
     }
 
     /// <inheritdoc />
-    protected override GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new VulkanSurface(this, in descriptor);
+    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescription description) => new VulkanGraphicsSurface(this, in description);
 
-    protected override ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options)
+    protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
     {
-        ReadOnlySpan<VkPhysicalDevice> physicalDevices = vkEnumeratePhysicalDevices(_instance);
-
-        if (physicalDevices.Length == 0)
+        VkResult result = vkEnumeratePhysicalDevices(_instance, out uint physicalDeviceCount);
+        if (result != VK_SUCCESS || physicalDeviceCount == 0)
         {
-            throw new GraphicsException("Vulkan: Failed to find GPUs with Vulkan support");
+            throw new GraphicsException("Vulkan: Failed to find GraphicsAdapter with Vulkan support");
         }
 
+        Span<VkPhysicalDevice> physicalDevices = stackalloc VkPhysicalDevice[(int)physicalDeviceCount];
+        vkEnumeratePhysicalDevices(_instance, physicalDevices);
+
+        bool headless = false;
         VkPhysicalDevice foundPhysicalDevice = VkPhysicalDevice.Null;
         foreach (VkPhysicalDevice physicalDevice in physicalDevices)
         {
@@ -280,10 +297,40 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
                 continue;
             }
 
-            PhysicalDeviceExtensions physicalDeviceExtensions = physicalDevice.QueryExtensions();
-            if (!Headless && !physicalDeviceExtensions.Swapchain)
+            VulkanPhysicalDeviceExtensions physicalDeviceExtensions = physicalDevice.QueryExtensions();
+            if (!headless && !physicalDeviceExtensions.Swapchain)
             {
                 continue;
+            }
+
+            if (options.CompatibleSurface != null)
+            {
+                VulkanGraphicsSurface vulkanSurface = (VulkanGraphicsSurface)options.CompatibleSurface;
+                VkSurfaceCapabilitiesKHR surfaceCapabilities;
+                result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, vulkanSurface.Handle, &surfaceCapabilities);
+                if (result != VK_SUCCESS)
+                {
+                    continue;
+                }
+
+                vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, out uint queueFamilyCount);
+                Span<VkQueueFamilyProperties> queueFamilies = new VkQueueFamilyProperties[(int)queueFamilyCount];
+                vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, queueFamilies);
+
+                for (uint i = 0; i < queueFamilyCount; i++)
+                {
+                    // A graphics queue candidate must support present for us to select it.
+                    if ((queueFamilies[(int)i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
+                    {
+                        VkBool32 supported = false;
+                        result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, vulkanSurface.Handle, &supported);
+                        if (result != VK_SUCCESS && !supported)
+                            continue;
+
+                        // Device supports presenting to our surface, stop searching.
+                        break;
+                    }
+                }
             }
 
             bool priority = physicalDeviceProperties.deviceType == VkPhysicalDeviceType.DiscreteGpu;
@@ -300,7 +347,6 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
                     // If this is prioritized adapter, look no further.
                     break;
                 }
-
             }
         }
 
@@ -309,7 +355,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
             throw new GraphicsException("Vulkan: Failed to find a suitable GPU");
         }
 
-        return ValueTask.FromResult<GPUAdapter>(new VulkanAdapter(foundPhysicalDevice));
+        return new VulkanGraphicsAdapter(foundPhysicalDevice);
     }
 
     private static bool CheckIsSupported()
@@ -344,7 +390,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
         VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
         void* userData)
     {
-        string message = Interop.GetString(pCallbackData->pMessage)!;
+        string message = VkStringInterop.ConvertToManaged(pCallbackData->pMessage)!;
         if (messageTypes == VkDebugUtilsMessageTypeFlagsEXT.Validation)
         {
             if (messageSeverity == VkDebugUtilsMessageSeverityFlagsEXT.Error)

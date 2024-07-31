@@ -4,7 +4,7 @@
 namespace Leoncino;
 
 /// <summary>
-/// Structure that describes the <see cref="GPUAdapter"/> request.
+/// Structure that describes the <see cref="GraphicsAdapter"/> request from <see cref="GraphicsFactory"/>.
 /// </summary>
 public readonly record struct RequestAdapterOptions
 {
@@ -12,7 +12,7 @@ public readonly record struct RequestAdapterOptions
     {
     }
 
-    public GPUSurface? CompatibleSurface { get; init; }
+    public GraphicsSurface? CompatibleSurface { get; init; }
 
     /// <summary>
     /// Gets or sets the GPU adapter selection power preference.

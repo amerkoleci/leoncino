@@ -17,7 +17,7 @@ public abstract class SurfaceSource
     /// Creates a new SurfaceSource for a MetalLayer.
     /// </summary>
     /// <param name="window">The ANativeWindow window.</param>
-    /// <returns>A new SurfaceSource which can be used to create a <see cref="GPUSurface"/> for the given android window.
+    /// <returns>A new SurfaceSource which can be used to create a <see cref="GraphicsSurface"/> for the given android window.
     /// </returns>
     public static SurfaceSource CreateAndroidWindow(nint window) => new AndroidWindowSurfaceSource(window);
 
@@ -25,24 +25,25 @@ public abstract class SurfaceSource
     /// Creates a new SurfaceSource for a MetalLayer.
     /// </summary>
     /// <param name="hwnd">The metal layer handle.</param>
-    /// <returns>A new SurfaceSource which can be used to create a <see cref="GPUSurface"/> for the given metal layer.
+    /// <returns>A new SurfaceSource which can be used to create a <see cref="GraphicsSurface"/> for the given metal layer.
     /// </returns>
-    public static SurfaceSource CreateMetalLayer(nint layer) => new Win32SurfaceSource(layer);
+    public static SurfaceSource CreateMetalLayer(nint layer) => new MetalLayerSurfaceSource(layer);
 
     /// <summary>
     /// Creates a new SurfaceSource for a Win32 window.
     /// </summary>
+    /// <param name="hinstance">The Win32 hinstance.</param>
     /// <param name="hwnd">The Win32 window handle.</param>
-    /// <returns>A new SurfaceSource which can be used to create a <see cref="GPUSurface"/> for the given Win32 window.
+    /// <returns>A new SurfaceSource which can be used to create a <see cref="GraphicsSurface"/> for the given Win32 window.
     /// </returns>
-    public static SurfaceSource CreateWin32(nint hwnd) => new Win32SurfaceSource(hwnd);
+    public static SurfaceSource CreateWin32(nint hinstance, nint hwnd) => new Win32SurfaceSource(hinstance, hwnd);
 
     /// <summary>
     /// Creates a new SurfaceSource for a SwapChain panel.
     /// </summary>
     /// <param name="swapChainPanel"></param>
     /// <param name="logicalDpi"></param>
-    /// <returns>A new SurfaceSource which can be used to create a <see cref="GPUSurface"/> for the given WinUI SwapChainPanel.
+    /// <returns>A new SurfaceSource which can be used to create a <see cref="GraphicsSurface"/> for the given WinUI SwapChainPanel.
     public static SurfaceSource CreateSwapChainPanel(object swapChainPanel, float logicalDpi) => new SwapChainPanelSurfaceSource(swapChainPanel, logicalDpi);
 
     /// <summary>
@@ -50,7 +51,7 @@ public abstract class SurfaceSource
     /// </summary>
     /// <param name="display">The Wayland display proxy.</param>
     /// <param name="surface">The Wayland surface proxy to map.</param>
-    /// <returns>A new SurfaceSource which can be used to create a <see cref="GPUSurface"/> for the given Wayland surface.
+    /// <returns>A new SurfaceSource which can be used to create a <see cref="GraphicsSurface"/> for the given Wayland surface.
     /// </returns>
     public static SurfaceSource CreateWaylandSurface(nint display, nint surface) => new WaylandSurfaceSource(display, surface);
 
@@ -59,7 +60,7 @@ public abstract class SurfaceSource
     /// </summary>
     /// <param name="connection">The xcb connection.</param>
     /// <param name="window">The xcb window.</param>
-    /// <returns>A new SurfaceSource which can be used to create a <see cref="GPUSurface"/> for the given xcb window.
+    /// <returns>A new SurfaceSource which can be used to create a <see cref="GraphicsSurface"/> for the given xcb window.
     /// </returns>
     public static SurfaceSource CreateXcbWindow(nint connection, uint window) => new XcbWindowSurfaceSource(connection, window);
 
@@ -68,7 +69,7 @@ public abstract class SurfaceSource
     /// </summary>
     /// <param name="display">The xlib display.</param>
     /// <param name="window">The xlib window.</param>
-    /// <returns>A new SurfaceSource which can be used to create a <see cref="GPUSurface"/> for the given xlib window.
+    /// <returns>A new SurfaceSource which can be used to create a <see cref="GraphicsSurface"/> for the given xlib window.
     /// </returns>
     public static SurfaceSource CreateXlibWindow(nint display, ulong window) => new XlibWindowSurfaceSource(display, window);
 }
@@ -83,8 +84,9 @@ internal class MetalLayerSurfaceSource(nint layer) : SurfaceSource
     public nint Layer { get; } = layer;
 }
 
-internal class Win32SurfaceSource(nint hwnd) : SurfaceSource
+internal class Win32SurfaceSource(nint hinstance, nint hwnd) : SurfaceSource
 {
+    public nint HInstance { get; } = hinstance;
     public nint Hwnd { get; } = hwnd;
 }
 

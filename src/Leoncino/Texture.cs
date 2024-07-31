@@ -3,9 +3,12 @@
 
 namespace Leoncino;
 
-public abstract class GPUTexture : GPUObject
+/// <summary>
+/// A graphics resource that holds image data in a specific format.
+/// </summary>
+public abstract class Texture : GPUObject
 {
-    protected GPUTexture(in TextureDescriptor descriptor)
+    protected Texture(in TextureDescription descriptor)
         : base(descriptor.Label)
     {
         Dimension = descriptor.Dimension;
@@ -69,7 +72,6 @@ public abstract class GPUTexture : GPUObject
     /// Gets the CPU access of the texure.
     /// </summary>
     public CpuAccessMode CpuAccess { get; }
-
 
     /// <summary>
     /// Get a mip-level width.

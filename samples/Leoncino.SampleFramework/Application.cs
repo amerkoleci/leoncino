@@ -4,7 +4,11 @@
 using System.Diagnostics;
 using System.Drawing;
 using SDL;
-using static SDL.SDL;
+using static SDL.SDL3;
+using static SDL.SDL_LogPriority;
+using static SDL.SDL_EventType;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Leoncino.Samples;
 
@@ -13,15 +17,15 @@ public abstract class Application : IDisposable
     private volatile uint _isDisposed = 0;
     private bool _closeRequested = false;
 
-    protected Application()
+    protected unsafe Application()
     {
-        if (SDL_Init(SDL_InitFlags.Video) != 0)
+        if (SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO) != 0)
         {
-            var error = SDL_GetErrorString();
+            var error = SDL_GetError();
             throw new Exception($"Failed to start SDL2: {error}");
         }
 
-        SDL_SetLogOutputFunction(Log_SDL);
+        SDL_SetLogOutputFunction(&Log_SDL, IntPtr.Zero);
         GraphicsFactoryDescription factoryDescription = new()
         {
             PreferredBackend = GraphicsBackend.Vulkan
@@ -37,12 +41,12 @@ public abstract class Application : IDisposable
             PowerPreference = PowerPreference.HighPerformance
         };
 
-        Adapter = Factory.RequestAdapterAsync(in requestAdapterOptions).Result;
+        Adapter = Factory.RequestAdapter(in requestAdapterOptions);
         SurfaceFormat = Adapter.GetSurfacePreferredFormat(MainWindow.Surface);
         Debug.Assert(SurfaceFormat != PixelFormat.Undefined);
 
-        DeviceDescriptor deviceDescriptor = new();
-        Device = Adapter.CreateDeviceAsync(in deviceDescriptor).Result;
+        GraphicsDeviceDescription deviceDescription = new();
+        Device = Adapter.CreateDevice(in deviceDescription);
 
         VSync = true;
         Resize(MainWindow.ClientSize);
@@ -63,8 +67,8 @@ public abstract class Application : IDisposable
     public Window MainWindow { get; }
 
     public GraphicsFactory Factory { get; }
-    public GPUAdapter Adapter { get; }
-    public GPUDevice Device { get; }
+    public GraphicsAdapter Adapter { get; }
+    public GraphicsDevice Device { get; }
     public PixelFormat SurfaceFormat { get; }
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -129,15 +133,16 @@ public abstract class Application : IDisposable
         while (running && !_closeRequested)
         {
             SDL_Event evt;
-            while (SDL_PollEvent(&evt))
+            while (SDL_PollEvent(&evt) == SDL_TRUE)
             {
-                if (evt.type == SDL_EventType.Quit)
+                if (evt.type == (uint)SDL_EVENT_QUIT)
                 {
                     running = false;
                     break;
                 }
 
-                if (evt.type == SDL_EventType.WindowCloseRequested && evt.window.windowID == MainWindow.Id)
+                if (evt.type == (uint)SDL_EVENT_WINDOW_CLOSE_REQUESTED
+                    && evt.window.windowID == MainWindow.Id)
                 {
                     running = false;
                     break;
@@ -156,16 +161,17 @@ public abstract class Application : IDisposable
 
     }
 
-    //[UnmanagedCallersOnly]
-    private static void Log_SDL(SDL_LogCategory category, SDL_LogPriority priority, string description)
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void Log_SDL(nint _, SDL_LogCategory category, SDL_LogPriority priority, byte* messagePtr)
     {
-        if (priority >= SDL_LogPriority.Error)
+        string? message = PtrToStringUTF8(messagePtr);
+        if (priority >= SDL_LOG_PRIORITY_ERROR)
         {
-            Log.Error($"[{priority}] SDL: {description}");
+            Log.Error($"[{priority}] SDL: {message}");
         }
         else
         {
-            Log.Info($"[{priority}] SDL: {description}");
+            Log.Info($"[{priority}] SDL: {message}");
         }
     }
 }

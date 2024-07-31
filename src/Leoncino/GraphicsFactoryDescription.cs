@@ -13,19 +13,17 @@ public readonly record struct GraphicsFactoryDescription
     }
 
     /// <summary>
-    /// Gets or sets the preferred backend to creates.
+    /// Gets or sets the preferred backend to create.
     /// </summary>
     public GraphicsBackend PreferredBackend { get; init; } = GraphicsBackend.Count;
 
     /// <summary>
-    /// Gets or sets the <see cref="GraphicsDevice"/> validation mode.
+    /// Gets or sets the <see cref="GraphicsFactory"/> validation mode.
     /// </summary>
     public ValidationMode ValidationMode { get; init; } = ValidationMode.Disabled;
 
-    public bool Headless { get; init; }
-
     /// <summary>
-    /// Gets or sets the label of <see cref="Instance"/>.
+    /// Gets or sets the label of <see cref="GraphicsFactory"/>.
     /// </summary>
     public string? Label { get; init; } = default;
 }

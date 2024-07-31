@@ -6,24 +6,26 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Leoncino.Vulkan;
 
-internal class VulkanAdapter : GPUAdapter
+internal class VulkanGraphicsAdapter : GraphicsAdapter
 {
     private readonly VkPhysicalDeviceProperties _properties;
-
-    public unsafe VulkanAdapter(VkPhysicalDevice handle)
+    private readonly VulkanPhysicalDeviceExtensions _extensions;
+    public unsafe VulkanGraphicsAdapter(VkPhysicalDevice handle)
     {
         Handle = handle;
 
         vkGetPhysicalDeviceProperties(handle, out _properties);
+        _extensions = handle.QueryExtensions();
     }
 
     public VkPhysicalDevice Handle { get; }
     public ref readonly VkPhysicalDeviceProperties Properties => ref _properties;
+    public ref readonly VulkanPhysicalDeviceExtensions Extensions => ref _extensions;
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="VulkanAdapter" /> class.
+    /// Finalizes an instance of the <see cref="VulkanGraphicsAdapter" /> class.
     /// </summary>
-    ~VulkanAdapter() => Dispose(disposing: false);
+    ~VulkanGraphicsAdapter() => Dispose(disposing: false);
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
@@ -34,9 +36,9 @@ internal class VulkanAdapter : GPUAdapter
     }
 
     /// <inheritdoc />
-    public override PixelFormat GetSurfacePreferredFormat(GPUSurface surface)
+    public override PixelFormat GetSurfacePreferredFormat(GraphicsSurface surface)
     {
-        VulkanSurface backendSurface = (VulkanSurface)surface;
+        VulkanGraphicsSurface backendSurface = (VulkanGraphicsSurface)surface;
 
         ReadOnlySpan<VkSurfaceFormatKHR> swapchainFormats = vkGetPhysicalDeviceSurfaceFormatsKHR(Handle, backendSurface.Handle);
 
@@ -69,8 +71,8 @@ internal class VulkanAdapter : GPUAdapter
     }
 
     /// <inheritdoc />
-    protected override ValueTask<GPUDevice> CreateDeviceAsyncCore(in DeviceDescriptor descriptor)
+    protected override GraphicsDevice CreateDeviceCore(in GraphicsDeviceDescription description)
     {
-        return ValueTask.FromResult<GPUDevice>(new VulkanDevice(this));
+        return new VulkanGraphicsDevice(this, in description);
     }
 }

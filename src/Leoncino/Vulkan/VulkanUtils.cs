@@ -3,33 +3,37 @@
 
 using System.Runtime.CompilerServices;
 using Vortice.Vulkan;
+using XenoAtom.Collections;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Leoncino.Vulkan;
 
-internal static unsafe class VulkanUtils
+internal static unsafe partial class VulkanUtils
 {
     private static readonly VkImageType[] s_vkImageTypeMap = [
-        VkImageType.Image1D,
-        VkImageType.Image2D,
-        VkImageType.Image3D,
-        VkImageType.Image2D,
+        VK_IMAGE_TYPE_1D,
+        VK_IMAGE_TYPE_2D,
+        VK_IMAGE_TYPE_3D,
+        VK_IMAGE_TYPE_2D,
     ];
 
     #region Layers Methods
-    public static bool ValidateLayers(List<string> required, VkLayerProperties* availableLayers, uint availableLayersCount)
+    public static bool ValidateLayers(UnsafeList<VkUtf8String> required, Span<VkLayerProperties> availableLayers)
     {
-        foreach (string layer in required)
+        foreach (VkUtf8String layer in required)
         {
             bool found = false;
-            for (uint i = 0; i < availableLayersCount; i++)
+            for (int i = 0; i < availableLayers.Length; i++)
             {
-                string availableLayer = availableLayers[i].GetLayerName();
-
-                if (availableLayer == layer)
+                fixed (byte* pLayerName = availableLayers[i].layerName)
                 {
-                    found = true;
-                    break;
+                    VkUtf8String availableLayer = new(pLayerName);
+
+                    if (availableLayer == layer)
+                    {
+                        found = true;
+                        break;
+                    }
                 }
             }
 
@@ -43,61 +47,65 @@ internal static unsafe class VulkanUtils
         return true;
     }
 
-    public static void GetOptimalValidationLayers(VkLayerProperties* availableLayers, uint availableLayersCount, List<string> instanceLayers)
+    public static void GetOptimalValidationLayers(ref UnsafeList<VkUtf8String> instanceLayers, Span<VkLayerProperties> availableLayers)
     {
         // The preferred validation layer is "VK_LAYER_KHRONOS_validation"
-        List<string> validationLayers = new()
+        UnsafeList<VkUtf8String> validationLayers =
+        [
+            VK_LAYER_KHRONOS_VALIDATION_EXTENSION_NAME
+        ];
+        if (ValidateLayers(validationLayers, availableLayers))
         {
-            "VK_LAYER_KHRONOS_validation"
-        };
-        if (ValidateLayers(validationLayers, availableLayers, availableLayersCount))
-        {
-            instanceLayers.AddRange(validationLayers);
+            instanceLayers.Add(VK_LAYER_KHRONOS_VALIDATION_EXTENSION_NAME);
             return;
         }
 
         // Otherwise we fallback to using the LunarG meta layer
-        validationLayers = new()
+        validationLayers =
+        [
+            "VK_LAYER_LUNARG_standard_validation"u8
+        ];
+        if (ValidateLayers(validationLayers, availableLayers))
         {
-            "VK_LAYER_LUNARG_standard_validation"
-        };
-        if (ValidateLayers(validationLayers, availableLayers, availableLayersCount))
-        {
-            instanceLayers.AddRange(validationLayers);
+            instanceLayers.Add("VK_LAYER_LUNARG_standard_validation"u8);
             return;
         }
 
         // Otherwise we attempt to enable the individual layers that compose the LunarG meta layer since it doesn't exist
-        validationLayers = new()
-        {
-            "VK_LAYER_GOOGLE_threading",
-            "VK_LAYER_LUNARG_parameter_validation",
-            "VK_LAYER_LUNARG_object_tracker",
-            "VK_LAYER_LUNARG_core_validation",
-            "VK_LAYER_GOOGLE_unique_objects",
-        };
+        validationLayers =
+        [
+            "VK_LAYER_GOOGLE_threading"u8,
+            "VK_LAYER_LUNARG_parameter_validation"u8,
+            "VK_LAYER_LUNARG_object_tracker"u8,
+            "VK_LAYER_LUNARG_core_validation"u8,
+            "VK_LAYER_GOOGLE_unique_objects"u8,
+        ];
 
-        if (ValidateLayers(validationLayers, availableLayers, availableLayersCount))
+        if (ValidateLayers(validationLayers, availableLayers))
         {
-            instanceLayers.AddRange(validationLayers);
+            instanceLayers.Add("VK_LAYER_GOOGLE_threading"u8);
+            instanceLayers.Add("VK_LAYER_LUNARG_parameter_validation"u8);
+            instanceLayers.Add("VK_LAYER_LUNARG_object_tracker"u8);
+            instanceLayers.Add("VK_LAYER_LUNARG_core_validation"u8);
+            instanceLayers.Add("VK_LAYER_GOOGLE_unique_objects"u8);
             return;
         }
 
         // Otherwise as a last resort we fallback to attempting to enable the LunarG core layer
-        validationLayers = new()
-        {
-            "VK_LAYER_LUNARG_core_validation"
-        };
+        validationLayers =
+        [
+            "VK_LAYER_LUNARG_core_validation"u8
+        ];
 
-        if (ValidateLayers(validationLayers, availableLayers, availableLayersCount))
+        if (ValidateLayers(validationLayers, availableLayers))
         {
-            instanceLayers.AddRange(validationLayers);
+            instanceLayers.Add("VK_LAYER_LUNARG_core_validation"u8);
             return;
         }
     }
     #endregion
 
-    public static PhysicalDeviceExtensions QueryExtensions(this VkPhysicalDevice physicalDevice)
+    public static VulkanPhysicalDeviceExtensions QueryExtensions(this VkPhysicalDevice physicalDevice)
     {
         uint count = 0;
         VkResult result = vkEnumerateDeviceExtensionProperties(physicalDevice, null, &count, null);
@@ -107,11 +115,11 @@ internal static unsafe class VulkanUtils
         VkExtensionProperties* vk_extensions = stackalloc VkExtensionProperties[(int)count];
         vkEnumerateDeviceExtensionProperties(physicalDevice, null, &count, vk_extensions);
 
-        PhysicalDeviceExtensions extensions = new();
+        VulkanPhysicalDeviceExtensions extensions = new();
 
         for (int i = 0; i < count; ++i)
         {
-            string extensionName = vk_extensions[i].GetExtensionName();
+            VkUtf8String extensionName = new(vk_extensions[i].extensionName);
 
             if (extensionName == VK_KHR_MAINTENANCE_4_EXTENSION_NAME)
             {
@@ -163,15 +171,15 @@ internal static unsafe class VulkanUtils
             }
             else if (extensionName == VK_KHR_PERFORMANCE_QUERY_EXTENSION_NAME)
             {
-                extensions.performance_query = true;
+                extensions.PerformanceQuery = true;
             }
             else if (extensionName == VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME)
             {
-                extensions.host_query_reset = true;
+                extensions.HostQueryReset = true;
             }
             else if (extensionName == VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME)
             {
-                extensions.deferred_host_operations = true;
+                extensions.DeferredHostOperations = true;
             }
             else if (extensionName == VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME)
             {
@@ -179,15 +187,15 @@ internal static unsafe class VulkanUtils
             }
             else if (extensionName == VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME)
             {
-                extensions.accelerationStructure = true;
+                extensions.AccelerationStructure = true;
             }
             else if (extensionName == VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME)
             {
-                extensions.raytracingPipeline = true;
+                extensions.RaytracingPipeline = true;
             }
             else if (extensionName == VK_KHR_RAY_QUERY_EXTENSION_NAME)
             {
-                extensions.rayQuery = true;
+                extensions.RayQuery = true;
             }
             else if (extensionName == VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME)
             {
@@ -228,7 +236,7 @@ internal static unsafe class VulkanUtils
             else if (extensionName == VK_KHR_VIDEO_ENCODE_H265_EXTENSION_NAME)
             {
                 extensions.Video.EncodeH265 = true;
-            } 
+            }
 
             if (OperatingSystem.IsWindows())
             {
@@ -236,24 +244,32 @@ internal static unsafe class VulkanUtils
                 {
                     extensions.win32_full_screen_exclusive = true;
                 }
-                else if (extensionName == VK_KHR_EXTERNAL_SEMAPHORE_WIN32_EXTENSION_NAME)
-                {
-                    extensions.SupportsExternalSemaphore = true;
-                }
                 else if (extensionName == VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME)
                 {
-                    extensions.SupportsExternalMemory = true;
+                    extensions.ExternalMemory = true;
+                }
+                else if (extensionName == VK_KHR_EXTERNAL_SEMAPHORE_WIN32_EXTENSION_NAME)
+                {
+                    extensions.ExternalSemaphore = true;
+                }
+                else if (extensionName == VK_KHR_EXTERNAL_FENCE_WIN32_EXTENSION_NAME)
+                {
+                    extensions.ExternalFence = true;
                 }
             }
             else
             {
-                if (extensionName == VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME)
+                if (extensionName == VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME)
                 {
-                    extensions.SupportsExternalSemaphore = true;
+                    extensions.ExternalMemory = true;
                 }
-                else if (extensionName == VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME)
+                else if (extensionName == VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME)
                 {
-                    extensions.SupportsExternalMemory = true;
+                    extensions.ExternalSemaphore = true;
+                }
+                else if (extensionName == VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME)
+                {
+                    extensions.ExternalFence = true;
                 }
             }
         }
@@ -371,35 +387,49 @@ internal static unsafe class VulkanUtils
             case PixelFormat.EACRG11Unorm: return VK_FORMAT_EAC_R11G11_UNORM_BLOCK;
             case PixelFormat.EACRG11Snorm: return VK_FORMAT_EAC_R11G11_SNORM_BLOCK;
             // ASTC compressed formats
-            case PixelFormat.ASTC4x4Unorm: return VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
-            case PixelFormat.ASTC4x4UnormSrgb: return VK_FORMAT_ASTC_4x4_SRGB_BLOCK;
-            case PixelFormat.ASTC5x4Unorm: return VK_FORMAT_ASTC_5x4_UNORM_BLOCK;
-            case PixelFormat.ASTC5x4UnormSrgb: return VK_FORMAT_ASTC_5x4_SRGB_BLOCK;
-            case PixelFormat.ASTC5x5Unorm: return VK_FORMAT_ASTC_5x5_UNORM_BLOCK;
-            case PixelFormat.ASTC5x5UnormSrgb: return VK_FORMAT_ASTC_5x5_SRGB_BLOCK;
-            case PixelFormat.ASTC6x5Unorm: return VK_FORMAT_ASTC_6x5_UNORM_BLOCK;
-            case PixelFormat.ASTC6x5UnormSrgb: return VK_FORMAT_ASTC_6x5_SRGB_BLOCK;
-            case PixelFormat.ASTC6x6Unorm: return VK_FORMAT_ASTC_6x6_UNORM_BLOCK;
-            case PixelFormat.ASTC6x6UnormSrgb: return VK_FORMAT_ASTC_6x6_SRGB_BLOCK;
-            case PixelFormat.ASTC8x5Unorm: return VK_FORMAT_ASTC_8x5_UNORM_BLOCK;
-            case PixelFormat.ASTC8x5UnormSrgb: return VK_FORMAT_ASTC_8x5_SRGB_BLOCK;
-            case PixelFormat.ASTC8x6Unorm: return VK_FORMAT_ASTC_8x6_UNORM_BLOCK;
-            case PixelFormat.ASTC8x6UnormSrgb: return VK_FORMAT_ASTC_8x6_SRGB_BLOCK;
-            case PixelFormat.ASTC8x8Unorm: return VK_FORMAT_ASTC_8x8_UNORM_BLOCK;
-            case PixelFormat.ASTC8x8UnormSrgb: return VK_FORMAT_ASTC_8x8_SRGB_BLOCK;
-            case PixelFormat.ASTC10x5Unorm: return VK_FORMAT_ASTC_10x5_UNORM_BLOCK;
-            case PixelFormat.ASTC10x5UnormSrgb: return VK_FORMAT_ASTC_10x5_SRGB_BLOCK;
-            case PixelFormat.ASTC10x6Unorm: return VK_FORMAT_ASTC_10x6_UNORM_BLOCK;
-            case PixelFormat.ASTC10x6UnormSrgb: return VK_FORMAT_ASTC_10x6_SRGB_BLOCK;
-            case PixelFormat.ASTC10x8Unorm: return VK_FORMAT_ASTC_10x8_UNORM_BLOCK;
-            case PixelFormat.ASTC10x8UnormSrgb: return VK_FORMAT_ASTC_10x8_SRGB_BLOCK;
-            case PixelFormat.ASTC10x10Unorm: return VK_FORMAT_ASTC_10x10_UNORM_BLOCK;
-            case PixelFormat.ASTC10x10UnormSrgb: return VK_FORMAT_ASTC_10x10_SRGB_BLOCK;
-            case PixelFormat.ASTC12x10Unorm: return VK_FORMAT_ASTC_12x10_UNORM_BLOCK;
-            case PixelFormat.ASTC12x10UnormSrgb: return VK_FORMAT_ASTC_12x10_SRGB_BLOCK;
-            case PixelFormat.ASTC12x12Unorm: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
-            case PixelFormat.ASTC12x12UnormSrgb: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
-
+            case PixelFormat.Astc4x4Unorm: return VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
+            case PixelFormat.Astc4x4UnormSrgb: return VK_FORMAT_ASTC_4x4_SRGB_BLOCK;
+            case PixelFormat.Astc5x4Unorm: return VK_FORMAT_ASTC_5x4_UNORM_BLOCK;
+            case PixelFormat.Astc5x4UnormSrgb: return VK_FORMAT_ASTC_5x4_SRGB_BLOCK;
+            case PixelFormat.Astc5x5Unorm: return VK_FORMAT_ASTC_5x5_UNORM_BLOCK;
+            case PixelFormat.Astc5x5UnormSrgb: return VK_FORMAT_ASTC_5x5_SRGB_BLOCK;
+            case PixelFormat.Astc6x5Unorm: return VK_FORMAT_ASTC_6x5_UNORM_BLOCK;
+            case PixelFormat.Astc6x5UnormSrgb: return VK_FORMAT_ASTC_6x5_SRGB_BLOCK;
+            case PixelFormat.Astc6x6Unorm: return VK_FORMAT_ASTC_6x6_UNORM_BLOCK;
+            case PixelFormat.Astc6x6UnormSrgb: return VK_FORMAT_ASTC_6x6_SRGB_BLOCK;
+            case PixelFormat.Astc8x5Unorm: return VK_FORMAT_ASTC_8x5_UNORM_BLOCK;
+            case PixelFormat.Astc8x5UnormSrgb: return VK_FORMAT_ASTC_8x5_SRGB_BLOCK;
+            case PixelFormat.Astc8x6Unorm: return VK_FORMAT_ASTC_8x6_UNORM_BLOCK;
+            case PixelFormat.Astc8x6UnormSrgb: return VK_FORMAT_ASTC_8x6_SRGB_BLOCK;
+            case PixelFormat.Astc8x8Unorm: return VK_FORMAT_ASTC_8x8_UNORM_BLOCK;
+            case PixelFormat.Astc8x8UnormSrgb: return VK_FORMAT_ASTC_8x8_SRGB_BLOCK;
+            case PixelFormat.Astc10x5Unorm: return VK_FORMAT_ASTC_10x5_UNORM_BLOCK;
+            case PixelFormat.Astc10x5UnormSrgb: return VK_FORMAT_ASTC_10x5_SRGB_BLOCK;
+            case PixelFormat.Astc10x6Unorm: return VK_FORMAT_ASTC_10x6_UNORM_BLOCK;
+            case PixelFormat.Astc10x6UnormSrgb: return VK_FORMAT_ASTC_10x6_SRGB_BLOCK;
+            case PixelFormat.Astc10x8Unorm: return VK_FORMAT_ASTC_10x8_UNORM_BLOCK;
+            case PixelFormat.Astc10x8UnormSrgb: return VK_FORMAT_ASTC_10x8_SRGB_BLOCK;
+            case PixelFormat.Astc10x10Unorm: return VK_FORMAT_ASTC_10x10_UNORM_BLOCK;
+            case PixelFormat.Astc10x10UnormSrgb: return VK_FORMAT_ASTC_10x10_SRGB_BLOCK;
+            case PixelFormat.Astc12x10Unorm: return VK_FORMAT_ASTC_12x10_UNORM_BLOCK;
+            case PixelFormat.Astc12x10UnormSrgb: return VK_FORMAT_ASTC_12x10_SRGB_BLOCK;
+            case PixelFormat.Astc12x12Unorm: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
+            case PixelFormat.Astc12x12UnormSrgb: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
+            // ASTC HDR compressed formats
+            case PixelFormat.Astc4x4Hdr: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
+            case PixelFormat.Astc5x4Hdr: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
+            case PixelFormat.Astc5x5Hdr: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
+            case PixelFormat.Astc6x5Hdr: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
+            case PixelFormat.Astc6x6Hdr: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
+            case PixelFormat.Astc8x5Hdr: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
+            case PixelFormat.Astc8x6Hdr: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
+            case PixelFormat.Astc8x8Hdr: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
+            case PixelFormat.Astc10x5Hdr: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
+            case PixelFormat.Astc10x6Hdr: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
+            case PixelFormat.Astc10x8Hdr: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
+            case PixelFormat.Astc10x10Hdr: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
+            case PixelFormat.Astc12x10Hdr: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
+            case PixelFormat.Astc12x12Hdr: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
             //case PixelFormat.R8BG8Biplanar420Unorm: return VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
             //case PixelFormat.R10X6BG10X6Biplanar420Unorm: return VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16;
 
@@ -408,52 +438,53 @@ internal static unsafe class VulkanUtils
         }
     }
 
-    internal struct PhysicalDeviceVideoExtensions
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static VkFormat ToVkFormat(this VertexFormat format)
     {
-        public bool Queue;
-        public bool DecodeQueue;
-        public bool DecodeH264;
-        public bool DecodeH265;
-        public bool EncodeQueue;
-        public bool EncodeH264;
-        public bool EncodeH265;
-    }
+        switch (format)
+        {
+            case VertexFormat.UByte2: return VkFormat.R8G8Uint;
+            case VertexFormat.UByte4: return VkFormat.R8G8B8A8Uint;
+            case VertexFormat.Byte2: return VkFormat.R8G8Sint;
+            case VertexFormat.Byte4: return VkFormat.R8G8B8A8Sint;
+            case VertexFormat.UByte2Normalized: return VkFormat.R8G8Unorm;
+            case VertexFormat.UByte4Normalized: return VkFormat.R8G8B8A8Unorm;
+            case VertexFormat.Byte2Normalized: return VkFormat.R8G8Snorm;
+            case VertexFormat.Byte4Normalized: return VkFormat.R8G8B8A8Snorm;
 
-    internal struct PhysicalDeviceExtensions
-    {
-        // Core in 1.3
-        public bool Maintenance4;
-        public bool DynamicRendering;
-        public bool Synchronization2;
-        public bool ExtendedDynamicState;
-        public bool ExtendedDynamicState2;
-        public bool PipelineCreationCacheControl;
-        public bool FormatFeatureFlags2;
+            case VertexFormat.UShort2: return VkFormat.R16G16Uint;
+            case VertexFormat.UShort4: return VkFormat.R16G16B16A16Uint;
+            case VertexFormat.Short2: return VkFormat.R16G16Sint;
+            case VertexFormat.Short4: return VkFormat.R16G16B16A16Sint;
+            case VertexFormat.UShort2Normalized: return VkFormat.R16G16Unorm;
+            case VertexFormat.UShort4Normalized: return VkFormat.R16G16B16A16Unorm;
+            case VertexFormat.Short2Normalized: return VkFormat.R16G16Snorm;
+            case VertexFormat.Short4Normalized: return VkFormat.R16G16B16A16Snorm;
+            case VertexFormat.Half2: return VkFormat.R16G16Sfloat;
+            case VertexFormat.Half4: return VkFormat.R16G16B16A16Sfloat;
 
-        // Extensions
-        public bool Swapchain;
-        public bool DepthClipEnable;
-        public bool MemoryBudget;
-        public bool AMD_DeviceCoherentMemory;
-        public bool MemoryPriority;
+            case VertexFormat.Float: return VkFormat.R32Sfloat;
+            case VertexFormat.Float2: return VkFormat.R32G32Sfloat;
+            case VertexFormat.Float3: return VkFormat.R32G32B32Sfloat;
+            case VertexFormat.Float4: return VkFormat.R32G32B32A32Sfloat;
 
-        public bool SupportsExternalSemaphore;
-        public bool SupportsExternalMemory;
+            case VertexFormat.UInt: return VkFormat.R32Uint;
+            case VertexFormat.UInt2: return VkFormat.R32G32Uint;
+            case VertexFormat.UInt3: return VkFormat.R32G32B32Uint;
+            case VertexFormat.UInt4: return VkFormat.R32G32B32A32Uint;
 
-        public bool performance_query;
-        public bool host_query_reset;
-        public bool deferred_host_operations;
-        public bool PortabilitySubset;
-        public bool accelerationStructure;
-        public bool raytracingPipeline;
-        public bool rayQuery;
-        public bool FragmentShadingRate;
-        public bool MeshShader;
-        public bool ConditionalRendering;
-        public bool win32_full_screen_exclusive;
+            case VertexFormat.Int: return VkFormat.R32Sint;
+            case VertexFormat.Int2: return VkFormat.R32G32Sint;
+            case VertexFormat.Int3: return VkFormat.R32G32B32Sint;
+            case VertexFormat.Int4: return VkFormat.R32G32B32A32Sint;
 
-        public readonly bool SupportsExternal => SupportsExternalSemaphore && SupportsExternalMemory;
+            //case VertexFormat.Int1010102Normalized: return VkFormat.A2B10G10R10SnormPack32;
+            case VertexFormat.UInt1010102Normalized: return VK_FORMAT_A2B10G10R10_UNORM_PACK32;
+            case VertexFormat.RG11B10Float: return VK_FORMAT_B10G11R11_UFLOAT_PACK32;
+            case VertexFormat.RGB9E5Float: return VK_FORMAT_E5B9G9R9_UFLOAT_PACK32;
 
-        public PhysicalDeviceVideoExtensions Video;
+            default:
+                return VkFormat.Undefined;
+        }
     }
 }

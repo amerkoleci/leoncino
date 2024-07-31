@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 namespace Leoncino;
 
 /// <summary>
-/// Defines a GPU buffer
+/// Defines a graphics buffer that holds data.
 /// </summary>
-public abstract class GPUBuffer : GPUObject
+public abstract class GraphicsBuffer : GPUObject
 {
-    protected GPUBuffer(in BufferDescriptor descriptor)
+    protected GraphicsBuffer(in BufferDescriptor descriptor)
         : base(descriptor.Label)
     {
         Size = descriptor.Size;
@@ -34,15 +34,15 @@ public abstract class GPUBuffer : GPUObject
     /// </summary>
     public CpuAccessMode CpuAccess { get; }
 
-    public unsafe void SetData<T>(in T data, int offsetInBytes = 0) where T : unmanaged
+    public unsafe void SetData<T>(in T data, ulong offsetInBytes = 0) where T : unmanaged
     {
         fixed (T* pointer = &data)
         {
-            SetData(new Span<T>(pointer, 1), offsetInBytes);
+            SetData(new ReadOnlySpan<T>(pointer, 1), offsetInBytes);
         }
     }
 
-    public unsafe void SetData<T>(Span<T> data, int offsetInBytes = 0) where T : unmanaged
+    public unsafe void SetData<T>(ReadOnlySpan<T> data, ulong offsetInBytes = 0) where T : unmanaged
     {
         Debug.Assert(CpuAccess == CpuAccessMode.Write);
 
@@ -59,7 +59,7 @@ public abstract class GPUBuffer : GPUObject
         }
     }
 
-    public T GetData<T>(int offsetInBytes = 0) where T : unmanaged
+    public T GetData<T>(ulong offsetInBytes = 0) where T : unmanaged
     {
         T data = new();
         GetData(ref data, offsetInBytes);
@@ -67,18 +67,7 @@ public abstract class GPUBuffer : GPUObject
         return data;
     }
 
-    public unsafe T[] GetArray<T>(int offsetInBytes = 0) where T : unmanaged
-    {
-        Debug.Assert(CpuAccess != CpuAccessMode.None);
-
-        T[] data = new T[((int)Size / sizeof(T)) - offsetInBytes];
-        GetData(data.AsSpan(), offsetInBytes);
-
-        return data;
-    }
-
-
-    public unsafe void GetData<T>(ref T data, int offsetInBytes = 0) where T : unmanaged
+    public unsafe void GetData<T>(ref T data, ulong offsetInBytes = 0) where T : unmanaged
     {
         Debug.Assert(CpuAccess != CpuAccessMode.None);
 
@@ -88,21 +77,11 @@ public abstract class GPUBuffer : GPUObject
         }
     }
 
-    public unsafe void GetData<T>(T[] destination, int offsetInBytes = 0) where T : unmanaged
-    {
-        Debug.Assert(CpuAccess != CpuAccessMode.None);
-
-        fixed (T* destPtr = destination)
-        {
-            GetDataUnsafe(destPtr, offsetInBytes);
-        }
-    }
-
-    public void GetData<T>(Span<T> destination, int offsetInBytes = 0) where T : unmanaged
+    public void GetData<T>(Span<T> destination, ulong offsetInBytes = 0) where T : unmanaged
     {
         GetData(ref MemoryMarshal.GetReference(destination), offsetInBytes);
     }
 
-    protected unsafe abstract void SetDataUnsafe(void* dataPtr, int offsetInBytes);
-    protected unsafe abstract void GetDataUnsafe(void* destPtr, int offsetInBytes);
+    protected unsafe abstract void SetDataUnsafe(void* dataPtr, ulong offsetInBytes);
+    protected unsafe abstract void GetDataUnsafe(void* destPtr, ulong offsetInBytes);
 }

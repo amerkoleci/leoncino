@@ -51,8 +51,8 @@ public static class VertexFormatUtils
 
         //new(VertexFormat.Int1010102Normalized,    32, 4, 4, FormatKind.Unorm),
         new(VertexFormat.UInt1010102Normalized,     32, 4, 4, FormatKind.Uint),
-        new(VertexFormat.FloatRG11B10,              32, 4, 4, FormatKind.Float),
-        new(VertexFormat.FloatRGB9E5,               32, 4, 4, FormatKind.Float),
+        new(VertexFormat.RG11B10Float,              32, 4, 4, FormatKind.Float),
+        new(VertexFormat.RGB9E5Float,               32, 4, 4, FormatKind.Float),
    ];
 
     public static ref readonly VertexFormatInfo GetFormatInfo(this VertexFormat format)

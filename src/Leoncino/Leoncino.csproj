@@ -32,10 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" />
-    <PackageReference Include="Vortice.Win32.Graphics.Dxgi" Condition="'$(ExcludeD3D12)' != 'true'" />
-    <PackageReference Include="Vortice.Win32.Graphics.Direct3D12" Condition="'$(ExcludeD3D12)' != 'true'" />
-    <PackageReference Include="Alimer.Bindings.WebGPU" Condition="'$(ExcludeWebGPU)' != 'true'" />
+    <PackageReference Include="XenoAtom.Collections" />
+    <PackageReference Include="Vortice.Vulkan" Condition="'$(ExcludeVulkan)' != 'true'" PrivateAssets="contentfiles;analyzers;build;compile" />
+    <PackageReference Include="Vortice.Win32.Graphics.Dxgi" Condition="'$(ExcludeD3D12)' != 'true'" PrivateAssets="contentfiles;analyzers;build;compile" />
+    <PackageReference Include="Vortice.Win32.Graphics.Direct3D12" Condition="'$(ExcludeD3D12)' != 'true'" PrivateAssets="contentfiles;analyzers;build;compile" />
+    <PackageReference Include="Alimer.Bindings.WebGPU" Condition="'$(ExcludeWebGPU)' != 'true'" PrivateAssets="contentfiles;analyzers;build;compile" />
   </ItemGroup>
 
 </Project>

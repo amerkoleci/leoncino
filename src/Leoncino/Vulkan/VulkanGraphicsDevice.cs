@@ -7,24 +7,25 @@ using static Vortice.Vulkan.Vulkan;
 
 namespace Leoncino.Vulkan;
 
-internal unsafe class VulkanDevice : GPUDevice
+internal unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
-    private VulkanAdapter _adapter;
+    private VulkanGraphicsAdapter _adapter;
 
-    public VulkanDevice(VulkanAdapter adapter)
+    public VulkanGraphicsDevice(VulkanGraphicsAdapter adapter, in GraphicsDeviceDescription description)
+        : base(description.Label)
     {
         _adapter = adapter;
     }
 
     /// <inheritdoc />
-    public override GPUAdapter Adapter => _adapter;
+    public override GraphicsAdapter Adapter => _adapter;
 
     public VkDevice Handle { get; }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="VulkanDevice" /> class.
+    /// Finalizes an instance of the <see cref="VulkanGraphicsDevice" /> class.
     /// </summary>
-    ~VulkanDevice() => Dispose(disposing: false);
+    ~VulkanGraphicsDevice() => Dispose(disposing: false);
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing)
@@ -35,13 +36,13 @@ internal unsafe class VulkanDevice : GPUDevice
     }
 
     /// <inheritdoc />
-    protected override GPUBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc />
-    protected override unsafe GPUTexture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData)
+    protected override unsafe Texture CreateTextureCore(in TextureDescription descriptor, TextureData* initialData)
     {
         throw new NotImplementedException();
     }

@@ -6,22 +6,23 @@ namespace Leoncino;
 /// <summary>
 /// Defines a platform-specific graphics surface.
 /// </summary>
-public abstract class GPUSurface : GraphicsObject
+public abstract class GraphicsSurface : GraphicsObject
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="Surface" /> class.
+    /// Initializes a new instance of the <see cref="GraphicsSurface" /> class.
     /// </summary>
-    /// <param name="descriptor">The <see cref="SurfaceDescriptor"/>.</param>
-    protected GPUSurface(in SurfaceDescriptor descriptor)
+    /// <param name="descriptor">The <see cref="SurfaceDescription"/>.</param>
+    protected GraphicsSurface(in SurfaceDescription descriptor)
         : base(descriptor.Label)
     {
     }
 
     public bool IsConfigured { get; private set; }
 
-    public void Configure(GPUDevice device, in SurfaceConfiguration configuration)
+    public void Configure(GraphicsDevice device, in SurfaceConfiguration configuration)
     {
-        //Guard.IsNotNull(device, nameof(device));
+        ArgumentNullException.ThrowIfNull(device, nameof(device));
+
         //Guard.IsFalse(IsConfigured, nameof(IsConfigured));
         //Guard.IsTrue(configuration.Format != PixelFormat.Undefined, nameof(configuration.Format));
         //Guard.IsGreaterThanOrEqualTo(configuration.Width, 1, nameof(configuration.Width));
@@ -31,5 +32,5 @@ public abstract class GPUSurface : GraphicsObject
         IsConfigured = true;
     }
 
-    protected abstract void ConfigureCore(GPUDevice device, in SurfaceConfiguration configuration);
+    protected abstract void ConfigureCore(GraphicsDevice device, in SurfaceConfiguration configuration);
 }

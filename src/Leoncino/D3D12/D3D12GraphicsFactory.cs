@@ -43,12 +43,12 @@ internal unsafe class D3D12GraphicsFactory : GraphicsFactory
     }
 
     /// <inheritdoc />
-    protected override GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor)
+    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescription descriptor)
     {
         throw new NotImplementedException();
     }
 
-    protected override ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options)
+    protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
     {
         throw new NotImplementedException();
     }

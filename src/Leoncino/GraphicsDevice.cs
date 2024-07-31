@@ -6,9 +6,9 @@ using System.Collections.Concurrent;
 namespace Leoncino;
 
 /// <summary>
-/// Defines a GPU logical device
+/// Defines a graphics logical device.
 /// </summary>
-public abstract class GPUDevice : GraphicsObject
+public abstract class GraphicsDevice : GraphicsObject
 {
     protected uint _frameIndex = 0;
     protected ulong _frameCount = 0;
@@ -16,20 +16,20 @@ public abstract class GPUDevice : GraphicsObject
     protected bool _shuttingDown;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GPUDevice" /> class.
+    /// Initializes a new instance of the <see cref="GraphicsDevice" /> class.
     /// </summary>
     /// <param name="label">The label of the object or <c>null</c> to use <see cref="MemberInfo.Name" />.</param>
-    protected GPUDevice(string? label = default)
+    protected GraphicsDevice(string? label = default)
         : base(label)
     {
     }
 
     // <summary>
-    /// Get the <see cref="GPUAdapter"/> object that created this object.
+    /// Get the <see cref="GraphicsAdapter"/> object that created this object.
     /// </summary>
-    public abstract GPUAdapter Adapter { get; }
+    public abstract GraphicsAdapter Adapter { get; }
 
-    public unsafe GPUBuffer CreateBuffer(in BufferDescriptor descriptor, nint initialData = 0)
+    public unsafe GraphicsBuffer CreateBuffer(in BufferDescriptor descriptor, nint initialData = 0)
     {
 #if VALIDATE_USAGE
         if (descriptor.Size < 4)
@@ -41,7 +41,7 @@ public abstract class GPUDevice : GraphicsObject
         return CreateBufferCore(descriptor, initialData.ToPointer());
     }
 
-    public GPUBuffer CreateBuffer(ulong size,
+    public GraphicsBuffer CreateBuffer(ulong size,
         BufferUsage usage = BufferUsage.ShaderReadWrite,
         CpuAccessMode cpuAccess = CpuAccessMode.None,
         string? label = default)
@@ -49,21 +49,26 @@ public abstract class GPUDevice : GraphicsObject
         return CreateBuffer(new BufferDescriptor(size, usage, cpuAccess, label), IntPtr.Zero);
     }
 
-    public unsafe GPUTexture CreateTexture(in TextureDescriptor descriptor)
+    public unsafe Texture CreateTexture(in TextureDescription description)
     {
 #if VALIDATE_USAGE
-        if (descriptor.Format == PixelFormat.Undefined)
+        if (description.Format == PixelFormat.Undefined)
         {
             throw new GraphicsException($"Format must be different than {PixelFormat.Undefined}");
         }
 
-        if (descriptor.Width == 0 || descriptor.Height == 0 || descriptor.DepthOrArrayLayers == 0)
+        if (description.Width <= 0 || description.Height <= 0 || description.DepthOrArrayLayers <= 0)
         {
             throw new GraphicsException("Width, Height, and DepthOrArrayLayers must be non-zero.");
         }
+
+        if (description.MipLevelCount < 0)
+        {
+            throw new GraphicsException("mipLevelCount must be greater or equal to zero.");
+        }
 #endif
 
-        return CreateTextureCore(in descriptor, default);
+        return CreateTextureCore(in description, default);
     }
 
     public BindGroupLayout CreateBindGroupLayout(in BindGroupLayoutDescriptor descriptor)
@@ -106,7 +111,7 @@ public abstract class GPUDevice : GraphicsObject
         }
     }
 
-    protected abstract unsafe GPUBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
-    protected abstract unsafe GPUTexture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData);
+    protected abstract unsafe GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
+    protected abstract unsafe Texture CreateTextureCore(in TextureDescription description, TextureData* initialData);
     protected abstract BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescriptor descriptor);
 }

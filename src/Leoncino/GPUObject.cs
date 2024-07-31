@@ -4,23 +4,23 @@
 namespace Leoncino;
 
 /// <summary>
-/// An base graphics object that was created by <see cref="GPUDevice"/>
+/// An base graphics object that was created by <see cref="GraphicsDevice"/>
 /// </summary>
 public abstract class GPUObject : GraphicsObject
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="GPUObject" /> class.
     /// </summary>
-    /// <param name="label">The label of the object or <c>null</c> to use <see cref="MemberInfo.Name" />.</param>
+    /// <param name="label">The label of the object or <c>null</c>.</param>
     protected GPUObject(string? label = default)
         : base(label)
     {
     }
 
     /// <summary>
-    /// Get the <see cref="GPUDevice"/> object that created this object.
+    /// Get the <see cref="GraphicsDevice"/> object that created this object.
     /// </summary>
-    public abstract GPUDevice Device { get; }
+    public abstract GraphicsDevice Device { get; }
 
     /// <inheritdoc />
     protected override void Dispose(bool disposing)

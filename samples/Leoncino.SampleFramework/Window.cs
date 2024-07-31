@@ -3,7 +3,9 @@
 
 using System.Drawing;
 using SDL;
-using static SDL.SDL;
+using static SDL.SDL3;
+using static SDL.SDL_EventType;
+using System.Runtime.InteropServices;
 
 namespace Leoncino.Samples;
 
@@ -18,64 +20,65 @@ public enum WindowFlags : uint
     Maximized = 1 << 4,
 }
 
-public sealed unsafe class Window
+public sealed unsafe partial class Window
 {
-    private readonly SDL_Window _window;
+    private readonly SDL_Window* _window;
 
     public Window(GraphicsFactory factory, string title, int width, int height, WindowFlags flags = WindowFlags.None)
     {
         Title = title;
 
-        SDL_WindowFlags sdl_flags = SDL_WindowFlags.HighPixelDensity | SDL_WindowFlags.Vulkan | SDL_WindowFlags.Hidden;
+        SDL_WindowFlags sdl_flags = SDL_WindowFlags.SDL_WINDOW_VULKAN | SDL_WindowFlags.SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WindowFlags.SDL_WINDOW_HIDDEN;
         if ((flags & WindowFlags.Fullscreen) != WindowFlags.None)
         {
-            sdl_flags |= SDL_WindowFlags.Fullscreen;
+            sdl_flags |= SDL_WindowFlags.SDL_WINDOW_FULLSCREEN;
         }
         else
         {
             if ((flags & WindowFlags.Borderless) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.Borderless;
+                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_BORDERLESS;
             }
 
             if ((flags & WindowFlags.Resizable) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.Resizable;
+                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
             }
 
             if ((flags & WindowFlags.Minimized) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.Minimized;
+                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_MINIMIZED;
             }
 
             if ((flags & WindowFlags.Maximized) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.Maximized;
+                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_MAXIMIZED;
             }
         }
 
-        _window = SDL_CreateWindow(title, width, height, sdl_flags);
-        if (_window.IsNull)
+        _window = SDL_CreateWindow((Utf8String)title, width, height, sdl_flags);
+        if (_window == null)
         {
             throw new Exception("SDL: failed to create window");
         }
 
-        SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        SDL_SetWindowPosition(_window, (int)SDL_WINDOWPOS_CENTERED, (int)SDL_WINDOWPOS_CENTERED);
         Id = SDL_GetWindowID(_window);
-        Surface =  CreateSurface(factory, _window);
+        Surface = CreateSurface(factory, _window);
     }
 
     public string Title { get; }
 
     public SDL_WindowID Id { get; }
 
-    public GPUSurface Surface { get; }
+    public GraphicsSurface Surface { get; }
 
     public Size ClientSize
     {
         get
         {
-            SDL_GetWindowSize(_window, out int width, out int height);
+            int width, height;
+            _ = SDL_GetWindowSize(_window, &width, &height);
             return new(width, height);
         }
     }
@@ -83,7 +86,8 @@ public sealed unsafe class Window
     {
         get
         {
-            SDL_GetWindowSizeInPixels(_window, out int width, out int height);
+            int width, height;
+            _ = SDL_GetWindowSizeInPixels(_window, &width, &height);
             return new(width, height);
         }
     }
@@ -93,17 +97,18 @@ public sealed unsafe class Window
         _ = SDL_ShowWindow(_window);
     }
 
-    private static GPUSurface CreateSurface(GraphicsFactory factory, SDL_Window window, bool useWayland = false)
+    private static GraphicsSurface CreateSurface(GraphicsFactory factory, SDL_Window* window)
     {
         SurfaceSource? source = default;
+        SDL_PropertiesID props = SDL_GetWindowProperties(window);
         if (OperatingSystem.IsWindows())
         {
-            nint hwnd = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.win32.hwnd");
-            source = SurfaceSource.CreateWin32(hwnd);
+            nint hwnd = SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, 0);
+            source = SurfaceSource.CreateWin32(GetModuleHandleW(null), hwnd);
         }
         else if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
         {
-            NSWindow ns_window = new(SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.cocoa.window"));
+            NSWindow ns_window = new(SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, 0));
             CAMetalLayer metal_layer = CAMetalLayer.New();
             ns_window.contentView.wantsLayer = true;
             ns_window.contentView.layer = metal_layer.Handle;
@@ -112,16 +117,17 @@ public sealed unsafe class Window
         }
         else if (OperatingSystem.IsLinux())
         {
-            if (useWayland)
+            string? videoDriver = SDL_GetCurrentVideoDriver();
+            if (videoDriver == "wayland")
             {
-                nint display = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.wayland.display");
-                nint surface = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.wayland.surface");
+                nint display = SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, 0);
+                nint surface = SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, 0);
                 source = SurfaceSource.CreateWaylandSurface(display, surface);
             }
-            else
+            else if (videoDriver == "x11")
             {
-                nint xlibDisplay = SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.x11.display");
-                ulong xlibWindow = (ulong)SDL_GetProperty(SDL_GetWindowProperties(window), "SDL.window.x11.window");
+                nint xlibDisplay = SDL_GetPointerProperty(props, SDL_PROP_WINDOW_X11_DISPLAY_POINTER, 0);
+                ulong xlibWindow = (ulong)SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
                 source = SurfaceSource.CreateXlibWindow(xlibDisplay, xlibWindow);
             }
         }
@@ -131,11 +137,14 @@ public sealed unsafe class Window
             throw new PlatformNotSupportedException();
         }
 
-        SurfaceDescriptor descriptor = new()
+        SurfaceDescription descriptor = new()
         {
             Source = source!
         };
 
         return factory.CreateSurface(in descriptor);
     }
+
+    [LibraryImport("kernel32")]
+    private static partial nint GetModuleHandleW(ushort* lpModuleName);
 }

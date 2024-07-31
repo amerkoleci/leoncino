@@ -4,7 +4,7 @@
 namespace Leoncino;
 
 /// <summary>
-/// Defines dimension of <see cref="GPUTexture"/>
+/// Defines dimension of <see cref="Texture"/>
 /// </summary>
 public enum TextureDimension
 {
