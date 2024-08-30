@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <AlimerRootDirectory>$(MSBuildThisFileDirectory)</AlimerRootDirectory>
-    <AlimerSrcDirectory>$(MSBuildThisFileDirectory)src/</AlimerSrcDirectory>
+    <RepoRootDirectory>$(MSBuildThisFileDirectory)</RepoRootDirectory>
+    <RepoSrcDirectory>$(MSBuildThisFileDirectory)src/</RepoSrcDirectory>
   </PropertyGroup>
 
   <PropertyGroup>

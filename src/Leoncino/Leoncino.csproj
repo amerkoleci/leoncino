@@ -5,9 +5,15 @@
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(Packing)' == 'true'">$(TargetFrameworks);net9.0-windows10.0.22621</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DefineConstants>$(DefineConstants);VALIDATE_USAGE</DefineConstants>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsPackable>true</IsPackable>
     <ExcludeWebGPU>true</ExcludeWebGPU>
     <ExcludeMetal>true</ExcludeMetal>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(RepoRootDirectory)README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
   
   <PropertyGroup Condition=" $(TargetFramework.Contains('-windows10')) ">
     <ExcludeVulkan>true</ExcludeVulkan>
