@@ -1,7 +1,7 @@
 <Project>
   <!-- https://learn.microsoft.com/nuget/consume-packages/central-package-management -->
   <PropertyGroup>
-    <VorticeWin32Version>2.2.4</VorticeWin32Version>
+    <VorticeWin32Version>2.2.6</VorticeWin32Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,12 +14,12 @@
     <PackageVersion Include="Alimer.Bindings.WebGPU" Version="1.4.3" />
 
     <!-- Samples -->
-    <PackageVersion Include="ppy.SDL3-CS" Version="2024.731.0" />
+    <PackageVersion Include="Alimer.Bindings.SDL" Version="3.7.2" />
 
     <!-- Tests -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-    <PackageVersion Include="NUnit" Version="4.1.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageVersion Include="NUnit" Version="4.2.1" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
 
 </Project>

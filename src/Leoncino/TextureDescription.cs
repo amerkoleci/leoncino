@@ -118,9 +118,9 @@ public readonly record struct TextureDescription
         return new TextureDescription(
             TextureDimension.Texture2D,
             format,
-            width * NumCubeMapSlices,
-            width * NumCubeMapSlices,
-            1,
+            width,
+            width,
+            arrayLayers * NumCubeMapSlices,
             mipLevelCount,
             usage,
             1,

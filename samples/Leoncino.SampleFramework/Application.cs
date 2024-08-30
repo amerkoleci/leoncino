@@ -3,12 +3,9 @@
 
 using System.Diagnostics;
 using System.Drawing;
-using SDL;
-using static SDL.SDL3;
-using static SDL.SDL_LogPriority;
-using static SDL.SDL_EventType;
+using SDL3;
+using static SDL3.SDL3;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 namespace Leoncino.Samples;
 
@@ -19,13 +16,13 @@ public abstract class Application : IDisposable
 
     protected unsafe Application()
     {
-        if (SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO) != 0)
+        if (SDL_Init(SDL_InitFlags.Video) != 0)
         {
             var error = SDL_GetError();
             throw new Exception($"Failed to start SDL2: {error}");
         }
 
-        SDL_SetLogOutputFunction(&Log_SDL, IntPtr.Zero);
+        SDL_SetLogOutputFunction(&Log_SDL, 0);
         GraphicsFactoryDescription factoryDescription = new()
         {
             PreferredBackend = GraphicsBackend.Vulkan
@@ -133,15 +130,15 @@ public abstract class Application : IDisposable
         while (running && !_closeRequested)
         {
             SDL_Event evt;
-            while (SDL_PollEvent(&evt) == SDL_TRUE)
+            while (SDL_PollEvent(&evt))
             {
-                if (evt.type == (uint)SDL_EVENT_QUIT)
+                if (evt.type == SDL_EventType.Quit)
                 {
                     running = false;
                     break;
                 }
 
-                if (evt.type == (uint)SDL_EVENT_WINDOW_CLOSE_REQUESTED
+                if (evt.type == SDL_EventType.WindowCloseRequested
                     && evt.window.windowID == MainWindow.Id)
                 {
                     running = false;
@@ -161,10 +158,11 @@ public abstract class Application : IDisposable
 
     }
 
-    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe void Log_SDL(nint _, SDL_LogCategory category, SDL_LogPriority priority, byte* messagePtr)
+    [UnmanagedCallersOnly]
+    private static unsafe void Log_SDL(nint _, int category, SDL_LogPriority priority, byte* messagePtr)
     {
-        string? message = PtrToStringUTF8(messagePtr);
+        string? message =  ConvertToManaged(messagePtr);
+
         if (priority >= SDL_LOG_PRIORITY_ERROR)
         {
             Log.Error($"[{priority}] SDL: {message}");

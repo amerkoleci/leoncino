@@ -2,9 +2,9 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Drawing;
-using SDL;
-using static SDL.SDL3;
-using static SDL.SDL_EventType;
+using SDL3;
+using static SDL3.SDL3;
+using static SDL3.SDL_EventType;
 using System.Runtime.InteropServices;
 
 namespace Leoncino.Samples;
@@ -22,42 +22,42 @@ public enum WindowFlags : uint
 
 public sealed unsafe partial class Window
 {
-    private readonly SDL_Window* _window;
+    private readonly SDL_Window _window;
 
     public Window(GraphicsFactory factory, string title, int width, int height, WindowFlags flags = WindowFlags.None)
     {
         Title = title;
 
-        SDL_WindowFlags sdl_flags = SDL_WindowFlags.SDL_WINDOW_VULKAN | SDL_WindowFlags.SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WindowFlags.SDL_WINDOW_HIDDEN;
+        SDL_WindowFlags sdl_flags = SDL_WindowFlags.Vulkan | SDL_WindowFlags.HighPixelDensity | SDL_WindowFlags.Hidden;
         if ((flags & WindowFlags.Fullscreen) != WindowFlags.None)
         {
-            sdl_flags |= SDL_WindowFlags.SDL_WINDOW_FULLSCREEN;
+            sdl_flags |= SDL_WindowFlags.Fullscreen;
         }
         else
         {
             if ((flags & WindowFlags.Borderless) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_BORDERLESS;
+                sdl_flags |= SDL_WindowFlags.Borderless;
             }
 
             if ((flags & WindowFlags.Resizable) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
+                sdl_flags |= SDL_WindowFlags.Resizable;
             }
 
             if ((flags & WindowFlags.Minimized) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_MINIMIZED;
+                sdl_flags |= SDL_WindowFlags.Minimized;
             }
 
             if ((flags & WindowFlags.Maximized) != WindowFlags.None)
             {
-                sdl_flags |= SDL_WindowFlags.SDL_WINDOW_MAXIMIZED;
+                sdl_flags |= SDL_WindowFlags.Maximized;
             }
         }
 
-        _window = SDL_CreateWindow((Utf8String)title, width, height, sdl_flags);
-        if (_window == null)
+        _window = SDL_CreateWindow(title, width, height, sdl_flags);
+        if (_window.IsNull)
         {
             throw new Exception("SDL: failed to create window");
         }
@@ -77,8 +77,7 @@ public sealed unsafe partial class Window
     {
         get
         {
-            int width, height;
-            _ = SDL_GetWindowSize(_window, &width, &height);
+            _ = SDL_GetWindowSize(_window, out int width, out int height);
             return new(width, height);
         }
     }
@@ -86,8 +85,7 @@ public sealed unsafe partial class Window
     {
         get
         {
-            int width, height;
-            _ = SDL_GetWindowSizeInPixels(_window, &width, &height);
+            _ = SDL_GetWindowSizeInPixels(_window, out int width, out int height);
             return new(width, height);
         }
     }
@@ -97,7 +95,7 @@ public sealed unsafe partial class Window
         _ = SDL_ShowWindow(_window);
     }
 
-    private static GraphicsSurface CreateSurface(GraphicsFactory factory, SDL_Window* window)
+    private static GraphicsSurface CreateSurface(GraphicsFactory factory, in SDL_Window window)
     {
         SurfaceSource? source = default;
         SDL_PropertiesID props = SDL_GetWindowProperties(window);
