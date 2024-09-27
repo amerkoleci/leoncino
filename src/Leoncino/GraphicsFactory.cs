@@ -8,7 +8,7 @@ namespace Leoncino;
 /// </summary>
 public abstract class GraphicsFactory : GraphicsObject
 {
-    protected GraphicsFactory(in GraphicsFactoryDescription description)
+    protected GraphicsFactory(in GraphicsFactoryDescriptor description)
         : base(description.Label)
     {
     }
@@ -18,7 +18,7 @@ public abstract class GraphicsFactory : GraphicsObject
     /// </summary>
     public abstract GraphicsBackend BackendType { get; }
 
-    public GraphicsSurface CreateSurface(in SurfaceDescription descriptor)
+    public GraphicsSurface CreateSurface(in SurfaceDescriptor descriptor)
     {
 #if VALIDATE_USAGE
         if (descriptor.Source is null)
@@ -35,7 +35,7 @@ public abstract class GraphicsFactory : GraphicsObject
         return RequestAdapterCore(in options);
     }
 
-    protected abstract GraphicsSurface CreateSurfaceCore(in SurfaceDescription descriptor);
+    protected abstract GraphicsSurface CreateSurfaceCore(in SurfaceDescriptor descriptor);
 
     protected abstract GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options);
 
@@ -60,8 +60,8 @@ public abstract class GraphicsFactory : GraphicsObject
                 return false;
 #endif
 
-#if !EXCLUDE_WEBGPU_BACKEND
-            case GraphicsBackendType.WebGPU:
+#if !EXCLUDE_WGPU_BACKEND
+            case GraphicsBackend.WGPU:
                 return WebGPU.WebGPUInstance.IsSupported();
 #endif
 
@@ -70,9 +70,9 @@ public abstract class GraphicsFactory : GraphicsObject
         }
     }
 
-    public static GraphicsFactory Create(in GraphicsFactoryDescription description)
+    public static GraphicsFactory Create(in GraphicsFactoryDescriptor descriptor)
     {
-        GraphicsBackend backend = description.PreferredBackend;
+        GraphicsBackend backend = descriptor.PreferredBackend;
         if (backend == GraphicsBackend.Count)
         {
             if (IsBackendSupport(GraphicsBackend.Direct3D12))
@@ -87,9 +87,9 @@ public abstract class GraphicsFactory : GraphicsObject
             {
                 backend = GraphicsBackend.Vulkan;
             }
-            else if (IsBackendSupport(GraphicsBackend.WebGPU))
+            else if (IsBackendSupport(GraphicsBackend.WGPU))
             {
-                backend = GraphicsBackend.WebGPU;
+                backend = GraphicsBackend.WGPU;
             }
         }
 
@@ -100,7 +100,7 @@ public abstract class GraphicsFactory : GraphicsObject
             case GraphicsBackend.Vulkan:
                 if (Vulkan.VulkanGraphicsFactory.IsSupported())
                 {
-                    instance = new Vulkan.VulkanGraphicsFactory(in description);
+                    instance = new Vulkan.VulkanGraphicsFactory(in descriptor);
                 }
                 break;
 #endif
@@ -109,7 +109,7 @@ public abstract class GraphicsFactory : GraphicsObject
             case GraphicsBackend.Direct3D12:
                 if (D3D12.D3D12GraphicsFactory.IsSupported())
                 {
-                    instance = new D3D12.D3D12GraphicsFactory(in description);
+                    instance = new D3D12.D3D12GraphicsFactory(in descriptor);
                 }
                 break;
 #endif
@@ -119,8 +119,8 @@ public abstract class GraphicsFactory : GraphicsObject
                 break;
 #endif
 
-#if !EXCLUDE_WEBGPU_BACKEND
-            case GraphicsBackendType.WebGPU:
+#if !EXCLUDE_WGPU_BACKEND
+            case GraphicsBackend.WGPU:
                 if (WebGPU.WebGPUInstance.IsSupported())
                 {
                     instance = new WebGPU.WebGPUInstance(in descriptor);

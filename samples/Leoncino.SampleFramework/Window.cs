@@ -135,7 +135,7 @@ public sealed unsafe partial class Window
             throw new PlatformNotSupportedException();
         }
 
-        SurfaceDescription descriptor = new()
+        SurfaceDescriptor descriptor = new()
         {
             Source = source!
         };

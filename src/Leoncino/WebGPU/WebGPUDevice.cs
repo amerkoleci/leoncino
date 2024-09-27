@@ -7,22 +7,51 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe class WebGPUDevice : GPUDevice
+internal unsafe class WebGPUDevice : GraphicsDevice
 {
     private WebGPUAdapter _adapter;
 
-    public WebGPUDevice(WebGPUAdapter adapter, WGPUDevice handle)
+    public WebGPUDevice(WebGPUAdapter adapter, in GraphicsDeviceDescriptor descriptor)
     {
         _adapter = adapter;
-        Handle = handle;
-        wgpuDeviceSetUncapturedErrorCallback(handle, &HandleUncapturedErrorCallback, 0);
+
+        fixed (byte* pDeviceName = descriptor.Label.GetUtf8Span())
+        fixed (WGPUFeatureName* requiredFeatures = adapter.Features)
+        {
+            WGPURequiredLimits requiredLimits;
+            requiredLimits.nextInChain = null;
+            requiredLimits.limits = adapter.AdapterLimits.limits;
+
+            WGPUDeviceDescriptor deviceDesc = new()
+            {
+                nextInChain = null,
+                label = pDeviceName,
+                requiredFeatureCount = (nuint)adapter.Features.Length,
+                requiredFeatures = requiredFeatures,
+                requiredLimits = &requiredLimits,
+                deviceLostCallback = &HandleDeviceLostCallback
+            };
+            deviceDesc.defaultQueue.nextInChain = null;
+            deviceDesc.uncapturedErrorCallbackInfo.callback = &HandleUncapturedErrorCallback;
+            //deviceDesc.defaultQueue.label = "The default queue";
+
+            WGPUDevice handle = WGPUDevice.Null;
+            wgpuAdapterRequestDevice(
+                adapter.Handle,
+                &deviceDesc,
+                &OnDeviceRequestEnded,
+                &handle
+            );
+
+            Handle = handle;
+        }
 
         // Get the queue associated with the device
-        Queue = wgpuDeviceGetQueue(handle);
+        Queue = wgpuDeviceGetQueue(Handle);
     }
 
     /// <inheritdoc />
-    public override GPUAdapter Adapter => _adapter;
+    public override GraphicsAdapter Adapter => _adapter;
 
     public WGPUDevice Handle { get; }
     public WGPUQueue Queue { get; }
@@ -43,13 +72,13 @@ internal unsafe class WebGPUDevice : GPUDevice
     }
 
     /// <inheritdoc />
-    protected override GPUBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
     {
         return new WebGPUBuffer(this, in descriptor, initialData);
     }
 
     /// <inheritdoc />
-    protected override unsafe GPUTexture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData)
+    protected override unsafe Texture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData)
     {
         return new WebGPUTexture(this, in descriptor, initialData);
     }
@@ -61,9 +90,29 @@ internal unsafe class WebGPUDevice : GPUDevice
     }
 
     [UnmanagedCallersOnly]
-    private static void HandleUncapturedErrorCallback(WGPUErrorType type, sbyte* pMessage, nint pUserData)
+    private static unsafe void OnDeviceRequestEnded(WGPURequestDeviceStatus status, WGPUDevice device, byte* message, void* pUserData)
+    {
+        if (status == WGPURequestDeviceStatus.Success)
+        {
+            *(WGPUDevice*)pUserData = device;
+        }
+        else
+        {
+            throw new GraphicsException("Could not get WGPU adapter: " + Interop.GetString(message));
+        }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void HandleDeviceLostCallback(WGPUDeviceLostReason type, byte* pMessage, void* pUserData)
     {
         string message = Interop.GetString(pMessage)!;
-        throw new LeoncinoException($"Uncaptured device error: type: {type} ({message})");
+        throw new GraphicsException($"WGPU Device lost: reason {type} ({message})");
+    }
+
+    [UnmanagedCallersOnly]
+    private static void HandleUncapturedErrorCallback(WGPUErrorType type, byte* pMessage, void* pUserData)
+    {
+        string message = Interop.GetString(pMessage)!;
+        throw new GraphicsException($"Uncaptured device error: type: {type} ({message})");
     }
 }

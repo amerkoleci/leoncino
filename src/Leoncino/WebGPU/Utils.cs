@@ -216,226 +216,181 @@ internal static unsafe class Utils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PixelFormat ToLeoncino(this WGPUTextureFormat format)
     {
-        switch (format)
+        return format switch
         {
             // 8-bit formats
-            case WGPUTextureFormat.R8Unorm: return PixelFormat.R8Unorm;
-            case WGPUTextureFormat.R8Snorm: return PixelFormat.R8Snorm;
-            case WGPUTextureFormat.R8Uint: return PixelFormat.R8Uint;
-            case WGPUTextureFormat.R8Sint: return PixelFormat.R8Sint;
+            WGPUTextureFormat.R8Unorm => PixelFormat.R8Unorm,
+            WGPUTextureFormat.R8Snorm => PixelFormat.R8Snorm,
+            WGPUTextureFormat.R8Uint => PixelFormat.R8Uint,
+            WGPUTextureFormat.R8Sint => PixelFormat.R8Sint,
             // 16-bit formats
             //case PixelFormat.R16Unorm: return WGPUTextureFormat.R16Unorm;
             //case PixelFormat.R16Snorm: return WGPUTextureFormat.R16Snorm;
-            case WGPUTextureFormat.R16Uint: return PixelFormat.R16Uint;
-            case WGPUTextureFormat.R16Sint: return PixelFormat.R16Sint;
-            case WGPUTextureFormat.R16Float: return PixelFormat.R16Float;
-            case WGPUTextureFormat.RG8Unorm: return PixelFormat.RG8Unorm;
-            case WGPUTextureFormat.RG8Snorm: return PixelFormat.RG8Snorm;
-            case WGPUTextureFormat.RG8Uint: return PixelFormat.RG8Uint;
-            case WGPUTextureFormat.RG8Sint: return PixelFormat.RG8Sint;
+            WGPUTextureFormat.R16Uint => PixelFormat.R16Uint,
+            WGPUTextureFormat.R16Sint => PixelFormat.R16Sint,
+            WGPUTextureFormat.R16Float => PixelFormat.R16Float,
+            WGPUTextureFormat.RG8Unorm => PixelFormat.RG8Unorm,
+            WGPUTextureFormat.RG8Snorm => PixelFormat.RG8Snorm,
+            WGPUTextureFormat.RG8Uint => PixelFormat.RG8Uint,
+            WGPUTextureFormat.RG8Sint => PixelFormat.RG8Sint,
             // Packed 16-Bit Pixel Formats
             //case PixelFormat.Bgra4Unorm: return WGPUTextureFormat.Bgra4Unorm;
             //case PixelFormat.B5G6R5Unorm: return WGPUTextureFormat.B5G6R5UnormPack16;
             //case PixelFormat.Bgr5A1Unorm: return WGPUTextureFormat.B5G5R5A1UnormPack16;
             // 32-bit formats
-            case WGPUTextureFormat.R32Uint: return PixelFormat.R32Uint;
-            case WGPUTextureFormat.R32Sint: return PixelFormat.R32Sint;
-            case WGPUTextureFormat.R32Float: return PixelFormat.R32Float;
+            WGPUTextureFormat.R32Uint => PixelFormat.R32Uint,
+            WGPUTextureFormat.R32Sint => PixelFormat.R32Sint,
+            WGPUTextureFormat.R32Float => PixelFormat.R32Float,
             //case PixelFormat.Rg16Unorm: return WGPUTextureFormat.Rg16Unorm;
             //case PixelFormat.Rg16Snorm: return WGPUTextureFormat.Rg16Snorm;
-            case WGPUTextureFormat.RG16Uint: return PixelFormat.RG16Uint;
-            case WGPUTextureFormat.RG16Sint: return PixelFormat.RG16Sint;
-            case WGPUTextureFormat.RG16Float: return PixelFormat.RG16Float;
-            case WGPUTextureFormat.RGBA8Unorm: return PixelFormat.RGBA8Unorm;
-            case WGPUTextureFormat.RGBA8UnormSrgb: return PixelFormat.RGBA8UnormSrgb;
-            case WGPUTextureFormat.RGBA8Snorm: return PixelFormat.RGBA8Snorm;
-            case WGPUTextureFormat.RGBA8Uint: return PixelFormat.RGBA8Uint;
-            case WGPUTextureFormat.RGBA8Sint: return PixelFormat.RGBA8Sint;
-            case WGPUTextureFormat.BGRA8Unorm: return PixelFormat.BGRA8Unorm;
-            case WGPUTextureFormat.BGRA8UnormSrgb: return PixelFormat.BGRA8UnormSrgb;
+            WGPUTextureFormat.RG16Uint => PixelFormat.RG16Uint,
+            WGPUTextureFormat.RG16Sint => PixelFormat.RG16Sint,
+            WGPUTextureFormat.RG16Float => PixelFormat.RG16Float,
+            WGPUTextureFormat.RGBA8Unorm => PixelFormat.RGBA8Unorm,
+            WGPUTextureFormat.RGBA8UnormSrgb => PixelFormat.RGBA8UnormSrgb,
+            WGPUTextureFormat.RGBA8Snorm => PixelFormat.RGBA8Snorm,
+            WGPUTextureFormat.RGBA8Uint => PixelFormat.RGBA8Uint,
+            WGPUTextureFormat.RGBA8Sint => PixelFormat.RGBA8Sint,
+            WGPUTextureFormat.BGRA8Unorm => PixelFormat.BGRA8Unorm,
+            WGPUTextureFormat.BGRA8UnormSrgb => PixelFormat.BGRA8UnormSrgb,
             // Packed 32-Bit formats
-            case WGPUTextureFormat.RGB10A2Unorm: return PixelFormat.RGB10A2Unorm;
-            case WGPUTextureFormat.RGB10A2Uint: return PixelFormat.RGB10A2Uint;
-            case WGPUTextureFormat.RG11B10Ufloat: return PixelFormat.RG11B10Ufloat;
-            case WGPUTextureFormat.RGB9E5Ufloat: return PixelFormat.RGB9E5Ufloat;
+            WGPUTextureFormat.RGB10A2Unorm => PixelFormat.RGB10A2Unorm,
+            WGPUTextureFormat.RGB10A2Uint => PixelFormat.RGB10A2Uint,
+            WGPUTextureFormat.RG11B10Ufloat => PixelFormat.RG11B10Ufloat,
+            WGPUTextureFormat.RGB9E5Ufloat => PixelFormat.RGB9E5Ufloat,
             // 64-Bit formats
-            case WGPUTextureFormat.RG32Uint: return PixelFormat.RG32Uint;
-            case WGPUTextureFormat.RG32Sint: return PixelFormat.RG32Sint;
-            case WGPUTextureFormat.RG32Float: return PixelFormat.RG32Float;
+            WGPUTextureFormat.RG32Uint => PixelFormat.RG32Uint,
+            WGPUTextureFormat.RG32Sint => PixelFormat.RG32Sint,
+            WGPUTextureFormat.RG32Float => PixelFormat.RG32Float,
             //case PixelFormat.Rgba16Unorm: return WGPUTextureFormat.Rgba16Unorm;
             //case PixelFormat.Rgba16Snorm: return WGPUTextureFormat.Rgba16Snorm;
-            case WGPUTextureFormat.RGBA16Uint: return PixelFormat.RGBA16Uint;
-            case WGPUTextureFormat.RGBA16Sint: return PixelFormat.RGBA16Sint;
-            case WGPUTextureFormat.RGBA16Float: return PixelFormat.RGBA16Float;
+            WGPUTextureFormat.RGBA16Uint => PixelFormat.RGBA16Uint,
+            WGPUTextureFormat.RGBA16Sint => PixelFormat.RGBA16Sint,
+            WGPUTextureFormat.RGBA16Float => PixelFormat.RGBA16Float,
             // 128-Bit formats
-            case WGPUTextureFormat.RGBA32Uint: return PixelFormat.RGBA32Uint;
-            case WGPUTextureFormat.RGBA32Sint: return PixelFormat.RGBA32Sint;
-            case WGPUTextureFormat.RGBA32Float: return PixelFormat.RGBA32Float;
-
+            WGPUTextureFormat.RGBA32Uint => PixelFormat.RGBA32Uint,
+            WGPUTextureFormat.RGBA32Sint => PixelFormat.RGBA32Sint,
+            WGPUTextureFormat.RGBA32Float => PixelFormat.RGBA32Float,
             // Depth-stencil formats
-            case WGPUTextureFormat.Stencil8:
-                return PixelFormat.Undefined;
-
-            case WGPUTextureFormat.Depth16Unorm:
-                return PixelFormat.Depth16Unorm;
-
-            case WGPUTextureFormat.Depth24Plus:
-            case WGPUTextureFormat.Depth24PlusStencil8:
-                return PixelFormat.Depth24UnormStencil8;
-
-            case WGPUTextureFormat.Depth32Float:
-                return PixelFormat.Depth32Float;
-
-            case WGPUTextureFormat.Depth32FloatStencil8:
-                return PixelFormat.Depth32FloatStencil8;
-
+            WGPUTextureFormat.Stencil8 => PixelFormat.Undefined,
+            WGPUTextureFormat.Depth16Unorm => PixelFormat.Depth16Unorm,
+            WGPUTextureFormat.Depth24Plus or WGPUTextureFormat.Depth24PlusStencil8 => PixelFormat.Depth24UnormStencil8,
+            WGPUTextureFormat.Depth32Float => PixelFormat.Depth32Float,
+            WGPUTextureFormat.Depth32FloatStencil8 => PixelFormat.Depth32FloatStencil8,
             // Compressed BC formats
-            case WGPUTextureFormat.BC1RGBAUnorm:
-                return PixelFormat.BC1RGBAUnorm;
-            case WGPUTextureFormat.BC1RGBAUnormSrgb:
-                return PixelFormat.BC1RGBAUnormSrgb;
-            case WGPUTextureFormat.BC2RGBAUnorm:
-                return PixelFormat.BC2RGBAUnorm;
-            case WGPUTextureFormat.BC2RGBAUnormSrgb:
-                return PixelFormat.BC2RGBAUnormSrgb;
-            case WGPUTextureFormat.BC3RGBAUnorm:
-                return PixelFormat.BC3RGBAUnorm;
-            case WGPUTextureFormat.BC3RGBAUnormSrgb:
-                return PixelFormat.BC3RGBAUnormSrgb;
-            case WGPUTextureFormat.BC4RSnorm:
-                return PixelFormat.BC4RSnorm;
-            case WGPUTextureFormat.BC4RUnorm:
-                return PixelFormat.BC4RUnorm;
-            case WGPUTextureFormat.BC5RGUnorm:
-                return PixelFormat.BC5RGUnorm;
-            case WGPUTextureFormat.BC5RGSnorm:
-                return PixelFormat.BC5RGSnorm;
-            case WGPUTextureFormat.BC6HRGBUfloat:
-                return PixelFormat.BC6HRGBUfloat;
-            case WGPUTextureFormat.BC6HRGBFloat:
-                return PixelFormat.BC6HRGBFloat;
-            case WGPUTextureFormat.BC7RGBAUnorm:
-                return PixelFormat.BC7RGBAUnorm;
-            case WGPUTextureFormat.BC7RGBAUnormSrgb:
-                return PixelFormat.BC7RGBAUnormSrgb;
-
+            WGPUTextureFormat.BC1RGBAUnorm => PixelFormat.BC1RGBAUnorm,
+            WGPUTextureFormat.BC1RGBAUnormSrgb => PixelFormat.BC1RGBAUnormSrgb,
+            WGPUTextureFormat.BC2RGBAUnorm => PixelFormat.BC2RGBAUnorm,
+            WGPUTextureFormat.BC2RGBAUnormSrgb => PixelFormat.BC2RGBAUnormSrgb,
+            WGPUTextureFormat.BC3RGBAUnorm => PixelFormat.BC3RGBAUnorm,
+            WGPUTextureFormat.BC3RGBAUnormSrgb => PixelFormat.BC3RGBAUnormSrgb,
+            WGPUTextureFormat.BC4RSnorm => PixelFormat.BC4RSnorm,
+            WGPUTextureFormat.BC4RUnorm => PixelFormat.BC4RUnorm,
+            WGPUTextureFormat.BC5RGUnorm => PixelFormat.BC5RGUnorm,
+            WGPUTextureFormat.BC5RGSnorm => PixelFormat.BC5RGSnorm,
+            WGPUTextureFormat.BC6HRGBUfloat => PixelFormat.BC6HRGBUfloat,
+            WGPUTextureFormat.BC6HRGBFloat => PixelFormat.BC6HRGBFloat,
+            WGPUTextureFormat.BC7RGBAUnorm => PixelFormat.BC7RGBAUnorm,
+            WGPUTextureFormat.BC7RGBAUnormSrgb => PixelFormat.BC7RGBAUnormSrgb,
             // Etc2/Eac compressed formats
-            case WGPUTextureFormat.ETC2RGB8Unorm:
-                return PixelFormat.ETC2RGB8Unorm;
-            case WGPUTextureFormat.ETC2RGB8UnormSrgb:
-                return PixelFormat.ETC2RGB8UnormSrgb;
-            case WGPUTextureFormat.ETC2RGB8A1Unorm:
-                return PixelFormat.ETC2RGB8A1Unorm;
-            case WGPUTextureFormat.ETC2RGB8A1UnormSrgb:
-                return PixelFormat.ETC2RGB8A1UnormSrgb;
-            case WGPUTextureFormat.ETC2RGBA8Unorm:
-                return PixelFormat.ETC2RGBA8Unorm;
-            case WGPUTextureFormat.ETC2RGBA8UnormSrgb:
-                return PixelFormat.ETC2RGBA8UnormSrgb;
-
-            case WGPUTextureFormat.EACR11Unorm: return PixelFormat.EACR11Unorm;
-            case WGPUTextureFormat.EACR11Snorm: return PixelFormat.EACR11Snorm;
-            case WGPUTextureFormat.EACRG11Unorm: return PixelFormat.EACRG11Unorm;
-            case WGPUTextureFormat.EACRG11Snorm: return PixelFormat.EACRG11Snorm;
-
-            case WGPUTextureFormat.ASTC4x4Unorm: return PixelFormat.ASTC4x4Unorm;
-            case WGPUTextureFormat.ASTC4x4UnormSrgb: return PixelFormat.ASTC4x4UnormSrgb;
-            case WGPUTextureFormat.ASTC5x4Unorm: return PixelFormat.ASTC5x4Unorm;
-            case WGPUTextureFormat.ASTC5x4UnormSrgb: return PixelFormat.ASTC5x4UnormSrgb;
-            case WGPUTextureFormat.ASTC5x5Unorm: return PixelFormat.ASTC5x5Unorm;
-            case WGPUTextureFormat.ASTC5x5UnormSrgb: return PixelFormat.ASTC5x5UnormSrgb;
-            case WGPUTextureFormat.ASTC6x5Unorm: return PixelFormat.ASTC6x5Unorm;
-            case WGPUTextureFormat.ASTC6x5UnormSrgb: return PixelFormat.ASTC6x5UnormSrgb;
-            case WGPUTextureFormat.ASTC6x6Unorm: return PixelFormat.ASTC6x6Unorm;
-            case WGPUTextureFormat.ASTC6x6UnormSrgb: return PixelFormat.ASTC6x6UnormSrgb;
-            case WGPUTextureFormat.ASTC8x5Unorm: return PixelFormat.ASTC8x5Unorm;
-            case WGPUTextureFormat.ASTC8x5UnormSrgb: return PixelFormat.ASTC8x5UnormSrgb;
-            case WGPUTextureFormat.ASTC8x6Unorm: return PixelFormat.ASTC8x6Unorm;
-            case WGPUTextureFormat.ASTC8x6UnormSrgb: return PixelFormat.ASTC8x6UnormSrgb;
-            case WGPUTextureFormat.ASTC8x8Unorm: return PixelFormat.ASTC8x8Unorm;
-            case WGPUTextureFormat.ASTC8x8UnormSrgb: return PixelFormat.ASTC8x8UnormSrgb;
-            case WGPUTextureFormat.ASTC10x5Unorm: return PixelFormat.ASTC10x5Unorm;
-            case WGPUTextureFormat.ASTC10x5UnormSrgb: return PixelFormat.ASTC10x5UnormSrgb;
-            case WGPUTextureFormat.ASTC10x6Unorm: return PixelFormat.ASTC10x6Unorm;
-            case WGPUTextureFormat.ASTC10x6UnormSrgb: return PixelFormat.ASTC10x6UnormSrgb;
-            case WGPUTextureFormat.ASTC10x8Unorm: return PixelFormat.ASTC10x8Unorm;
-            case WGPUTextureFormat.ASTC10x8UnormSrgb: return PixelFormat.ASTC10x8UnormSrgb;
-            case WGPUTextureFormat.ASTC10x10Unorm: return PixelFormat.ASTC10x10Unorm;
-            case WGPUTextureFormat.ASTC10x10UnormSrgb: return PixelFormat.ASTC10x10UnormSrgb;
-            case WGPUTextureFormat.ASTC12x10Unorm: return PixelFormat.ASTC12x10Unorm;
-            case WGPUTextureFormat.ASTC12x10UnormSrgb: return PixelFormat.ASTC12x10UnormSrgb;
-            case WGPUTextureFormat.ASTC12x12Unorm: return PixelFormat.ASTC12x12Unorm;
-            case WGPUTextureFormat.ASTC12x12UnormSrgb: return PixelFormat.ASTC12x12UnormSrgb;
-
-            default:
-                return PixelFormat.Undefined;
-        }
+            WGPUTextureFormat.ETC2RGB8Unorm => PixelFormat.ETC2RGB8Unorm,
+            WGPUTextureFormat.ETC2RGB8UnormSrgb => PixelFormat.ETC2RGB8UnormSrgb,
+            WGPUTextureFormat.ETC2RGB8A1Unorm => PixelFormat.ETC2RGB8A1Unorm,
+            WGPUTextureFormat.ETC2RGB8A1UnormSrgb => PixelFormat.ETC2RGB8A1UnormSrgb,
+            WGPUTextureFormat.ETC2RGBA8Unorm => PixelFormat.ETC2RGBA8Unorm,
+            WGPUTextureFormat.ETC2RGBA8UnormSrgb => PixelFormat.ETC2RGBA8UnormSrgb,
+            WGPUTextureFormat.EACR11Unorm => PixelFormat.EACR11Unorm,
+            WGPUTextureFormat.EACR11Snorm => PixelFormat.EACR11Snorm,
+            WGPUTextureFormat.EACRG11Unorm => PixelFormat.EACRG11Unorm,
+            WGPUTextureFormat.EACRG11Snorm => PixelFormat.EACRG11Snorm,
+            WGPUTextureFormat.ASTC4x4Unorm => PixelFormat.ASTC4x4Unorm,
+            WGPUTextureFormat.ASTC4x4UnormSrgb => PixelFormat.ASTC4x4UnormSrgb,
+            WGPUTextureFormat.ASTC5x4Unorm => PixelFormat.ASTC5x4Unorm,
+            WGPUTextureFormat.ASTC5x4UnormSrgb => PixelFormat.ASTC5x4UnormSrgb,
+            WGPUTextureFormat.ASTC5x5Unorm => PixelFormat.ASTC5x5Unorm,
+            WGPUTextureFormat.ASTC5x5UnormSrgb => PixelFormat.ASTC5x5UnormSrgb,
+            WGPUTextureFormat.ASTC6x5Unorm => PixelFormat.ASTC6x5Unorm,
+            WGPUTextureFormat.ASTC6x5UnormSrgb => PixelFormat.ASTC6x5UnormSrgb,
+            WGPUTextureFormat.ASTC6x6Unorm => PixelFormat.ASTC6x6Unorm,
+            WGPUTextureFormat.ASTC6x6UnormSrgb => PixelFormat.ASTC6x6UnormSrgb,
+            WGPUTextureFormat.ASTC8x5Unorm => PixelFormat.ASTC8x5Unorm,
+            WGPUTextureFormat.ASTC8x5UnormSrgb => PixelFormat.ASTC8x5UnormSrgb,
+            WGPUTextureFormat.ASTC8x6Unorm => PixelFormat.ASTC8x6Unorm,
+            WGPUTextureFormat.ASTC8x6UnormSrgb => PixelFormat.ASTC8x6UnormSrgb,
+            WGPUTextureFormat.ASTC8x8Unorm => PixelFormat.ASTC8x8Unorm,
+            WGPUTextureFormat.ASTC8x8UnormSrgb => PixelFormat.ASTC8x8UnormSrgb,
+            WGPUTextureFormat.ASTC10x5Unorm => PixelFormat.ASTC10x5Unorm,
+            WGPUTextureFormat.ASTC10x5UnormSrgb => PixelFormat.ASTC10x5UnormSrgb,
+            WGPUTextureFormat.ASTC10x6Unorm => PixelFormat.ASTC10x6Unorm,
+            WGPUTextureFormat.ASTC10x6UnormSrgb => PixelFormat.ASTC10x6UnormSrgb,
+            WGPUTextureFormat.ASTC10x8Unorm => PixelFormat.ASTC10x8Unorm,
+            WGPUTextureFormat.ASTC10x8UnormSrgb => PixelFormat.ASTC10x8UnormSrgb,
+            WGPUTextureFormat.ASTC10x10Unorm => PixelFormat.ASTC10x10Unorm,
+            WGPUTextureFormat.ASTC10x10UnormSrgb => PixelFormat.ASTC10x10UnormSrgb,
+            WGPUTextureFormat.ASTC12x10Unorm => PixelFormat.ASTC12x10Unorm,
+            WGPUTextureFormat.ASTC12x10UnormSrgb => PixelFormat.ASTC12x10UnormSrgb,
+            WGPUTextureFormat.ASTC12x12Unorm => PixelFormat.ASTC12x12Unorm,
+            WGPUTextureFormat.ASTC12x12UnormSrgb => PixelFormat.ASTC12x12UnormSrgb,
+            _ => PixelFormat.Undefined,
+        };
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static WGPUVertexFormat ToWGPU(this VertexFormat format)
     {
-        switch (format)
+        return format switch
         {
-            case VertexFormat.UByte2: return WGPUVertexFormat.Uint8x2;
-            case VertexFormat.UByte4: return WGPUVertexFormat.Uint8x4;
-            case VertexFormat.Byte2: return WGPUVertexFormat.Sint8x2;
-            case VertexFormat.Byte4: return WGPUVertexFormat.Sint8x4;
-            case VertexFormat.UByte2Normalized: return WGPUVertexFormat.Unorm8x2;
-            case VertexFormat.UByte4Normalized: return WGPUVertexFormat.Unorm8x4;
-            case VertexFormat.Byte2Normalized: return WGPUVertexFormat.Snorm8x2;
-            case VertexFormat.Byte4Normalized: return WGPUVertexFormat.Snorm8x4;
-
-            case VertexFormat.UShort2: return WGPUVertexFormat.Uint16x2;
-            case VertexFormat.UShort4: return WGPUVertexFormat.Uint16x4;
-            case VertexFormat.Short2: return WGPUVertexFormat.Sint16x2;
-            case VertexFormat.Short4: return WGPUVertexFormat.Sint16x4;
-            case VertexFormat.UShort2Normalized: return WGPUVertexFormat.Unorm16x2;
-            case VertexFormat.UShort4Normalized: return WGPUVertexFormat.Unorm16x4;
-            case VertexFormat.Short2Normalized: return WGPUVertexFormat.Snorm16x2;
-            case VertexFormat.Short4Normalized: return WGPUVertexFormat.Snorm16x4;
-            case VertexFormat.Half2: return WGPUVertexFormat.Float16x2;
-            case VertexFormat.Half4: return WGPUVertexFormat.Float16x4;
-
-            case VertexFormat.Float: return WGPUVertexFormat.Float32;
-            case VertexFormat.Float2: return WGPUVertexFormat.Float32x2;
-            case VertexFormat.Float3: return WGPUVertexFormat.Float32x3;
-            case VertexFormat.Float4: return WGPUVertexFormat.Float32x4;
-
-            case VertexFormat.UInt: return WGPUVertexFormat.Uint32;
-            case VertexFormat.UInt2: return WGPUVertexFormat.Uint32x2;
-            case VertexFormat.UInt3: return WGPUVertexFormat.Uint32x3;
-            case VertexFormat.UInt4: return WGPUVertexFormat.Uint32x4;
-
-            case VertexFormat.Int: return WGPUVertexFormat.Sint32;
-            case VertexFormat.Int2: return WGPUVertexFormat.Sint32x2;
-            case VertexFormat.Int3: return WGPUVertexFormat.Sint32x3;
-            case VertexFormat.Int4: return WGPUVertexFormat.Sint32x4;
-
+            VertexFormat.UByte2 => WGPUVertexFormat.Uint8x2,
+            VertexFormat.UByte4 => WGPUVertexFormat.Uint8x4,
+            VertexFormat.Byte2 => WGPUVertexFormat.Sint8x2,
+            VertexFormat.Byte4 => WGPUVertexFormat.Sint8x4,
+            VertexFormat.UByte2Normalized => WGPUVertexFormat.Unorm8x2,
+            VertexFormat.UByte4Normalized => WGPUVertexFormat.Unorm8x4,
+            VertexFormat.Byte2Normalized => WGPUVertexFormat.Snorm8x2,
+            VertexFormat.Byte4Normalized => WGPUVertexFormat.Snorm8x4,
+            VertexFormat.UShort2 => WGPUVertexFormat.Uint16x2,
+            VertexFormat.UShort4 => WGPUVertexFormat.Uint16x4,
+            VertexFormat.Short2 => WGPUVertexFormat.Sint16x2,
+            VertexFormat.Short4 => WGPUVertexFormat.Sint16x4,
+            VertexFormat.UShort2Normalized => WGPUVertexFormat.Unorm16x2,
+            VertexFormat.UShort4Normalized => WGPUVertexFormat.Unorm16x4,
+            VertexFormat.Short2Normalized => WGPUVertexFormat.Snorm16x2,
+            VertexFormat.Short4Normalized => WGPUVertexFormat.Snorm16x4,
+            VertexFormat.Half2 => WGPUVertexFormat.Float16x2,
+            VertexFormat.Half4 => WGPUVertexFormat.Float16x4,
+            VertexFormat.Float => WGPUVertexFormat.Float32,
+            VertexFormat.Float2 => WGPUVertexFormat.Float32x2,
+            VertexFormat.Float3 => WGPUVertexFormat.Float32x3,
+            VertexFormat.Float4 => WGPUVertexFormat.Float32x4,
+            VertexFormat.UInt => WGPUVertexFormat.Uint32,
+            VertexFormat.UInt2 => WGPUVertexFormat.Uint32x2,
+            VertexFormat.UInt3 => WGPUVertexFormat.Uint32x3,
+            VertexFormat.UInt4 => WGPUVertexFormat.Uint32x4,
+            VertexFormat.Int => WGPUVertexFormat.Sint32,
+            VertexFormat.Int2 => WGPUVertexFormat.Sint32x2,
+            VertexFormat.Int3 => WGPUVertexFormat.Sint32x3,
+            VertexFormat.Int4 => WGPUVertexFormat.Sint32x4,
             //case VertexFormat.Int1010102Normalized: return WGPUVertexFormat.A2B10G10R10SnormPack32;
             //case VertexFormat.UInt1010102Normalized: return WGPUVertexFormat.A2B10G10R10UnormPack32;
-
-            default:
-                return WGPUVertexFormat.Undefined;
-        }
+            _ => WGPUVertexFormat.Undefined,
+        };
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static WGPUCompareFunction ToWGPU(this CompareFunction value)
     {
-        switch (value)
+        return value switch
         {
-            case CompareFunction.Never: return WGPUCompareFunction.Never;
-            case CompareFunction.Less: return WGPUCompareFunction.Less;
-            case CompareFunction.Equal: return WGPUCompareFunction.Equal;
-            case CompareFunction.LessEqual: return WGPUCompareFunction.LessEqual;
-            case CompareFunction.Greater: return WGPUCompareFunction.Greater;
-            case CompareFunction.NotEqual: return WGPUCompareFunction.NotEqual;
-            case CompareFunction.GreaterEqual: return WGPUCompareFunction.GreaterEqual;
-            case CompareFunction.Always: return WGPUCompareFunction.Always;
-            default:
-                return WGPUCompareFunction.Never;
-        }
+            CompareFunction.Never => WGPUCompareFunction.Never,
+            CompareFunction.Less => WGPUCompareFunction.Less,
+            CompareFunction.Equal => WGPUCompareFunction.Equal,
+            CompareFunction.LessEqual => WGPUCompareFunction.LessEqual,
+            CompareFunction.Greater => WGPUCompareFunction.Greater,
+            CompareFunction.NotEqual => WGPUCompareFunction.NotEqual,
+            CompareFunction.GreaterEqual => WGPUCompareFunction.GreaterEqual,
+            CompareFunction.Always => WGPUCompareFunction.Always,
+            _ => WGPUCompareFunction.Never,
+        };
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -449,13 +404,13 @@ internal static unsafe class Utils
             result |= WGPUShaderStage.Vertex;
 
         if ((stage & ShaderStages.Hull) != 0)
-            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Hull} shader stage");
+            throw new GraphicsException($"WGPU doesn't support {ShaderStages.Hull} shader stage");
 
         if ((stage & ShaderStages.Domain) != 0)
-            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Domain} shader stage");
+            throw new GraphicsException($"WGPU doesn't support {ShaderStages.Domain} shader stage");
 
         if ((stage & ShaderStages.Geometry) != 0)
-            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Geometry} shader stage");
+            throw new GraphicsException($"WGPU doesn't support {ShaderStages.Geometry} shader stage");
 
         if ((stage & ShaderStages.Fragment) != 0)
             result |= WGPUShaderStage.Fragment;
@@ -464,10 +419,10 @@ internal static unsafe class Utils
             result |= WGPUShaderStage.Compute;
 
         if ((stage & ShaderStages.Amplification) != 0)
-            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Amplification} shader stage");
+            throw new GraphicsException($"WGPU doesn't support {ShaderStages.Amplification} shader stage");
 
         if ((stage & ShaderStages.Mesh) != 0)
-            throw new LeoncinoException($"WebGPU doesn't support {ShaderStages.Mesh} shader stage");
+            throw new GraphicsException($"WGPU doesn't support {ShaderStages.Mesh} shader stage");
 
         return result;
     }
@@ -475,54 +430,50 @@ internal static unsafe class Utils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static WGPUBufferBindingType ToWGPU(this BufferBindingType value)
     {
-        switch (value)
+        return value switch
         {
-            case BufferBindingType.Constant: return WGPUBufferBindingType.Uniform;
-            case BufferBindingType.Storage: return WGPUBufferBindingType.Storage;
-            case BufferBindingType.ReadOnlyStorage: return WGPUBufferBindingType.ReadOnlyStorage;
-            default:
-                return WGPUBufferBindingType.Undefined;
-        }
+            BufferBindingType.Constant => WGPUBufferBindingType.Uniform,
+            BufferBindingType.Storage => WGPUBufferBindingType.Storage,
+            BufferBindingType.ReadOnlyStorage => WGPUBufferBindingType.ReadOnlyStorage,
+            _ => WGPUBufferBindingType.Undefined,
+        };
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static WGPUSamplerBindingType ToWGPU(this SamplerBindingType value)
     {
-        switch (value)
+        return value switch
         {
-            case SamplerBindingType.Filtering: return WGPUSamplerBindingType.Filtering;
-            case SamplerBindingType.NonFiltering: return WGPUSamplerBindingType.NonFiltering;
-            case SamplerBindingType.Comparison: return WGPUSamplerBindingType.Comparison;
-            default:
-                return WGPUSamplerBindingType.Undefined;
-        }
+            SamplerBindingType.Filtering => WGPUSamplerBindingType.Filtering,
+            SamplerBindingType.NonFiltering => WGPUSamplerBindingType.NonFiltering,
+            SamplerBindingType.Comparison => WGPUSamplerBindingType.Comparison,
+            _ => WGPUSamplerBindingType.Undefined,
+        };
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static WGPUTextureSampleType ToWGPU(this TextureSampleType value)
     {
-        switch (value)
+        return value switch
         {
-            case TextureSampleType.Float: return WGPUTextureSampleType.Float;
-            case TextureSampleType.UnfilterableFloat: return WGPUTextureSampleType.UnfilterableFloat;
-            case TextureSampleType.Depth: return WGPUTextureSampleType.Depth;
-            case TextureSampleType.Sint: return WGPUTextureSampleType.Sint;
-            case TextureSampleType.Uint: return WGPUTextureSampleType.Uint;
-            default:
-                return WGPUTextureSampleType.Undefined;
-        }
+            TextureSampleType.Float => WGPUTextureSampleType.Float,
+            TextureSampleType.UnfilterableFloat => WGPUTextureSampleType.UnfilterableFloat,
+            TextureSampleType.Depth => WGPUTextureSampleType.Depth,
+            TextureSampleType.Sint => WGPUTextureSampleType.Sint,
+            TextureSampleType.Uint => WGPUTextureSampleType.Uint,
+            _ => WGPUTextureSampleType.Undefined,
+        };
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static WGPUStorageTextureAccess ToWGPU(this StorageTextureAccess value)
     {
-        switch (value)
+        return value switch
         {
-            case StorageTextureAccess.WriteOnly: return WGPUStorageTextureAccess.WriteOnly;
-            case StorageTextureAccess.ReadOnly: return WGPUStorageTextureAccess.ReadOnly;
-            case StorageTextureAccess.ReadWrite: return WGPUStorageTextureAccess.ReadWrite;
-            default:
-                return WGPUStorageTextureAccess.Undefined;
-        }
+            StorageTextureAccess.WriteOnly => WGPUStorageTextureAccess.WriteOnly,
+            StorageTextureAccess.ReadOnly => WGPUStorageTextureAccess.ReadOnly,
+            StorageTextureAccess.ReadWrite => WGPUStorageTextureAccess.ReadWrite,
+            _ => WGPUStorageTextureAccess.Undefined,
+        };
     }
 }

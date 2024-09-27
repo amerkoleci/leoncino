@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Leoncino;
 
-public static class GPUUtilities
+public static class GraphicsUtilities
 {
     /// <summary>Rounds a given address up to the nearest alignment.</summary>
     /// <param name="address">The address to be aligned.</param>
@@ -48,17 +48,17 @@ public static class GPUUtilities
         return (address + (alignment - 1)) & ~(alignment - 1);
     }
 
-    public static int GetMipLevelCount(int width, int height, int depth = 1, int minDimension = 1, uint requiredAlignment = 1u)
+    public static uint GetMipLevelCount(uint width, uint height, uint depth = 1, uint minDimension = 1, uint requiredAlignment = 1u)
     {
-        int mipLevelCount = 1;
+        uint mipLevelCount = 1;
         while (width > minDimension || height > minDimension || depth > minDimension)
         {
             width = Math.Max(minDimension, width >> 1);
             height = Math.Max(minDimension, height >> 1);
             depth = Math.Max(minDimension, depth >> 1);
-            if (AlignUp((uint)width, requiredAlignment) != width ||
-                AlignUp((uint)height, requiredAlignment) != height ||
-                AlignUp((uint)depth, requiredAlignment) != depth)
+            if (AlignUp(width, requiredAlignment) != width ||
+                AlignUp(height, requiredAlignment) != height ||
+                AlignUp(depth, requiredAlignment) != depth)
             {
                 break;
             }
@@ -69,21 +69,21 @@ public static class GPUUtilities
         return mipLevelCount;
     }
 
-    public static ulong ComputeTextureMemorySizeInBytes(in TextureDescription description)
+    public static ulong ComputeTextureMemorySizeInBytes(in TextureDescriptor description)
     {
         ulong size = 0;
         uint bytesPerBlock = description.Format.GetFormatBytesPerBlock();
         uint pixelsPerBlock = description.Format.GetFormatHeightCompressionRatio();
-        uint numBlocksX = (uint)description.Width / pixelsPerBlock;
-        uint numBlocksY = (uint)description.Height / pixelsPerBlock;
-        int mipLevelCount = description.MipLevelCount == 0 ? GetMipLevelCount(description.Width, description.Height, description.DepthOrArrayLayers) : description.MipLevelCount;
+        uint numBlocksX = description.Width / pixelsPerBlock;
+        uint numBlocksY = description.Height / pixelsPerBlock;
+        uint mipLevelCount = description.MipLevelCount == 0 ? GetMipLevelCount(description.Width, description.Height, description.DepthOrArrayLayers) : description.MipLevelCount;
         for (uint arrayLayer = 0; arrayLayer < description.DepthOrArrayLayers; ++arrayLayer)
         {
             for (int mipLevel = 0; mipLevel < mipLevelCount; ++mipLevel)
             {
                 uint width = Math.Max(1u, numBlocksX >> mipLevel);
                 uint height = Math.Max(1u, numBlocksY >> mipLevel);
-                uint depth = (uint)Math.Max(1u, description.DepthOrArrayLayers >> mipLevel);
+                uint depth = Math.Max(1u, description.DepthOrArrayLayers >> mipLevel);
                 size += width * height * depth * bytesPerBlock;
             }
         }

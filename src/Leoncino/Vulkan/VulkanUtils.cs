@@ -3,7 +3,6 @@
 
 using System.Runtime.CompilerServices;
 using Vortice.Vulkan;
-using XenoAtom.Collections;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Leoncino.Vulkan;
@@ -18,7 +17,7 @@ internal static unsafe partial class VulkanUtils
     ];
 
     #region Layers Methods
-    public static bool ValidateLayers(UnsafeList<VkUtf8String> required, Span<VkLayerProperties> availableLayers)
+    public static bool ValidateLayers(List<VkUtf8String> required, Span<VkLayerProperties> availableLayers)
     {
         foreach (VkUtf8String layer in required)
         {
@@ -47,10 +46,10 @@ internal static unsafe partial class VulkanUtils
         return true;
     }
 
-    public static void GetOptimalValidationLayers(ref UnsafeList<VkUtf8String> instanceLayers, Span<VkLayerProperties> availableLayers)
+    public static void GetOptimalValidationLayers(ref List<VkUtf8String> instanceLayers, Span<VkLayerProperties> availableLayers)
     {
         // The preferred validation layer is "VK_LAYER_KHRONOS_validation"
-        UnsafeList<VkUtf8String> validationLayers =
+        List<VkUtf8String> validationLayers =
         [
             VK_LAYER_KHRONOS_VALIDATION_EXTENSION_NAME
         ];
@@ -387,49 +386,49 @@ internal static unsafe partial class VulkanUtils
             case PixelFormat.EACRG11Unorm: return VK_FORMAT_EAC_R11G11_UNORM_BLOCK;
             case PixelFormat.EACRG11Snorm: return VK_FORMAT_EAC_R11G11_SNORM_BLOCK;
             // ASTC compressed formats
-            case PixelFormat.Astc4x4Unorm: return VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
-            case PixelFormat.Astc4x4UnormSrgb: return VK_FORMAT_ASTC_4x4_SRGB_BLOCK;
-            case PixelFormat.Astc5x4Unorm: return VK_FORMAT_ASTC_5x4_UNORM_BLOCK;
-            case PixelFormat.Astc5x4UnormSrgb: return VK_FORMAT_ASTC_5x4_SRGB_BLOCK;
-            case PixelFormat.Astc5x5Unorm: return VK_FORMAT_ASTC_5x5_UNORM_BLOCK;
-            case PixelFormat.Astc5x5UnormSrgb: return VK_FORMAT_ASTC_5x5_SRGB_BLOCK;
-            case PixelFormat.Astc6x5Unorm: return VK_FORMAT_ASTC_6x5_UNORM_BLOCK;
-            case PixelFormat.Astc6x5UnormSrgb: return VK_FORMAT_ASTC_6x5_SRGB_BLOCK;
-            case PixelFormat.Astc6x6Unorm: return VK_FORMAT_ASTC_6x6_UNORM_BLOCK;
-            case PixelFormat.Astc6x6UnormSrgb: return VK_FORMAT_ASTC_6x6_SRGB_BLOCK;
-            case PixelFormat.Astc8x5Unorm: return VK_FORMAT_ASTC_8x5_UNORM_BLOCK;
-            case PixelFormat.Astc8x5UnormSrgb: return VK_FORMAT_ASTC_8x5_SRGB_BLOCK;
-            case PixelFormat.Astc8x6Unorm: return VK_FORMAT_ASTC_8x6_UNORM_BLOCK;
-            case PixelFormat.Astc8x6UnormSrgb: return VK_FORMAT_ASTC_8x6_SRGB_BLOCK;
-            case PixelFormat.Astc8x8Unorm: return VK_FORMAT_ASTC_8x8_UNORM_BLOCK;
-            case PixelFormat.Astc8x8UnormSrgb: return VK_FORMAT_ASTC_8x8_SRGB_BLOCK;
-            case PixelFormat.Astc10x5Unorm: return VK_FORMAT_ASTC_10x5_UNORM_BLOCK;
-            case PixelFormat.Astc10x5UnormSrgb: return VK_FORMAT_ASTC_10x5_SRGB_BLOCK;
-            case PixelFormat.Astc10x6Unorm: return VK_FORMAT_ASTC_10x6_UNORM_BLOCK;
-            case PixelFormat.Astc10x6UnormSrgb: return VK_FORMAT_ASTC_10x6_SRGB_BLOCK;
-            case PixelFormat.Astc10x8Unorm: return VK_FORMAT_ASTC_10x8_UNORM_BLOCK;
-            case PixelFormat.Astc10x8UnormSrgb: return VK_FORMAT_ASTC_10x8_SRGB_BLOCK;
-            case PixelFormat.Astc10x10Unorm: return VK_FORMAT_ASTC_10x10_UNORM_BLOCK;
-            case PixelFormat.Astc10x10UnormSrgb: return VK_FORMAT_ASTC_10x10_SRGB_BLOCK;
-            case PixelFormat.Astc12x10Unorm: return VK_FORMAT_ASTC_12x10_UNORM_BLOCK;
-            case PixelFormat.Astc12x10UnormSrgb: return VK_FORMAT_ASTC_12x10_SRGB_BLOCK;
-            case PixelFormat.Astc12x12Unorm: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
-            case PixelFormat.Astc12x12UnormSrgb: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
+            case PixelFormat.ASTC4x4Unorm: return VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
+            case PixelFormat.ASTC4x4UnormSrgb: return VK_FORMAT_ASTC_4x4_SRGB_BLOCK;
+            case PixelFormat.ASTC5x4Unorm: return VK_FORMAT_ASTC_5x4_UNORM_BLOCK;
+            case PixelFormat.ASTC5x4UnormSrgb: return VK_FORMAT_ASTC_5x4_SRGB_BLOCK;
+            case PixelFormat.ASTC5x5Unorm: return VK_FORMAT_ASTC_5x5_UNORM_BLOCK;
+            case PixelFormat.ASTC5x5UnormSrgb: return VK_FORMAT_ASTC_5x5_SRGB_BLOCK;
+            case PixelFormat.ASTC6x5Unorm: return VK_FORMAT_ASTC_6x5_UNORM_BLOCK;
+            case PixelFormat.ASTC6x5UnormSrgb: return VK_FORMAT_ASTC_6x5_SRGB_BLOCK;
+            case PixelFormat.ASTC6x6Unorm: return VK_FORMAT_ASTC_6x6_UNORM_BLOCK;
+            case PixelFormat.ASTC6x6UnormSrgb: return VK_FORMAT_ASTC_6x6_SRGB_BLOCK;
+            case PixelFormat.ASTC8x5Unorm: return VK_FORMAT_ASTC_8x5_UNORM_BLOCK;
+            case PixelFormat.ASTC8x5UnormSrgb: return VK_FORMAT_ASTC_8x5_SRGB_BLOCK;
+            case PixelFormat.ASTC8x6Unorm: return VK_FORMAT_ASTC_8x6_UNORM_BLOCK;
+            case PixelFormat.ASTC8x6UnormSrgb: return VK_FORMAT_ASTC_8x6_SRGB_BLOCK;
+            case PixelFormat.ASTC8x8Unorm: return VK_FORMAT_ASTC_8x8_UNORM_BLOCK;
+            case PixelFormat.ASTC8x8UnormSrgb: return VK_FORMAT_ASTC_8x8_SRGB_BLOCK;
+            case PixelFormat.ASTC10x5Unorm: return VK_FORMAT_ASTC_10x5_UNORM_BLOCK;
+            case PixelFormat.ASTC10x5UnormSrgb: return VK_FORMAT_ASTC_10x5_SRGB_BLOCK;
+            case PixelFormat.ASTC10x6Unorm: return VK_FORMAT_ASTC_10x6_UNORM_BLOCK;
+            case PixelFormat.ASTC10x6UnormSrgb: return VK_FORMAT_ASTC_10x6_SRGB_BLOCK;
+            case PixelFormat.ASTC10x8Unorm: return VK_FORMAT_ASTC_10x8_UNORM_BLOCK;
+            case PixelFormat.ASTC10x8UnormSrgb: return VK_FORMAT_ASTC_10x8_SRGB_BLOCK;
+            case PixelFormat.ASTC10x10Unorm: return VK_FORMAT_ASTC_10x10_UNORM_BLOCK;
+            case PixelFormat.ASTC10x10UnormSrgb: return VK_FORMAT_ASTC_10x10_SRGB_BLOCK;
+            case PixelFormat.ASTC12x10Unorm: return VK_FORMAT_ASTC_12x10_UNORM_BLOCK;
+            case PixelFormat.ASTC12x10UnormSrgb: return VK_FORMAT_ASTC_12x10_SRGB_BLOCK;
+            case PixelFormat.ASTC12x12Unorm: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
+            case PixelFormat.ASTC12x12UnormSrgb: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
             // ASTC HDR compressed formats
-            case PixelFormat.Astc4x4Hdr: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
-            case PixelFormat.Astc5x4Hdr: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
-            case PixelFormat.Astc5x5Hdr: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
-            case PixelFormat.Astc6x5Hdr: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
-            case PixelFormat.Astc6x6Hdr: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
-            case PixelFormat.Astc8x5Hdr: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
-            case PixelFormat.Astc8x6Hdr: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
-            case PixelFormat.Astc8x8Hdr: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
-            case PixelFormat.Astc10x5Hdr: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
-            case PixelFormat.Astc10x6Hdr: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
-            case PixelFormat.Astc10x8Hdr: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
-            case PixelFormat.Astc10x10Hdr: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
-            case PixelFormat.Astc12x10Hdr: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
-            case PixelFormat.Astc12x12Hdr: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
+            case PixelFormat.ASTC4x4Hdr: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
+            case PixelFormat.ASTC5x4Hdr: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
+            case PixelFormat.ASTC5x5Hdr: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC6x5Hdr: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC6x6Hdr: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
+            case PixelFormat.ASTC8x5Hdr: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC8x6Hdr: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
+            case PixelFormat.ASTC8x8Hdr: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x5Hdr: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x6Hdr: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x8Hdr: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x10Hdr: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
+            case PixelFormat.ASTC12x10Hdr: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
+            case PixelFormat.ASTC12x12Hdr: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
             //case PixelFormat.R8BG8Biplanar420Unorm: return VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
             //case PixelFormat.R10X6BG10X6Biplanar420Unorm: return VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16;
 

@@ -21,9 +21,9 @@ public enum GraphicsBackend
     /// </summary>
     Metal,
     /// <summary>
-    /// WebGPU
+    /// WGPU (WebGPU)
     /// </summary>
-    WebGPU,
+    WGPU,
 
     Count,
 }

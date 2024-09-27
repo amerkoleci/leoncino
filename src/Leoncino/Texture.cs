@@ -8,7 +8,7 @@ namespace Leoncino;
 /// </summary>
 public abstract class Texture : GPUObject
 {
-    protected Texture(in TextureDescription descriptor)
+    protected Texture(in TextureDescriptor descriptor)
         : base(descriptor.Label)
     {
         Dimension = descriptor.Dimension;
@@ -36,27 +36,27 @@ public abstract class Texture : GPUObject
     /// <summary>
     /// Gets the texture width, in texels.
     /// </summary>
-    public int Width { get; }
+    public uint Width { get; }
 
     /// <summary>
     /// Gets the texture height, in texels.
     /// </summary>
-    public int Height { get; }
+    public uint Height { get; }
 
     /// <summary>
     /// Gets the texture depth, in texels.
     /// </summary>
-    public int Depth { get; }
+    public uint Depth { get; }
 
     /// <summary>
     /// Gets the texture total number of array layers.
     /// </summary>
-    public int ArrayLayers { get; }
+    public uint ArrayLayers { get; }
 
     /// <summary>
     /// Gets the total number of mipmap levels in this texture.
     /// </summary>
-    public int MipLevelCount { get; }
+    public uint MipLevelCount { get; }
 
     /// <summary>
     /// Gets the texture <see cref="TextureUsage"/>.
@@ -66,7 +66,7 @@ public abstract class Texture : GPUObject
     /// <summary>
     /// Gets the texture sample count.
     /// </summary>
-    public uint SampleCount { get; }
+    public TextureSampleCount SampleCount { get; }
 
     /// <summary>
     /// Gets the CPU access of the texure.
@@ -78,9 +78,9 @@ public abstract class Texture : GPUObject
     /// </summary>
     /// <param name="mipLevel"></param>
     /// <returns></returns>
-    public int GetWidth(int mipLevel = 0)
+    public uint GetWidth(uint mipLevel = 0)
     {
-        return (mipLevel == 0) || (mipLevel < MipLevelCount) ? Math.Max(1, Width >> mipLevel) : 0;
+        return (mipLevel == 0) || (mipLevel < MipLevelCount) ? Math.Max(1, Width >> (int)mipLevel) : 0;
     }
 
     // <summary>
@@ -88,9 +88,9 @@ public abstract class Texture : GPUObject
     /// </summary>
     /// <param name="mipLevel"></param>
     /// <returns></returns>
-    public int GetHeight(int mipLevel = 0)
+    public uint GetHeight(uint mipLevel = 0)
     {
-        return (mipLevel == 0) || (mipLevel < MipLevelCount) ? Math.Max(1, Height >> mipLevel) : 0;
+        return (mipLevel == 0) || (mipLevel < MipLevelCount) ? Math.Max(1, Height >> (int)mipLevel) : 0;
     }
 
     // <summary>
@@ -98,12 +98,12 @@ public abstract class Texture : GPUObject
     /// </summary>
     /// <param name="mipLevel"></param>
     /// <returns></returns>
-    public int GetDepth(int mipLevel = 0)
+    public uint GetDepth(uint mipLevel = 0)
     {
-        return (mipLevel == 0) || (mipLevel < MipLevelCount) ? Math.Max(1, Depth >> mipLevel) : 0;
+        return (mipLevel == 0) || (mipLevel < MipLevelCount) ? Math.Max(1, Depth >> (int)mipLevel) : 0;
     }
 
-    public int CalculateSubresource(int mipLevel, int arrayLayer, int planeSlice = 0)
+    public uint CalculateSubresource(uint mipLevel, uint arrayLayer, uint planeSlice = 0)
     {
         return mipLevel + arrayLayer * MipLevelCount + planeSlice * MipLevelCount * ArrayLayers;
     }

@@ -7,7 +7,7 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe partial class WebGPUSurface : GPUSurface
+internal unsafe partial class WebGPUSurface : GraphicsSurface
 {
     public WebGPUSurface(WebGPUInstance instance, in SurfaceDescriptor descriptor)
         : base(descriptor)
@@ -18,7 +18,7 @@ internal unsafe partial class WebGPUSurface : GPUSurface
             case AndroidWindowSurfaceSource androidWindowSurface:
                 WGPUSurfaceDescriptorFromAndroidNativeWindow androidWindowChain = new()
                 {
-                    window = androidWindowSurface.Window,
+                    window = androidWindowSurface.Window.ToPointer(),
                     chain = new WGPUChainedStruct()
                     {
                         sType = WGPUSType.SurfaceDescriptorFromAndroidNativeWindow
@@ -32,7 +32,7 @@ internal unsafe partial class WebGPUSurface : GPUSurface
             case MetalLayerSurfaceSource metalLayerSurfaceSource:
                 WGPUSurfaceDescriptorFromMetalLayer metalLayerChain = new()
                 {
-                    layer = metalLayerSurfaceSource.Layer,
+                    layer = metalLayerSurfaceSource.Layer.ToPointer(),
                     chain = new WGPUChainedStruct()
                     {
                         sType = WGPUSType.SurfaceDescriptorFromMetalLayer
@@ -45,7 +45,7 @@ internal unsafe partial class WebGPUSurface : GPUSurface
             case Win32SurfaceSource win32SurfaceSource:
                 WGPUSurfaceDescriptorFromWindowsHWND win32Chain = new()
                 {
-                    hwnd = win32SurfaceSource.Hwnd,
+                    hwnd = win32SurfaceSource.Hwnd.ToPointer(),
                     hinstance = GetModuleHandleW(null),
                     chain = new WGPUChainedStruct()
                     {
@@ -59,8 +59,8 @@ internal unsafe partial class WebGPUSurface : GPUSurface
             case WaylandSurfaceSource waylandSurfaceSource:
                 WGPUSurfaceDescriptorFromWaylandSurface waylandChain = new()
                 {
-                    display = waylandSurfaceSource.Display,
-                    surface = waylandSurfaceSource.Surface,
+                    display = waylandSurfaceSource.Display.ToPointer(),
+                    surface = waylandSurfaceSource.Surface.ToPointer(),
                     chain = new WGPUChainedStruct()
                     {
                         sType = WGPUSType.SurfaceDescriptorFromWaylandSurface
@@ -73,7 +73,7 @@ internal unsafe partial class WebGPUSurface : GPUSurface
             case XcbWindowSurfaceSource xcbWindowSurfaceSource:
                 WGPUSurfaceDescriptorFromXcbWindow xcbChain = new()
                 {
-                    connection = xcbWindowSurfaceSource.Connection,
+                    connection = xcbWindowSurfaceSource.Connection.ToPointer(),
                     window = xcbWindowSurfaceSource.Window,
                     chain = new WGPUChainedStruct()
                     {
@@ -87,7 +87,7 @@ internal unsafe partial class WebGPUSurface : GPUSurface
             case XlibWindowSurfaceSource xlibWindowSurfaceSource:
                 WGPUSurfaceDescriptorFromXlibWindow xlibChain = new()
                 {
-                    display = xlibWindowSurfaceSource.Display,
+                    display = xlibWindowSurfaceSource.Display.ToPointer(),
                     window = xlibWindowSurfaceSource.Window,
                     chain = new WGPUChainedStruct()
                     {
@@ -125,7 +125,7 @@ internal unsafe partial class WebGPUSurface : GPUSurface
     }
 
     /// <inheritdoc />
-    protected override void ConfigureCore(GPUDevice device, in SurfaceConfiguration configuration)
+    protected override void ConfigureCore(GraphicsDevice device, in SurfaceConfiguration configuration)
     {
         WebGPUDevice backendDevice = (WebGPUDevice)device;
 
@@ -149,5 +149,5 @@ internal unsafe partial class WebGPUSurface : GPUSurface
     }
 
     [LibraryImport("kernel32")]
-    private static partial nint GetModuleHandleW(ushort* lpModuleName);
+    private static partial void* GetModuleHandleW(ushort* lpModuleName);
 }

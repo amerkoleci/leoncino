@@ -66,13 +66,13 @@ internal unsafe class WebGPUBindGroupLayout : BindGroupLayout
             }
         }
 
-        fixed (sbyte* pLabel = descriptor.Label.GetUtf8Span())
+        fixed (byte* pLabel = descriptor.Label.GetUtf8Span())
         {
             WGPUBindGroupLayoutDescriptor wgpuDescriptor = new()
             {
                 nextInChain = null,
                 label = pLabel,
-                entryCount = (nuint)LayoutBindingCount,
+                entryCount = LayoutBindingCount,
                 entries = entries
             };
 
@@ -90,7 +90,7 @@ internal unsafe class WebGPUBindGroupLayout : BindGroupLayout
     public WGPUBindGroupLayout Handle { get; }
 
     /// <inheritdoc />
-    public override GPUDevice Device => _device;
+    public override GraphicsDevice Device => _device;
 
     /// <inheritdoc />
     protected internal override void Destroy()

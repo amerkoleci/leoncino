@@ -11,7 +11,7 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
     private VulkanGraphicsAdapter _adapter;
 
-    public VulkanGraphicsDevice(VulkanGraphicsAdapter adapter, in GraphicsDeviceDescription description)
+    public VulkanGraphicsDevice(VulkanGraphicsAdapter adapter, in GraphicsDeviceDescriptor description)
         : base(description.Label)
     {
         _adapter = adapter;
@@ -42,7 +42,7 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    protected override unsafe Texture CreateTextureCore(in TextureDescription descriptor, TextureData* initialData)
+    protected override unsafe Texture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData)
     {
         throw new NotImplementedException();
     }

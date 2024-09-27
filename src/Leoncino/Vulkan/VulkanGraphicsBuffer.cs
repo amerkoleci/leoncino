@@ -1,6 +1,7 @@
 // Copyright (c) Amer Koleci and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
@@ -9,6 +10,7 @@ namespace Leoncino.Vulkan;
 internal unsafe partial class VulkanGraphicsBuffer : GraphicsBuffer
 {
     private readonly VulkanGraphicsDevice _device;
+    private readonly void* _pMappedData = default;
 
     public VulkanGraphicsBuffer(VulkanGraphicsDevice device, in BufferDescriptor description)
         : base(description)
@@ -30,6 +32,10 @@ internal unsafe partial class VulkanGraphicsBuffer : GraphicsBuffer
     {
     }
 
-    protected override unsafe void SetDataUnsafe(void* dataPtr, ulong offsetInBytes) => throw new NotImplementedException();
+    protected override unsafe void SetDataUnsafe(void* dataPtr, ulong offsetInBytes)
+    {
+        NativeMemory.Copy(dataPtr, (byte*)_pMappedData + offsetInBytes, (nuint)Size);
+    }
+
     protected override unsafe void GetDataUnsafe(void* destPtr, ulong offsetInBytes) => throw new NotImplementedException();
 }

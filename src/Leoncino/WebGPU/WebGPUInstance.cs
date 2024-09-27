@@ -7,13 +7,13 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe class WebGPUInstance : GPUInstance
+internal unsafe class WebGPUInstance : GraphicsFactory
 {
     private static readonly Lazy<bool> s_isSupported = new(CheckIsSupported);
 
     public static bool IsSupported() => s_isSupported.Value;
 
-    public WebGPUInstance(in InstanceDescriptor descriptor)
+    public WebGPUInstance(in GraphicsFactoryDescriptor descriptor)
         : base(descriptor)
     {
         wgpuSetLogCallback(LogCallback);
@@ -33,6 +33,9 @@ internal unsafe class WebGPUInstance : GPUInstance
         Handle = wgpuCreateInstance(&instanceDescriptor);
     }
 
+    /// <inheritdoc />
+    public override GraphicsBackend BackendType => GraphicsBackend.WGPU;
+
     public WGPUInstance Handle { get; }
 
     /// <summary>
@@ -50,9 +53,9 @@ internal unsafe class WebGPUInstance : GPUInstance
     }
 
     /// <inheritdoc />
-    protected override GPUSurface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new WebGPUSurface(this, in descriptor);
+    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new WebGPUSurface(this, in descriptor);
 
-    protected override ValueTask<GPUAdapter> RequestAdapterAsyncCore(in RequestAdapterOptions options)
+    protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
     {
         WGPURequestAdapterOptions requestAdapterOptions = new()
         {
@@ -64,8 +67,8 @@ internal unsafe class WebGPUInstance : GPUInstance
         };
 
         WGPUAdapter result = WGPUAdapter.Null;
-        wgpuInstanceRequestAdapter(Handle, &requestAdapterOptions, &OnAdapterRequestEnded, new nint(&result));
-        return ValueTask.FromResult<GPUAdapter>(new WebGPUAdapter(result));
+        wgpuInstanceRequestAdapter(Handle, &requestAdapterOptions, &OnAdapterRequestEnded, &result);
+        return new WebGPUAdapter(result);
     }
 
     private static bool CheckIsSupported()
@@ -78,7 +81,7 @@ internal unsafe class WebGPUInstance : GPUInstance
         switch (level)
         {
             case WGPULogLevel.Error:
-                throw new LeoncinoException(message);
+                throw new GraphicsException(message);
             case WGPULogLevel.Warn:
                 //Log.Warn(message);
                 break;
@@ -91,7 +94,7 @@ internal unsafe class WebGPUInstance : GPUInstance
     }
 
     [UnmanagedCallersOnly]
-    private static void OnAdapterRequestEnded(WGPURequestAdapterStatus status, WGPUAdapter candidateAdapter, sbyte* message, nint pUserData)
+    private static void OnAdapterRequestEnded(WGPURequestAdapterStatus status, WGPUAdapter candidateAdapter, byte* message, void* pUserData)
     {
         if (status == WGPURequestAdapterStatus.Success)
         {
@@ -99,7 +102,7 @@ internal unsafe class WebGPUInstance : GPUInstance
         }
         else
         {
-            //Log.Error("Could not get WebGPU adapter: " + Interop.GetString(message));
+            throw new GraphicsException("Could not get WGPU adapter: " + Interop.GetString(message));
         }
     }
 }

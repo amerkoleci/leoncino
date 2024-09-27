@@ -6,7 +6,7 @@ namespace Leoncino;
 /// <summary>
 /// Type of validation during creation of <see cref="GraphicsFactory"/>.
 /// </summary>
-/// <remarks>See <see cref="GraphicsFactoryDescription.ValidationMode"/></remarks>
+/// <remarks>See <see cref="GraphicsFactoryDescriptor.ValidationMode"/></remarks>
 public enum ValidationMode
 {
     /// <summary>

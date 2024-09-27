@@ -7,7 +7,7 @@ internal unsafe partial class D3D12GraphicsSurface : GraphicsSurface
 {
     private readonly D3D12GraphicsFactory _factory;
 
-    public D3D12GraphicsSurface(D3D12GraphicsFactory factory, in SurfaceDescription description)
+    public D3D12GraphicsSurface(D3D12GraphicsFactory factory, in SurfaceDescriptor description)
         : base(description)
     {
         _factory = factory;

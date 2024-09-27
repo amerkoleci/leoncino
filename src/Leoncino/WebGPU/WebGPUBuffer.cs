@@ -2,12 +2,13 @@
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using WebGPU;
 using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe class WebGPUBuffer : GPUBuffer
+internal unsafe class WebGPUBuffer : GraphicsBuffer
 {
     private readonly WebGPUDevice _device;
     public readonly void* pMappedData = default;
@@ -17,7 +18,7 @@ internal unsafe class WebGPUBuffer : GPUBuffer
     {
         _device = device;
 
-        fixed (sbyte* pLabel = descriptor.Label.GetUtf8Span())
+        fixed (byte* pLabel = descriptor.Label.GetUtf8Span())
         {
             WGPUBufferDescriptor wgpuDescriptor = new()
             {
@@ -49,7 +50,7 @@ internal unsafe class WebGPUBuffer : GPUBuffer
     public WGPUBuffer Handle { get; }
 
     /// <inheritdoc />
-    public override GPUDevice Device => _device;
+    public override GraphicsDevice Device => _device;
 
     /// <inheritdoc />
     protected internal override void Destroy()
@@ -64,14 +65,14 @@ internal unsafe class WebGPUBuffer : GPUBuffer
     }
 
     /// <inheitdoc />
-    protected override void SetDataUnsafe(void* dataPtr, int offsetInBytes)
+    protected override void SetDataUnsafe(void* dataPtr, ulong offsetInBytes)
     {
-        Unsafe.CopyBlockUnaligned((byte*)pMappedData + offsetInBytes, dataPtr, (uint)Size);
+        NativeMemory.Copy(dataPtr, (byte*)pMappedData + offsetInBytes, (nuint)Size);
     }
 
     /// <inheitdoc />
-    protected override void GetDataUnsafe(void* destPtr, int offsetInBytes)
+    protected override void GetDataUnsafe(void* destPtr, ulong offsetInBytes)
     {
-        Unsafe.CopyBlockUnaligned(destPtr, (byte*)pMappedData + offsetInBytes, (uint)Size);
+        NativeMemory.Copy((byte*)pMappedData + offsetInBytes, destPtr, (nuint)Size);
     }
 }

@@ -6,7 +6,7 @@ using static WebGPU.WebGPU;
 
 namespace Leoncino.WebGPU;
 
-internal unsafe class WebGPUTexture : GPUTexture
+internal unsafe class WebGPUTexture : Texture
 {
     private readonly WebGPUDevice _device;
 
@@ -16,7 +16,7 @@ internal unsafe class WebGPUTexture : GPUTexture
         _device = device;
         WGPUTextureFormat format = descriptor.Format.ToWGPU();
 
-        fixed (sbyte* pLabel = descriptor.Label.GetUtf8Span())
+        fixed (byte* pLabel = descriptor.Label.GetUtf8Span())
         {
             WGPUTextureDescriptor wgpuDescriptor = new()
             {
@@ -26,7 +26,7 @@ internal unsafe class WebGPUTexture : GPUTexture
                 dimension = WGPUTextureDimension._2D,
                 size = new WGPUExtent3D(descriptor.Width, descriptor.Height, descriptor.DepthOrArrayLayers),
                 format = format,
-                mipLevelCount = (uint)descriptor.MipLevelCount,
+                mipLevelCount = descriptor.MipLevelCount,
                 sampleCount = (uint)descriptor.SampleCount,
                 viewFormatCount = 0,
                 viewFormats = null,
@@ -44,7 +44,7 @@ internal unsafe class WebGPUTexture : GPUTexture
     public WGPUTexture Handle { get; }
 
     /// <inheritdoc />
-    public override GPUDevice Device => _device;
+    public override GraphicsDevice Device => _device;
 
     /// <inheritdoc />
     protected internal override void Destroy()

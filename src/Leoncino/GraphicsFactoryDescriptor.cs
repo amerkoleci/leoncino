@@ -4,11 +4,11 @@
 namespace Leoncino;
 
 /// <summary>
-/// Structure that describes the <see cref="GraphicsFactory"/>.
+/// Structure that describes the <see cref="GraphicsFactory" />.
 /// </summary>
-public readonly record struct GraphicsFactoryDescription
+public readonly record struct GraphicsFactoryDescriptor
 {
-    public GraphicsFactoryDescription()
+    public GraphicsFactoryDescriptor()
     {
     }
 

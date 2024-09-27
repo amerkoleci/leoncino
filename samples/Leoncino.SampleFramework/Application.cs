@@ -16,16 +16,16 @@ public abstract class Application : IDisposable
 
     protected unsafe Application()
     {
-        if (SDL_Init(SDL_InitFlags.Video) != 0)
+        if (!SDL_Init(SDL_InitFlags.Video))
         {
             var error = SDL_GetError();
             throw new Exception($"Failed to start SDL2: {error}");
         }
 
         SDL_SetLogOutputFunction(&Log_SDL, 0);
-        GraphicsFactoryDescription factoryDescription = new()
+        GraphicsFactoryDescriptor factoryDescription = new()
         {
-            PreferredBackend = GraphicsBackend.Vulkan
+            PreferredBackend = GraphicsBackend.WGPU
         };
         Factory = GraphicsFactory.Create(in factoryDescription);
 
@@ -42,8 +42,8 @@ public abstract class Application : IDisposable
         SurfaceFormat = Adapter.GetSurfacePreferredFormat(MainWindow.Surface);
         Debug.Assert(SurfaceFormat != PixelFormat.Undefined);
 
-        GraphicsDeviceDescription deviceDescription = new();
-        Device = Adapter.CreateDevice(in deviceDescription);
+        GraphicsDeviceDescriptor deviceDescriptor = new();
+        Device = Adapter.CreateDevice(in deviceDescriptor);
 
         VSync = true;
         Resize(MainWindow.ClientSize);

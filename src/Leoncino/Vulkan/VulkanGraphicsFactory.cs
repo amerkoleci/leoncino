@@ -7,7 +7,6 @@ using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 using static Leoncino.Vulkan.VulkanUtils;
 using Win32;
-using XenoAtom.Collections;
 
 namespace Leoncino.Vulkan;
 
@@ -19,7 +18,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
 
     public static bool IsSupported() => s_isSupported.Value;
 
-    public VulkanGraphicsFactory(in GraphicsFactoryDescription description)
+    public VulkanGraphicsFactory(in GraphicsFactoryDescriptor description)
         : base(description)
     {
         vkEnumerateInstanceLayerProperties(out uint availableInstanceLayerCount).CheckResult();
@@ -30,8 +29,8 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
         Span<VkExtensionProperties> availableInstanceExtensions = stackalloc VkExtensionProperties[(int)extensionCount];
         vkEnumerateInstanceExtensionProperties(availableInstanceExtensions).CheckResult();
 
-        UnsafeList<VkUtf8String> instanceExtensions = [];
-        UnsafeList<VkUtf8String> instanceLayers = [];
+        List<VkUtf8String> instanceExtensions = [];
+        List<VkUtf8String> instanceLayers = [];
         bool validationFeatures = false;
         bool hasPortability = false;
 
@@ -273,7 +272,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
     }
 
     /// <inheritdoc />
-    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescription description) => new VulkanGraphicsSurface(this, in description);
+    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescriptor description) => new VulkanGraphicsSurface(this, in description);
 
     protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
     {

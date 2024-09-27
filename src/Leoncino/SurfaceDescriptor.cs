@@ -6,9 +6,9 @@ namespace Leoncino;
 /// <summary>
 /// Structure that describes the <see cref="GraphicsSurface"/>.
 /// </summary>
-public readonly record struct SurfaceDescription
+public readonly record struct SurfaceDescriptor
 {
-    public SurfaceDescription()
+    public SurfaceDescriptor()
     {
     }
 

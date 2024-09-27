@@ -18,7 +18,7 @@ internal unsafe class D3D12GraphicsFactory : GraphicsFactory
 
     public static bool IsSupported() => s_isSupported.Value;
 
-    public D3D12GraphicsFactory(in GraphicsFactoryDescription description)
+    public D3D12GraphicsFactory(in GraphicsFactoryDescriptor description)
         : base(description)
     {
     }
@@ -43,7 +43,7 @@ internal unsafe class D3D12GraphicsFactory : GraphicsFactory
     }
 
     /// <inheritdoc />
-    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescription descriptor) => new D3D12GraphicsSurface(this, in descriptor);
+    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescriptor descriptor) => new D3D12GraphicsSurface(this, in descriptor);
 
     protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
     {

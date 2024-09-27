@@ -49,26 +49,26 @@ public abstract class GraphicsDevice : GraphicsObject
         return CreateBuffer(new BufferDescriptor(size, usage, cpuAccess, label), IntPtr.Zero);
     }
 
-    public unsafe Texture CreateTexture(in TextureDescription description)
+    public unsafe Texture CreateTexture(in TextureDescriptor descriptor)
     {
 #if VALIDATE_USAGE
-        if (description.Format == PixelFormat.Undefined)
+        if (descriptor.Format == PixelFormat.Undefined)
         {
             throw new GraphicsException($"Format must be different than {PixelFormat.Undefined}");
         }
 
-        if (description.Width <= 0 || description.Height <= 0 || description.DepthOrArrayLayers <= 0)
+        if (descriptor.Width <= 0 || descriptor.Height <= 0 || descriptor.DepthOrArrayLayers <= 0)
         {
             throw new GraphicsException("Width, Height, and DepthOrArrayLayers must be non-zero.");
         }
 
-        if (description.MipLevelCount < 0)
+        if (descriptor.MipLevelCount < 0)
         {
             throw new GraphicsException("mipLevelCount must be greater or equal to zero.");
         }
 #endif
 
-        return CreateTextureCore(in description, default);
+        return CreateTextureCore(in descriptor, default);
     }
 
     public BindGroupLayout CreateBindGroupLayout(in BindGroupLayoutDescriptor descriptor)
@@ -112,6 +112,6 @@ public abstract class GraphicsDevice : GraphicsObject
     }
 
     protected abstract unsafe GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
-    protected abstract unsafe Texture CreateTextureCore(in TextureDescription description, TextureData* initialData);
+    protected abstract unsafe Texture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData);
     protected abstract BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescriptor descriptor);
 }

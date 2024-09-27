@@ -71,7 +71,7 @@ internal class VulkanGraphicsAdapter : GraphicsAdapter
     }
 
     /// <inheritdoc />
-    protected override GraphicsDevice CreateDeviceCore(in GraphicsDeviceDescription description)
+    protected override GraphicsDevice CreateDeviceCore(in GraphicsDeviceDescriptor description)
     {
         return new VulkanGraphicsDevice(this, in description);
     }

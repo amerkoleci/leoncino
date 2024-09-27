@@ -10,7 +10,7 @@ internal unsafe partial class VulkanGraphicsSurface : GraphicsSurface
 {
     private readonly VulkanGraphicsFactory _factory;
 
-    public VulkanGraphicsSurface(VulkanGraphicsFactory factory, in SurfaceDescription description)
+    public VulkanGraphicsSurface(VulkanGraphicsFactory factory, in SurfaceDescriptor description)
         : base(description)
     {
         _factory = factory;
