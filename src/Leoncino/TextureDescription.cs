@@ -8,7 +8,7 @@ namespace Leoncino;
 /// <summary>
 /// Structure that describes the <see cref="Texture"/>.
 /// </summary>
-public record struct TextureDescriptor
+public record struct TextureDescription
 {
     public const int NumCubeMapSlices = 6;
 
@@ -63,7 +63,7 @@ public record struct TextureDescriptor
     public string? Label { get; init; }
 
     [SetsRequiredMembers]
-    public TextureDescriptor(
+    public TextureDescription(
         TextureDimension dimension,
         PixelFormat format,
         uint width,
@@ -87,7 +87,7 @@ public record struct TextureDescriptor
         Label = label;
     }
 
-    public static TextureDescriptor Texture1D(
+    public static TextureDescription Texture1D(
         PixelFormat format,
         uint width,
         uint mipLevelCount = 1,
@@ -96,7 +96,7 @@ public record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        return new TextureDescriptor(
+        return new TextureDescription(
             TextureDimension.Texture1D,
             format,
             width,
@@ -109,7 +109,7 @@ public record struct TextureDescriptor
             label);
     }
 
-    public static TextureDescriptor Texture2D(
+    public static TextureDescription Texture2D(
         PixelFormat format,
         uint width,
         uint height,
@@ -120,7 +120,7 @@ public record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        return new TextureDescriptor(
+        return new TextureDescription(
             TextureDimension.Texture2D,
             format,
             width,
@@ -133,7 +133,7 @@ public record struct TextureDescriptor
             label);
     }
 
-    public static TextureDescriptor Texture3D(
+    public static TextureDescription Texture3D(
         PixelFormat format,
         uint width,
         uint height,
@@ -143,7 +143,7 @@ public record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        return new TextureDescriptor(
+        return new TextureDescription(
             TextureDimension.Texture3D,
             format,
             width,
@@ -156,7 +156,7 @@ public record struct TextureDescriptor
             label);
     }
 
-    public static TextureDescriptor TextureCube(
+    public static TextureDescription TextureCube(
         PixelFormat format,
         uint width,
         uint mipLevelCount = 1,
@@ -165,7 +165,7 @@ public record struct TextureDescriptor
         CpuAccessMode access = CpuAccessMode.None,
         string? label = default)
     {
-        return new TextureDescriptor(
+        return new TextureDescription(
             TextureDimension.Texture2D,
             format,
             width,

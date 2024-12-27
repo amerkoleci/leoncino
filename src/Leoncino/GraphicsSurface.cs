@@ -11,13 +11,15 @@ public abstract class GraphicsSurface : GraphicsObject
     /// <summary>
     /// Initializes a new instance of the <see cref="GraphicsSurface" /> class.
     /// </summary>
-    /// <param name="descriptor">The <see cref="SurfaceDescriptor"/>.</param>
-    protected GraphicsSurface(in SurfaceDescriptor descriptor)
+    /// <param name="descriptor">The <see cref="SurfaceDescription"/>.</param>
+    protected GraphicsSurface(in SurfaceDescription descriptor)
         : base(descriptor.Label)
     {
     }
 
     public bool IsConfigured { get; private set; }
+
+    public abstract bool GetCapabilites(GraphicsAdapter adapter, out SurfaceCapabilities capabilities);
 
     public void Configure(GraphicsDevice device, in SurfaceConfiguration configuration)
     {

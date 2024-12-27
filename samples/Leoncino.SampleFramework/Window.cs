@@ -90,10 +90,7 @@ public sealed unsafe partial class Window
         }
     }
 
-    public void Show()
-    {
-        _ = SDL_ShowWindow(_window);
-    }
+    public bool Show() => SDL_ShowWindow(_window);
 
     private static GraphicsSurface CreateSurface(GraphicsFactory factory, in SDL_Window window)
     {
@@ -135,7 +132,7 @@ public sealed unsafe partial class Window
             throw new PlatformNotSupportedException();
         }
 
-        SurfaceDescriptor descriptor = new()
+        SurfaceDescription descriptor = new()
         {
             Source = source!
         };

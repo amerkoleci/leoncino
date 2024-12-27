@@ -6,21 +6,21 @@ namespace Leoncino;
 /// <summary>
 /// A graphics resource that holds image data in a specific format.
 /// </summary>
-public abstract class Texture : GPUObject
+public abstract class Texture : GraphicsDeviceObject
 {
-    protected Texture(in TextureDescriptor descriptor)
-        : base(descriptor.Label)
+    protected Texture(in TextureDescription description)
+        : base(description.Label)
     {
-        Dimension = descriptor.Dimension;
-        Format = descriptor.Format;
-        Width = descriptor.Width;
-        Height = descriptor.Height;
-        Depth = (descriptor.Dimension == TextureDimension.Texture3D) ? descriptor.DepthOrArrayLayers : 1;
-        ArrayLayers = (descriptor.Dimension != TextureDimension.Texture3D) ? descriptor.DepthOrArrayLayers : 1;
-        MipLevelCount = descriptor.MipLevelCount;
-        SampleCount = descriptor.SampleCount;
-        Usage = descriptor.Usage;
-        CpuAccess = descriptor.CpuAccess;
+        Dimension = description.Dimension;
+        Format = description.Format;
+        Width = description.Width;
+        Height = description.Height;
+        Depth = (description.Dimension == TextureDimension.Texture3D) ? description.DepthOrArrayLayers : 1;
+        ArrayLayers = (description.Dimension != TextureDimension.Texture3D) ? description.DepthOrArrayLayers : 1;
+        MipLevelCount = description.MipLevelCount;
+        SampleCount = description.SampleCount;
+        Usage = description.Usage;
+        CpuAccess = description.CpuAccess;
     }
 
     /// <summary>

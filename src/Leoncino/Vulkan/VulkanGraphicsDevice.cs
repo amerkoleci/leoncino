@@ -11,7 +11,7 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
 {
     private VulkanGraphicsAdapter _adapter;
 
-    public VulkanGraphicsDevice(VulkanGraphicsAdapter adapter, in GraphicsDeviceDescriptor description)
+    public VulkanGraphicsDevice(VulkanGraphicsAdapter adapter, in GraphicsDeviceDescription description)
         : base(description.Label)
     {
         _adapter = adapter;
@@ -36,19 +36,19 @@ internal unsafe class VulkanGraphicsDevice : GraphicsDevice
     }
 
     /// <inheritdoc />
-    protected override GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData)
+    protected override GraphicsBuffer CreateBufferCore(in BufferDescription descriptor, void* initialData)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc />
-    protected override unsafe Texture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData)
+    protected override unsafe Texture CreateTextureCore(in TextureDescription description, TextureData* initialData)
     {
         throw new NotImplementedException();
     }
 
     /// <inheritdoc />
-    protected override BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescriptor descriptor)
+    protected override BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescription description)
     {
         throw new NotImplementedException();
     }

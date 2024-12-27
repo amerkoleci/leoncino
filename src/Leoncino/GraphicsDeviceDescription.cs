@@ -6,9 +6,9 @@ namespace Leoncino;
 /// <summary>
 /// Structure that describes the <see cref="GraphicsDevice"/>.
 /// </summary>
-public readonly record struct GraphicsDeviceDescriptor
+public readonly record struct GraphicsDeviceDescription
 {
-    public GraphicsDeviceDescriptor()
+    public GraphicsDeviceDescription()
     {
     }
 

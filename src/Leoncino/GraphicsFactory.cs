@@ -8,7 +8,7 @@ namespace Leoncino;
 /// </summary>
 public abstract class GraphicsFactory : GraphicsObject
 {
-    protected GraphicsFactory(in GraphicsFactoryDescriptor description)
+    protected GraphicsFactory(in GraphicsFactoryDescription description)
         : base(description.Label)
     {
     }
@@ -18,7 +18,7 @@ public abstract class GraphicsFactory : GraphicsObject
     /// </summary>
     public abstract GraphicsBackend BackendType { get; }
 
-    public GraphicsSurface CreateSurface(in SurfaceDescriptor descriptor)
+    public GraphicsSurface CreateSurface(in SurfaceDescription descriptor)
     {
 #if VALIDATE_USAGE
         if (descriptor.Source is null)
@@ -35,7 +35,7 @@ public abstract class GraphicsFactory : GraphicsObject
         return RequestAdapterCore(in options);
     }
 
-    protected abstract GraphicsSurface CreateSurfaceCore(in SurfaceDescriptor descriptor);
+    protected abstract GraphicsSurface CreateSurfaceCore(in SurfaceDescription descriptor);
 
     protected abstract GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options);
 
@@ -70,9 +70,9 @@ public abstract class GraphicsFactory : GraphicsObject
         }
     }
 
-    public static GraphicsFactory Create(in GraphicsFactoryDescriptor descriptor)
+    public static GraphicsFactory Create(in GraphicsFactoryDescription description)
     {
-        GraphicsBackend backend = descriptor.PreferredBackend;
+        GraphicsBackend backend = description.PreferredBackend;
         if (backend == GraphicsBackend.Count)
         {
             if (IsBackendSupport(GraphicsBackend.Direct3D12))
@@ -100,7 +100,7 @@ public abstract class GraphicsFactory : GraphicsObject
             case GraphicsBackend.Vulkan:
                 if (Vulkan.VulkanGraphicsFactory.IsSupported())
                 {
-                    instance = new Vulkan.VulkanGraphicsFactory(in descriptor);
+                    instance = new Vulkan.VulkanGraphicsFactory(in description);
                 }
                 break;
 #endif
@@ -109,7 +109,7 @@ public abstract class GraphicsFactory : GraphicsObject
             case GraphicsBackend.Direct3D12:
                 if (D3D12.D3D12GraphicsFactory.IsSupported())
                 {
-                    instance = new D3D12.D3D12GraphicsFactory(in descriptor);
+                    instance = new D3D12.D3D12GraphicsFactory(in description);
                 }
                 break;
 #endif

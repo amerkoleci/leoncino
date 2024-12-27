@@ -32,8 +32,4 @@ public enum FormatKind
     /// Floating-point formats.
     /// </summary>
     Float,
-    /// <summary>
-    /// Hdr formats.
-    /// </summary>
-    Hdr,
 }

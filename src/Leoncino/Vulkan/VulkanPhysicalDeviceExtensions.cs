@@ -16,7 +16,7 @@ internal struct VulkanPhysicalDeviceVideoExtensions
 
 internal struct VulkanPhysicalDeviceExtensions
 {
-    // Core in 1.3
+    // Core 1.3
     public bool Maintenance4;
     public bool DynamicRendering;
     public bool Synchronization2;
@@ -25,8 +25,13 @@ internal struct VulkanPhysicalDeviceExtensions
     public bool PipelineCreationCacheControl;
     public bool FormatFeatureFlags2;
 
+    // Core 1.4
+    public bool PushDescriptor;
+
     // Extensions
     public bool Swapchain;
+    public bool Maintenance5;
+    public bool Maintenance6;
     public bool DepthClipEnable;
     public bool MemoryBudget;
     public bool AMD_DeviceCoherentMemory;
@@ -40,6 +45,10 @@ internal struct VulkanPhysicalDeviceExtensions
     public bool HostQueryReset;
     public bool DeferredHostOperations;
     public bool PortabilitySubset;
+    public bool TextureCompressionAstcHdr;
+    public bool ShaderViewportIndexLayer;
+    public bool ConservativeRasterization;
+
     public bool AccelerationStructure;
     public bool RaytracingPipeline;
     public bool RayQuery;

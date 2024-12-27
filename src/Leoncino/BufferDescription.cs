@@ -8,10 +8,11 @@ namespace Leoncino;
 /// <summary>
 /// Structure that describes the <see cref="GraphicsBuffer"/>.
 /// </summary>
-public readonly record struct BufferDescriptor
+public readonly record struct BufferDescription
+
 {
     [SetsRequiredMembers]
-    public BufferDescriptor(
+    public BufferDescription(
         ulong size,
         BufferUsage usage = BufferUsage.ShaderReadWrite,
         CpuAccessMode access = CpuAccessMode.None,

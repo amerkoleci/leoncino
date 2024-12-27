@@ -4,7 +4,7 @@
 namespace Leoncino;
 
 /// <summary>
-/// A bitmask indicating how a <see cref="GPUTexture"/> is permitted to be used.
+/// A bitmask indicating how a <see cref="Texture"/> is permitted to be used.
 /// </summary>
 [Flags]
 public enum TextureUsage

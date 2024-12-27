@@ -12,7 +12,7 @@ public abstract class GraphicsDevice : GraphicsObject
 {
     protected uint _frameIndex = 0;
     protected ulong _frameCount = 0;
-    protected readonly ConcurrentQueue<Tuple<GPUObject, ulong>> _deferredDestroyObjects = new();
+    protected readonly ConcurrentQueue<Tuple<GraphicsDeviceObject, ulong>> _deferredDestroyObjects = new();
     protected bool _shuttingDown;
 
     /// <summary>
@@ -29,7 +29,7 @@ public abstract class GraphicsDevice : GraphicsObject
     /// </summary>
     public abstract GraphicsAdapter Adapter { get; }
 
-    public unsafe GraphicsBuffer CreateBuffer(in BufferDescriptor descriptor, nint initialData = 0)
+    public unsafe GraphicsBuffer CreateBuffer(in BufferDescription descriptor, nint initialData = 0)
     {
 #if VALIDATE_USAGE
         if (descriptor.Size < 4)
@@ -46,42 +46,42 @@ public abstract class GraphicsDevice : GraphicsObject
         CpuAccessMode cpuAccess = CpuAccessMode.None,
         string? label = default)
     {
-        return CreateBuffer(new BufferDescriptor(size, usage, cpuAccess, label), IntPtr.Zero);
+        return CreateBuffer(new BufferDescription(size, usage, cpuAccess, label), IntPtr.Zero);
     }
 
-    public unsafe Texture CreateTexture(in TextureDescriptor descriptor)
+    public unsafe Texture CreateTexture(in TextureDescription description)
     {
 #if VALIDATE_USAGE
-        if (descriptor.Format == PixelFormat.Undefined)
+        if (description.Format == PixelFormat.Undefined)
         {
             throw new GraphicsException($"Format must be different than {PixelFormat.Undefined}");
         }
 
-        if (descriptor.Width <= 0 || descriptor.Height <= 0 || descriptor.DepthOrArrayLayers <= 0)
+        if (description.Width <= 0 || description.Height <= 0 || description.DepthOrArrayLayers <= 0)
         {
             throw new GraphicsException("Width, Height, and DepthOrArrayLayers must be non-zero.");
         }
 
-        if (descriptor.MipLevelCount < 0)
+        if (description.MipLevelCount < 0)
         {
             throw new GraphicsException("mipLevelCount must be greater or equal to zero.");
         }
 #endif
 
-        return CreateTextureCore(in descriptor, default);
+        return CreateTextureCore(in description, default);
     }
 
-    public BindGroupLayout CreateBindGroupLayout(in BindGroupLayoutDescriptor descriptor)
+    public BindGroupLayout CreateBindGroupLayout(in BindGroupLayoutDescription description)
     {
-        return CreateBindGroupLayoutCore(in descriptor);
+        return CreateBindGroupLayoutCore(in description);
     }
 
-    public BindGroupLayout CreateBindGroupLayout(params BindGroupLayoutEntry[] entries)
+    public BindGroupLayout CreateBindGroupLayout(params ReadOnlySpan<BindGroupLayoutEntry> entries)
     {
-        return CreateBindGroupLayoutCore(new BindGroupLayoutDescriptor(entries));
+        return CreateBindGroupLayoutCore(new BindGroupLayoutDescription(entries));
     }
 
-    internal void QueueDestroy(GPUObject @object)
+    internal void QueueDestroy(GraphicsDeviceObject @object)
     {
         if (_shuttingDown)
         {
@@ -96,7 +96,7 @@ public abstract class GraphicsDevice : GraphicsObject
     {
         while (!_deferredDestroyObjects.IsEmpty)
         {
-            if (_deferredDestroyObjects.TryPeek(out Tuple<GPUObject, ulong>? item) &&
+            if (_deferredDestroyObjects.TryPeek(out Tuple<GraphicsDeviceObject, ulong>? item) &&
                 item.Item2 + Constants.MaxFramesInFlight < _frameCount)
             {
                 if (_deferredDestroyObjects.TryDequeue(out item))
@@ -111,7 +111,7 @@ public abstract class GraphicsDevice : GraphicsObject
         }
     }
 
-    protected abstract unsafe GraphicsBuffer CreateBufferCore(in BufferDescriptor descriptor, void* initialData);
-    protected abstract unsafe Texture CreateTextureCore(in TextureDescriptor descriptor, TextureData* initialData);
-    protected abstract BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescriptor descriptor);
+    protected abstract unsafe GraphicsBuffer CreateBufferCore(in BufferDescription descriptor, void* initialData);
+    protected abstract unsafe Texture CreateTextureCore(in TextureDescription descriptor, TextureData* initialData);
+    protected abstract BindGroupLayout CreateBindGroupLayoutCore(in BindGroupLayoutDescription description);
 }

@@ -3,10 +3,10 @@
 
 namespace Leoncino;
 
-public abstract class BindGroupLayout : GPUObject
+public abstract class BindGroupLayout : GraphicsDeviceObject
 {
-    protected BindGroupLayout(in BindGroupLayoutDescriptor descriptor)
-        : base(descriptor.Label)
+    protected BindGroupLayout(in BindGroupLayoutDescription description)
+        : base(description.Label)
     {
     }
 }

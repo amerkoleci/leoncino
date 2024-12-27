@@ -18,14 +18,14 @@ public abstract class Application : IDisposable
     {
         if (!SDL_Init(SDL_InitFlags.Video))
         {
-            var error = SDL_GetError();
+            string error = SDL_GetError()!;
             throw new Exception($"Failed to start SDL2: {error}");
         }
 
-        SDL_SetLogOutputFunction(&Log_SDL, 0);
-        GraphicsFactoryDescriptor factoryDescription = new()
+        SDL_SetLogOutputFunction(Log_SDL);
+        GraphicsFactoryDescription factoryDescription = new()
         {
-            PreferredBackend = GraphicsBackend.WGPU
+            PreferredBackend = GraphicsBackend.Vulkan
         };
         Factory = GraphicsFactory.Create(in factoryDescription);
 
@@ -42,8 +42,8 @@ public abstract class Application : IDisposable
         SurfaceFormat = Adapter.GetSurfacePreferredFormat(MainWindow.Surface);
         Debug.Assert(SurfaceFormat != PixelFormat.Undefined);
 
-        GraphicsDeviceDescriptor deviceDescriptor = new();
-        Device = Adapter.CreateDevice(in deviceDescriptor);
+        GraphicsDeviceDescription deviceDescription = new();
+        Device = Adapter.CreateDevice(in deviceDescription);
 
         VSync = true;
         Resize(MainWindow.ClientSize);
@@ -158,12 +158,9 @@ public abstract class Application : IDisposable
 
     }
 
-    [UnmanagedCallersOnly]
-    private static unsafe void Log_SDL(nint _, int category, SDL_LogPriority priority, byte* messagePtr)
+    private static void Log_SDL(SDL_LogCategory category, SDL_LogPriority priority, string? message)
     {
-        string? message =  ConvertToManaged(messagePtr);
-
-        if (priority >= SDL_LOG_PRIORITY_ERROR)
+        if (priority >= SDL_LogPriority.Error)
         {
             Log.Error($"[{priority}] SDL: {message}");
         }

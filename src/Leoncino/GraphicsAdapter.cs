@@ -17,10 +17,10 @@ public abstract class GraphicsAdapter : GraphicsObject
 
     public abstract PixelFormat GetSurfacePreferredFormat(GraphicsSurface surface);
 
-    public GraphicsDevice CreateDevice(in GraphicsDeviceDescriptor description)
+    public GraphicsDevice CreateDevice(in GraphicsDeviceDescription description)
     {
         return CreateDeviceCore(in description);
     }
 
-    protected abstract GraphicsDevice CreateDeviceCore(in GraphicsDeviceDescriptor description);
+    protected abstract GraphicsDevice CreateDeviceCore(in GraphicsDeviceDescription description);
 }

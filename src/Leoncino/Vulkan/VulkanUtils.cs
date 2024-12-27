@@ -152,6 +152,14 @@ internal static unsafe partial class VulkanUtils
             {
                 extensions.Swapchain = true;
             }
+            else if (extensionName == VK_KHR_MAINTENANCE_5_EXTENSION_NAME)
+            {
+                extensions.Maintenance5 = true;
+            }
+            else if (extensionName == VK_KHR_MAINTENANCE_6_EXTENSION_NAME)
+            {
+                extensions.Maintenance6 = true;
+            }
             else if (extensionName == VK_EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME)
             {
                 extensions.DepthClipEnable = true;
@@ -183,6 +191,18 @@ internal static unsafe partial class VulkanUtils
             else if (extensionName == VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME)
             {
                 extensions.PortabilitySubset = true;
+            }
+            else if (extensionName == VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME)
+            {
+                extensions.TextureCompressionAstcHdr = true;
+            }
+            else if (extensionName == VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME)
+            {
+                extensions.ShaderViewportIndexLayer = true;
+            }
+            else if (extensionName == VK_EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME)
+            {
+                extensions.ConservativeRasterization = true;
             }
             else if (extensionName == VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME)
             {
@@ -275,6 +295,13 @@ internal static unsafe partial class VulkanUtils
 
         VkPhysicalDeviceProperties gpuProps;
         vkGetPhysicalDeviceProperties(physicalDevice, &gpuProps);
+
+        // Core 1.4
+        if (gpuProps.apiVersion >= VkVersion.Version_1_4)
+        {
+            extensions.Maintenance6 = true;
+            extensions.PushDescriptor = true;
+        }
 
         // Core 1.3
         if (gpuProps.apiVersion >= VkVersion.Version_1_3)
@@ -415,20 +442,20 @@ internal static unsafe partial class VulkanUtils
             case PixelFormat.ASTC12x12Unorm: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
             case PixelFormat.ASTC12x12UnormSrgb: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
             // ASTC HDR compressed formats
-            case PixelFormat.ASTC4x4Hdr: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
-            case PixelFormat.ASTC5x4Hdr: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
-            case PixelFormat.ASTC5x5Hdr: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
-            case PixelFormat.ASTC6x5Hdr: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
-            case PixelFormat.ASTC6x6Hdr: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
-            case PixelFormat.ASTC8x5Hdr: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
-            case PixelFormat.ASTC8x6Hdr: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
-            case PixelFormat.ASTC8x8Hdr: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
-            case PixelFormat.ASTC10x5Hdr: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
-            case PixelFormat.ASTC10x6Hdr: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
-            case PixelFormat.ASTC10x8Hdr: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
-            case PixelFormat.ASTC10x10Hdr: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
-            case PixelFormat.ASTC12x10Hdr: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
-            case PixelFormat.ASTC12x12Hdr: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
+            case PixelFormat.ASTC4x4HDR: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
+            case PixelFormat.ASTC5x4HDR: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
+            case PixelFormat.ASTC5x5HDR: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC6x5HDR: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC6x6HDR: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
+            case PixelFormat.ASTC8x5HDR: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC8x6HDR: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
+            case PixelFormat.ASTC8x8HDR: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x5HDR: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x6HDR: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x8HDR: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
+            case PixelFormat.ASTC10x10HDR: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
+            case PixelFormat.ASTC12x10HDR: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
+            case PixelFormat.ASTC12x12HDR: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
             //case PixelFormat.R8BG8Biplanar420Unorm: return VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
             //case PixelFormat.R10X6BG10X6Biplanar420Unorm: return VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16;
 

@@ -18,7 +18,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
 
     public static bool IsSupported() => s_isSupported.Value;
 
-    public VulkanGraphicsFactory(in GraphicsFactoryDescriptor description)
+    public VulkanGraphicsFactory(in GraphicsFactoryDescription description)
         : base(description)
     {
         vkEnumerateInstanceLayerProperties(out uint availableInstanceLayerCount).CheckResult();
@@ -272,7 +272,7 @@ internal unsafe class VulkanGraphicsFactory : GraphicsFactory
     }
 
     /// <inheritdoc />
-    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescriptor description) => new VulkanGraphicsSurface(this, in description);
+    protected override GraphicsSurface CreateSurfaceCore(in SurfaceDescription description) => new VulkanGraphicsSurface(this, in description);
 
     protected override GraphicsAdapter RequestAdapterCore(in RequestAdapterOptions options)
     {

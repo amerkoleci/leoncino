@@ -6,14 +6,14 @@ namespace Leoncino;
 /// <summary>
 /// Structure that describes a <see cref="BindGroupLayout"/>.
 /// </summary>
-public readonly record struct BindGroupLayoutDescriptor
+public readonly ref struct BindGroupLayoutDescription
 {
-    public BindGroupLayoutDescriptor(params BindGroupLayoutEntry[] entries)
+    public BindGroupLayoutDescription(ReadOnlySpan<BindGroupLayoutEntry> entries)
     {
         Entries = entries;
     }
 
-    public BindGroupLayoutEntry[] Entries { get; init; }
+    public ReadOnlySpan<BindGroupLayoutEntry> Entries { get; init; }
 
     /// <summary>
     /// The label of <see cref="BindGroupLayout"/>.

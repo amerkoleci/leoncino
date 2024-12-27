@@ -9,9 +9,9 @@ namespace Leoncino;
 /// <summary>
 /// Defines a graphics buffer that holds data.
 /// </summary>
-public abstract class GraphicsBuffer : GPUObject
+public abstract class GraphicsBuffer : GraphicsDeviceObject
 {
-    protected GraphicsBuffer(in BufferDescriptor descriptor)
+    protected GraphicsBuffer(in BufferDescription descriptor)
         : base(descriptor.Label)
     {
         Size = descriptor.Size;

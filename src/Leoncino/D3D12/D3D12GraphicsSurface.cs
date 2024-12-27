@@ -7,7 +7,7 @@ internal unsafe partial class D3D12GraphicsSurface : GraphicsSurface
 {
     private readonly D3D12GraphicsFactory _factory;
 
-    public D3D12GraphicsSurface(D3D12GraphicsFactory factory, in SurfaceDescriptor description)
+    public D3D12GraphicsSurface(D3D12GraphicsFactory factory, in SurfaceDescription description)
         : base(description)
     {
         _factory = factory;
@@ -28,6 +28,30 @@ internal unsafe partial class D3D12GraphicsSurface : GraphicsSurface
                 // TODO: Destroy Swapchain
             }
         }
+    }
+
+    /// <inheritdoc />
+    public override bool GetCapabilites(GraphicsAdapter adapter, out SurfaceCapabilities capabilities)
+    {
+        capabilities = new SurfaceCapabilities
+        {
+            PreferredFormat = PixelFormat.BGRA8UnormSrgb,
+            SupportedUsage = TextureUsage.ShaderRead | TextureUsage.RenderTarget,
+            Formats = [
+                PixelFormat.BGRA8Unorm,
+                PixelFormat.BGRA8UnormSrgb,
+                PixelFormat.RGBA8Unorm,
+                PixelFormat.RGBA8UnormSrgb,
+                PixelFormat.RGBA16Float,
+                PixelFormat.RGB10A2Unorm,
+            ],
+            PresentModes = [
+                PresentMode.Fifo,
+                PresentMode.Mailbox,
+                PresentMode.Immediate,
+            ],
+        };
+        return true;
     }
 
     /// <inheritdoc />

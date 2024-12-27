@@ -12,7 +12,7 @@ internal unsafe partial class VulkanGraphicsBuffer : GraphicsBuffer
     private readonly VulkanGraphicsDevice _device;
     private readonly void* _pMappedData = default;
 
-    public VulkanGraphicsBuffer(VulkanGraphicsDevice device, in BufferDescriptor description)
+    public VulkanGraphicsBuffer(VulkanGraphicsDevice device, in BufferDescription description)
         : base(description)
     {
         _device = device;

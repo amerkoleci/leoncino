@@ -10,7 +10,7 @@ internal unsafe partial class VulkanGraphicsSurface : GraphicsSurface
 {
     private readonly VulkanGraphicsFactory _factory;
 
-    public VulkanGraphicsSurface(VulkanGraphicsFactory factory, in SurfaceDescriptor description)
+    public VulkanGraphicsSurface(VulkanGraphicsFactory factory, in SurfaceDescription description)
         : base(description)
     {
         _factory = factory;
@@ -112,6 +112,42 @@ internal unsafe partial class VulkanGraphicsSurface : GraphicsSurface
 
             vkDestroySurfaceKHR(_factory.Handle, Handle, null);
         }
+    }
+
+    /// <inheritdoc />
+    public override bool GetCapabilites(GraphicsAdapter adapter, out SurfaceCapabilities capabilities)
+    {
+        VulkanGraphicsAdapter backendAdapter = (VulkanGraphicsAdapter)adapter;
+
+        VkSurfaceCapabilitiesKHR surfaceCaps;
+        VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(backendAdapter.Handle, Handle, &surfaceCaps);
+        if (result != VK_SUCCESS)
+        {
+            capabilities = default;
+            return false;
+        }
+
+        result = vkGetPhysicalDeviceSurfaceFormatsKHR(backendAdapter.Handle, Handle, out uint formatCount);
+        if (result != VK_SUCCESS)
+        {
+            capabilities = default;
+            return false;
+        }
+
+        Span<VkSurfaceFormatKHR> vkFormats = stackalloc VkSurfaceFormatKHR[(int)formatCount];
+        result = vkGetPhysicalDeviceSurfaceFormatsKHR(backendAdapter.Handle, Handle, vkFormats);
+        if (result != VK_SUCCESS)
+        {
+            capabilities = default;
+            return false;
+        }
+
+        capabilities = new SurfaceCapabilities
+        {
+            PreferredFormat = PixelFormat.BGRA8UnormSrgb,
+            SupportedUsage = TextureUsage.ShaderRead | TextureUsage.RenderTarget
+        };
+        return true;
     }
 
     /// <inheritdoc />
